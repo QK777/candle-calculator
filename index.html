@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>キャンドル計算機</title>
+<style>
+  body { font-family: sans-serif; margin: 20px; }
+  .category { border: 1px solid #ccc; margin-bottom: 10px; padding: 10px; }
+  .category h3 { margin: 0 0 10px 0; }
+  .items { display: grid; grid-template-columns: repeat(4, auto); gap: 5px; }
+  #total, #required { font-weight: bold; margin-top: 10px; }
+</style>
+</head>
+<body>
+
+<div id="mainPanel"></div>
+
+<div id="southPanel">
+  <div id="total">合計: 0</div>
+  <div id="required">必要ライト: 2055（15キャンドル）</div>
+</div>
+
+<script>
+const categories = ["孤島","草原","雨林","峡谷","捨て地","書庫","その他","ソーシャル"];
+const items = [
+  ["砂丘","予言者の席窟","水の試練","土の試練","風の試練","火の試練"],
+  ["蝶々","村","谷","8人エリア","鳥の巣","楽園"],
+  ["最初","小川","神殿前","晴れ間","神殿","ツリーハウス","地下洞窟"],
+  ["最初","陸レース","要塞","空レース","コロセウム","神殿","夢見","隠者","隠者レース"],
+  ["壊れた神殿","墓地","戦場","蟹エリア","箱舟","悲報"],
+  ["１階","アーカイブ","避難所","２階","３階","４階","サミット"],
+  ["ホーム","オフィス","星月夜の砂漠","風の回廊"],
+  ["シナモン","大キャン4","キャンドル2倍","パン屋","ウニ","闇の欠片"]
+];
+const values = [
+  [200,50,100,105,200,200],
+  [55,119,45,99,50,299],
+  [45,227,175,42,83,55,57],
+  [104,135,79,150,10,93,100,50,200],
+  [65,92,111,63,109,188],
+  [16,50,31,110,12,222,64],
+  [23,57,140,30],
+  [50,200,200,600,200,200]
+];
+const sundayValues = [
+  [0,0,0,0,0,0],
+  [0,0,0,0,0,0],
+  [0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0],
+  [86,119,139,101,0,0],
+  [0,0,0,0,0,0,0],
+  [0,0,0,0],
+  [0,0,0,0,0,0]
+];
+
+const mainPanel = document.getElementById("mainPanel");
+const totalLabel = document.getElementById("total");
+const isSunday = (new Date()).getDay() === 0;
+
+let checkBoxes = [];
+
+// チェックボックス作成
+categories.forEach((cat, i) => {
+  const catDiv = document.createElement("div");
+  catDiv.className = "category";
+  const title = document.createElement("h3");
+  title.textContent = cat;
+  catDiv.appendChild(title);
+
+  const itemsDiv = document.createElement("div");
+  itemsDiv.className = "items";
+
+  checkBoxes[i] = [];
+
+  items[i].forEach((name, j) => {
+    const cb = document.createElement("input");
+    cb.type = "checkbox";
+    cb.id = `cb_${i}_${j}`;
+    cb.dataset.value = isSunday ? sundayValues[i][j] : values[i][j];
+
+    // localStorage からチェック状態を復元
+    cb.checked = localStorage.getItem(cb.id) === "true";
+
+    const label = document.createElement("label");
+    label.appendChild(cb);
+    label.appendChild(document.createTextNode(` ${name} (${cb.dataset.value})`));
+    itemsDiv.appendChild(label);
+
+    // チェック変更時に保存と合計更新
+    cb.addEventListener("change", () => {
+      localStorage.setItem(cb.id, cb.checked);
+      updateTotal();
+    });
+
+    checkBoxes[i][j] = cb;
+  });
+
+  catDiv.appendChild(itemsDiv);
+  mainPanel.appendChild(catDiv);
+});
+
+// 合計計算
+function updateTotal() {
+  let total = 0;
+  checkBoxes.forEach(row => {
+    row.forEach(cb => {
+      if(cb.checked){
+        total += parseInt(cb.dataset.value);
+      }
+    });
+  });
+  totalLabel.textContent = "合計: " + total;
+}
+
+// 初期合計計算
+updateTotal();
+</script>
+
+</body>
+</html>
