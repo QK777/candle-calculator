@@ -4,11 +4,54 @@
 <meta charset="UTF-8">
 <title>キャンドル計算機</title>
 <style>
-  body { font-family: sans-serif; margin: 20px; }
-  .category { border: 1px solid #ccc; margin-bottom: 10px; padding: 10px; }
-  .category h3 { margin: 0 0 10px 0; }
-  .items { display: grid; grid-template-columns: repeat(4, auto); gap: 5px; }
-  #total, #required { font-weight: bold; margin-top: 10px; }
+  body { 
+    font-family: sans-serif; 
+    margin: 20px; 
+    background-color: #f8f8f8;
+  }
+
+  .category { 
+    border: 1px solid #ccc; 
+    margin-bottom: 10px; 
+    padding: 10px; 
+    background-color: #fff;
+    border-radius: 8px;
+  }
+
+  .category h3 { 
+    margin: 0 0 10px 0; 
+  }
+
+  .items { 
+    display: grid; 
+    grid-template-columns: repeat(4, auto); 
+    gap: 5px; 
+  }
+
+  #southPanel {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #222;
+    color: #fff;
+    border-radius: 10px;
+    text-align: center;
+  }
+
+  #total { 
+    font-weight: bold; 
+    font-size: 36px; /* 文字を大きく */
+    color: #e67e22;  /* 文字色オレンジ */
+    margin-bottom: 10px;
+  }
+
+  #required {
+    font-size: 16px;
+    color: #fff;
+  }
+
+  label {
+    cursor: pointer;
+  }
 </style>
 </head>
 <body>
