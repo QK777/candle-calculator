@@ -18,14 +18,21 @@
     border-radius: 8px;
   }
 
+  .category-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
   .category h3 { 
-    margin: 0 0 10px 0; 
+    margin: 0; 
   }
 
   .items { 
     display: grid; 
     grid-template-columns: repeat(4, auto); 
     gap: 5px; 
+    margin-top: 5px;
   }
 
   #southPanel {
@@ -39,14 +46,23 @@
 
   #total { 
     font-weight: bold; 
-    font-size: 36px; /* 文字を大きく */
-    color: #e67e22;  /* 文字色オレンジ */
+    font-size: 36px;
+    color: #e67e22;
     margin-bottom: 10px;
   }
 
   #required {
     font-size: 16px;
     color: #fff;
+  }
+
+  button {
+    margin-top: 10px;
+    margin-bottom: 20px;
+    padding: 5px 15px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
   }
 
   label {
@@ -56,24 +72,27 @@
 </head>
 <body>
 
+<button id="resetBtn">全てリセット</button>
+
 <div id="mainPanel"></div>
 
 <div id="southPanel">
   <div id="total">合計: 0</div>
-  <div id="required">必要ライト: 2055（15キャンドル） (16)2268  (17)2481  (18)2719  (19)3207  (20)4195</div>
+  <div id="required">必要ライト: 2055（15キャンドル）</div>
+    <div id="required"></div>2268（16） 2481（17）  2719（18）  3207（19）  4195（20）</div>
 </div>
 
 <script>
 const categories = ["孤島","草原","雨林","峡谷","捨て地","書庫","その他","ソーシャル"];
 const items = [
-  ["砂丘","予言者の席窟","水の試練","土の試練","風の試練","火の試練"],
-  ["蝶々","村","谷","8人エリア","鳥の巣","楽園"],
-  ["最初","小川","神殿前","晴れ間","神殿","ツリーハウス","地下洞窟"],
-  ["最初","陸レース","要塞","空レース","コロセウム","神殿","夢見","隠者","隠者レース"],
-  ["壊れた神殿","墓地","戦場","蟹エリア","箱舟","悲報"],
-  ["１階","アーカイブ","避難所","２階","３階","４階","サミット"],
-  ["ホーム","オフィス","星月夜の砂漠","風の回廊"],
-  ["シナモン","大キャン4","キャンドル2倍","パン屋","ウニ","闇の欠片"]
+  ["初期エリア","予言者の席窟","水の試練","土の試練","風の試練","火の試練"],
+  ["初期エリア","村","谷","8人エリア","鳥の巣","楽園"],
+  ["初期エリア","小川","神殿前","晴れ間","神殿内","ツリーハウス","地下洞窟"],
+  ["初期エリア","陸レース","要塞","空レース","コロセウム","神殿","夢見","隠者","隠者レース"],
+  ["初期エリア","墓地","戦場","蟹エリア","箱舟","秘宝"],
+  ["初期エリア","アーカイブ","避難所","２階","３階","４階","サミット"],
+  ["ホーム","オフィス","星月夜の砂漠","風の街道"],
+  ["シナモン","大キャン4","キャンドル2倍","パン屋","ウニ焼き","闇の欠片"]
 ];
 const values = [
   [200,50,100,105,200,200],
@@ -106,9 +125,21 @@ let checkBoxes = [];
 categories.forEach((cat, i) => {
   const catDiv = document.createElement("div");
   catDiv.className = "category";
+
+  // カテゴリタイトル＋マスターcheckbox
+  const headerDiv = document.createElement("div");
+  headerDiv.className = "category-header";
+
+  const masterCb = document.createElement("input");
+  masterCb.type = "checkbox";
+  masterCb.id = `master_${i}`;
+  headerDiv.appendChild(masterCb);
+
   const title = document.createElement("h3");
   title.textContent = cat;
-  catDiv.appendChild(title);
+  headerDiv.appendChild(title);
+
+  catDiv.appendChild(headerDiv);
 
   const itemsDiv = document.createElement("div");
   itemsDiv.className = "items";
@@ -133,6 +164,10 @@ categories.forEach((cat, i) => {
     cb.addEventListener("change", () => {
       localStorage.setItem(cb.id, cb.checked);
       updateTotal();
+
+      // マスターCheckbox同期
+      const allChecked = checkBoxes[i].every(c => c.checked);
+      masterCb.checked = allChecked;
     });
 
     checkBoxes[i][j] = cb;
@@ -140,6 +175,18 @@ categories.forEach((cat, i) => {
 
   catDiv.appendChild(itemsDiv);
   mainPanel.appendChild(catDiv);
+
+  // マスターCheckboxクリック時
+  masterCb.addEventListener("change", () => {
+    checkBoxes[i].forEach(cb => {
+      cb.checked = masterCb.checked;
+      localStorage.setItem(cb.id, cb.checked);
+    });
+    updateTotal();
+  });
+
+  // 初期状態でマスターCheckboxを設定
+  masterCb.checked = checkBoxes[i].every(c => c.checked);
 });
 
 // 合計計算
@@ -157,6 +204,23 @@ function updateTotal() {
 
 // 初期合計計算
 updateTotal();
+
+// 全リセットボタン
+document.getElementById("resetBtn").addEventListener("click", () => {
+  checkBoxes.forEach(row => {
+    row.forEach(cb => {
+      cb.checked = false;
+      localStorage.setItem(cb.id, false);
+    });
+  });
+
+  // マスターCheckboxもリセット
+  categories.forEach((cat, i) => {
+    document.getElementById(`master_${i}`).checked = false;
+  });
+
+  updateTotal();
+});
 </script>
 
 </body>
