@@ -2,95 +2,238 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>キャンドル計算機</title>
+<title>キャンドル計算機 - かわいいSky風</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600&display=swap" rel="stylesheet">
 <style>
-  body { 
-    font-family: sans-serif; 
-    margin: 20px; 
-    background-color: #f8f8f8;
+  /* 全体 */
+  body {
+    font-family: 'Baloo 2', cursive;
+    background: linear-gradient(135deg, #fdfbff 0%, #eef5ff 40%, #fdf6ff 100%);
+    margin: 0;
+    padding: 24px 12px;
+    color: #222;
   }
 
-  .category { 
-    border: 1px solid #ccc; 
-    margin-bottom: 10px; 
-    padding: 10px; 
-    background-color: #fff;
-    border-radius: 8px;
+  .app {
+    max-width: 960px;
+    margin: 0 auto;
+  }
+
+  /* タイトルカード */
+  .header-card {
+    background: radial-gradient(circle at top left, #fef7ff 0%, #ffffff 40%, #f5f8ff 100%);
+    border-radius: 28px;
+    padding: 18px 24px;
+    box-shadow: 0 10px 30px rgba(123, 154, 255, 0.18);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border: 2px solid rgba(210, 220, 255, 0.9);
+  }
+
+  .header-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #ffe7a9 0%, #ffbb6f 55%, #ff9b42 100%);
+    box-shadow: 0 0 12px rgba(255, 195, 120, 0.9);
+  }
+
+  .page-title {
+    font-size: 26px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+  }
+
+  .page-subtitle {
+    font-size: 13px;
+    opacity: 0.7;
+  }
+
+  /* カテゴリカード（くっきり） */
+  .category {
+    background: #ffffff;
+    border-radius: 24px;
+    padding: 18px 22px 16px;
+    margin-bottom: 18px;
+    box-shadow: 0 6px 18px rgba(70, 90, 150, 0.22);
+    border: 2px solid rgba(210, 220, 255, 0.9);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .category-inner {
+    position: relative;
+    z-index: 1;
   }
 
   .category-header {
     display: flex;
     align-items: center;
     gap: 10px;
+    margin-bottom: 12px;
   }
 
-  .category h3 { 
-    margin: 0; 
+  .category-label {
+    font-size: 20px;
+    font-weight: 600;
+    color: #222;
   }
 
-  .items { 
-    display: grid; 
-    grid-template-columns: repeat(4, auto); 
-    gap: 5px; 
-    margin-top: 5px;
+  .category-toggle {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 6px;
+    border: 2px solid #ff9b42;
+    cursor: pointer;
+    transition: 0.2s;
   }
 
+  .category-toggle:checked {
+    background: linear-gradient(135deg, #ffb36b, #ff9b42);
+    box-shadow: 0 0 8px #ffcf8b, 0 0 16px rgba(255,180,100,0.4);
+  }
+
+/* PCでは4列 並べる */
+  .items {
+    display: grid;
+    grid-template-columns: repeat(4
+    , minmax(0, 1fr));
+    gap: 8px;
+  }
+
+/* スマホでは2列に落とす */
+@media (max-width: 720px) {
+  /items {
+    grid-template-columns: repeat(3, minmax(0,1fr));
+         }
+      }
+
+  .check-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    cursor: pointer;
+    border-radius: 999px;
+    background: rgba(248, 251, 255, 0.95);
+    border: 1px solid rgba(185, 211, 255, 0.6);
+    transition: 0.18s;
+  }
+
+  .check-wrapper:hover {
+    box-shadow: 0 4px 10px rgba(149, 177, 255, 0.35);
+    transform: translateY(-1px);
+  }
+
+  .check-input {
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border: 2px solid #87bfff;
+    border-radius: 50%;
+    transition: 0.25s;
+  }
+
+  .check-input:checked {
+    background: radial-gradient(circle, #6db3ff, #3a8cff 60%, #2d6fe0 100%);
+    box-shadow: 0 0 8px #6db3ff, 0 0 14px #89c3ff;
+    border-color: #3a8cff;
+    transform: scale(1.15);
+  }
+
+  .item-name { flex: 1; font-size: 14px; }
+  .item-value {
+    font-size: 12px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: rgba(61, 138, 255, 0.08);
+    border: 1px solid rgba(61, 138, 255, 0.25);
+    color: #2250a6;
+  }
+
+  /* ★ リセットボタンを上側に独立配置 */
+  .reset-row {
+    display: flex;
+    justify-content: flex-end;
+    margin: 10px 0 6px;
+  }
+
+  #resetButton {
+    padding: 10px 24px;
+    background: linear-gradient(135deg, #ff8b8b, #ff6b6b);
+    color: white;
+    border-radius: 999px;
+    cursor: pointer;
+    border: none;
+    font-size: 15px;
+    font-weight: 600;
+    box-shadow: 0 8px 18px rgba(255, 71, 71, 0.32);
+    transition: 0.25s;
+  }
+
+  #resetButton:hover {
+    background: linear-gradient(135deg, #ff7676, #ff5252);
+  }
+
+  /* 合計カード */
   #southPanel {
-    margin-top: 20px;
-    padding: 15px;
-    background-color: #222;
-    color: #fff;
-    border-radius: 10px;
-    text-align: center;
+    background: linear-gradient(135deg, #ffffff 0%, #f1f6ff 100%);
+    border-radius: 26px;
+    padding: 18px 22px;
+    margin-top: 8px;
+    box-shadow: 0 10px 28px rgba(60, 80, 150, 0.28);
+    border: 2px solid rgba(150, 170, 240, 0.9);
+    position: relative;
   }
 
-  #total { 
-    font-weight: bold; 
-    font-size: 36px;
-    color: #e67e22;
-    margin-bottom: 10px;
-  }
-
-  #required {
-    font-size: 16px;
-    color: #fff;
-  }
-
-  button {
-    margin-top: 10px;
-    margin-bottom: 20px;
-    padding: 5px 15px;
-    font-size: 16px;
-    cursor: pointer;
-    border-radius: 5px;
-  }
-
-  label {
-    cursor: pointer;
+  #total {
+    font-size: 26px;
+    font-weight: 700;
+    color: #2d3a80;
   }
 </style>
 </head>
 <body>
+<div class="app">
 
-<button id="resetBtn">全てリセット</button>
+  <div class="header-card">
+    <div class="header-icon"></div>
+    <div>
+      <div class="page-title">キャンドル計算機</div>
+      <div class="page-subtitle"></div>
+    </div>
+  </div>
 
-<div id="mainPanel"></div>
+  <!-- ★ リセットボタンをここに配置 -->
+  <div class="reset-row">
+    <button id="resetButton">全てリセット</button>
+  </div>
 
-<div id="southPanel">
-  <div id="total">合計: 0</div>
-  <div id="required">必要ライト: 2055（15キャンドル）</div>
-    <div id="required"></div>2268（16） 2481（17）  2719（18）  3207（19）  4195（20）</div>
+  <div id="mainPanel"></div>
+
+  <div id="southPanel">
+    <div id="total">合計: 0</div>
+    <div id="required">
+      必要ライト:
+      <b>2055（15キャンドル）</b> </div>
+       <div>(16)2268 / (17)2481 / (18)2719 / (19)3207 / (20)4195
+    </div>
+  </div>
+
 </div>
 
 <script>
 const categories = ["孤島","草原","雨林","峡谷","捨て地","書庫","その他","ソーシャル"];
 const items = [
-  ["初期エリア","予言者の席窟","水の試練","土の試練","風の試練","火の試練"],
-  ["初期エリア","村","谷","8人エリア","鳥の巣","楽園"],
-  ["初期エリア","小川","神殿前","晴れ間","神殿内","ツリーハウス","地下洞窟"],
-  ["初期エリア","陸レース","要塞","空レース","コロセウム","神殿","夢見","隠者","隠者レース"],
-  ["初期エリア","墓地","戦場","蟹エリア","箱舟","秘宝"],
-  ["初期エリア","アーカイブ","避難所","２階","３階","４階","サミット"],
+  ["砂丘","予言者の席窟","水の試練","土の試練","風の試練","火の試練"],
+  ["蝶々","村","谷","8人エリア","鳥の巣","楽園"],
+  ["最初","小川","神殿前","晴れ間","神殿","ツリーハウス","地下洞窟"],
+  ["最初","陸レース","要塞","空レース","コロセウム","神殿","夢見","隠者","隠者レース"],
+  ["壊れた神殿","墓地","戦場","蟹エリア","箱舟","秘宝"],
+  ["１階","アーカイブ","避難所","２階","３階","４階","サミット"],
   ["ホーム","オフィス","星月夜の砂漠","風の街道"],
   ["シナモン","大キャン4","キャンドル2倍","パン屋","ウニ焼き","闇の欠片"]
 ];
@@ -104,124 +247,104 @@ const values = [
   [23,57,140,30],
   [50,200,200,600,200,200]
 ];
-const sundayValues = [
-  [0,0,0,0,0,0],
-  [0,0,0,0,0,0],
-  [0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0],
-  [86,119,139,101,0,0],
-  [0,0,0,0,0,0,0],
-  [0,0,0,0],
-  [0,0,0,0,0,0]
-];
 
 const mainPanel = document.getElementById("mainPanel");
 const totalLabel = document.getElementById("total");
-const isSunday = (new Date()).getDay() === 0;
-
 let checkBoxes = [];
 
-// チェックボックス作成
-categories.forEach((cat, i) => {
+categories.forEach((cat,i)=>{
   const catDiv = document.createElement("div");
   catDiv.className = "category";
 
-  // カテゴリタイトル＋マスターcheckbox
-  const headerDiv = document.createElement("div");
-  headerDiv.className = "category-header";
+  const inner = document.createElement("div");
+  inner.className = "category-inner";
 
-  const masterCb = document.createElement("input");
-  masterCb.type = "checkbox";
-  masterCb.id = `master_${i}`;
-  headerDiv.appendChild(masterCb);
+  const header = document.createElement("div");
+  header.className = "category-header";
 
-  const title = document.createElement("h3");
+  const toggle = document.createElement("input");
+  toggle.type = "checkbox";
+  toggle.className = "category-toggle";
+
+  toggle.addEventListener("change", ()=>{
+    items[i].forEach((_, j)=>{
+      const cb = checkBoxes[i][j];
+      cb.checked = toggle.checked;
+      localStorage.setItem(cb.id, cb.checked);
+    });
+    updateTotal();
+  });
+
+  const title = document.createElement("label");
   title.textContent = cat;
-  headerDiv.appendChild(title);
+  title.className = "category-label";
 
-  catDiv.appendChild(headerDiv);
+  header.appendChild(toggle);
+  header.appendChild(title);
+  inner.appendChild(header);
 
   const itemsDiv = document.createElement("div");
   itemsDiv.className = "items";
 
   checkBoxes[i] = [];
 
-  items[i].forEach((name, j) => {
+  items[i].forEach((name,j)=>{
+    const wrapper = document.createElement("label");
+    wrapper.className = "check-wrapper";
+
     const cb = document.createElement("input");
     cb.type = "checkbox";
+    cb.className = "check-input";
     cb.id = `cb_${i}_${j}`;
-    cb.dataset.value = isSunday ? sundayValues[i][j] : values[i][j];
-
-    // localStorage からチェック状態を復元
+    cb.dataset.value = values[i][j];
     cb.checked = localStorage.getItem(cb.id) === "true";
 
-    const label = document.createElement("label");
-    label.appendChild(cb);
-    label.appendChild(document.createTextNode(` ${name} (${cb.dataset.value})`));
-    itemsDiv.appendChild(label);
-
-    // チェック変更時に保存と合計更新
-    cb.addEventListener("change", () => {
+    cb.addEventListener("change",()=>{
       localStorage.setItem(cb.id, cb.checked);
       updateTotal();
-
-      // マスターCheckbox同期
-      const allChecked = checkBoxes[i].every(c => c.checked);
-      masterCb.checked = allChecked;
     });
+
+    const nameSpan = document.createElement("span");
+    nameSpan.className = "item-name";
+    nameSpan.textContent = name;
+
+    const valueSpan = document.createElement("span");
+    valueSpan.className = "item-value";
+    valueSpan.textContent = `+${cb.dataset.value}`;
+
+    wrapper.appendChild(cb);
+    wrapper.appendChild(nameSpan);
+    wrapper.appendChild(valueSpan);
+    itemsDiv.appendChild(wrapper);
 
     checkBoxes[i][j] = cb;
   });
 
-  catDiv.appendChild(itemsDiv);
+  inner.appendChild(itemsDiv);
+  catDiv.appendChild(inner);
   mainPanel.appendChild(catDiv);
-
-  // マスターCheckboxクリック時
-  masterCb.addEventListener("change", () => {
-    checkBoxes[i].forEach(cb => {
-      cb.checked = masterCb.checked;
-      localStorage.setItem(cb.id, cb.checked);
-    });
-    updateTotal();
-  });
-
-  // 初期状態でマスターCheckboxを設定
-  masterCb.checked = checkBoxes[i].every(c => c.checked);
 });
 
-// 合計計算
-function updateTotal() {
+function updateTotal(){
   let total = 0;
-  checkBoxes.forEach(row => {
-    row.forEach(cb => {
-      if(cb.checked){
-        total += parseInt(cb.dataset.value);
-      }
-    });
-  });
+  checkBoxes.forEach(row =>
+    row.forEach(cb => { if(cb.checked) total += parseInt(cb.dataset.value); })
+  );
   totalLabel.textContent = "合計: " + total;
 }
 
-// 初期合計計算
 updateTotal();
 
-// 全リセットボタン
-document.getElementById("resetBtn").addEventListener("click", () => {
-  checkBoxes.forEach(row => {
+document.getElementById("resetButton").onclick = ()=>{
+  checkBoxes.forEach(row =>
     row.forEach(cb => {
       cb.checked = false;
       localStorage.setItem(cb.id, false);
-    });
-  });
-
-  // マスターCheckboxもリセット
-  categories.forEach((cat, i) => {
-    document.getElementById(`master_${i}`).checked = false;
-  });
-
+    })
+  );
+  document.querySelectorAll('input.category-toggle').forEach(m => m.checked = false);
   updateTotal();
-});
+};
 </script>
-
 </body>
 </html>
