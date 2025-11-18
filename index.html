@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>キャンドル計算機 - かわいいSky風</title>
+<title>Sky キャンドル計算機</title>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600&display=swap" rel="stylesheet">
 <style>
   /* 全体 */
@@ -28,16 +28,22 @@
     margin-bottom: 20px;
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 14px;
     border: 2px solid rgba(210, 220, 255, 0.9);
   }
 
-  .header-icon {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: radial-gradient(circle, #ffe7a9 0%, #ffbb6f 55%, #ff9b42 100%);
-    box-shadow: 0 0 12px rgba(255, 195, 120, 0.9);
+  /* タイトルアイコン設定 */
+  .title-with-icon {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .title-icon {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+    filter: drop-shadow(0 0 4px rgba(255, 190, 90, 0.3));
   }
 
   .page-title {
@@ -192,12 +198,17 @@
 <body>
 <div class="app">
 
+  <!-- タイトルカード -->
   <div class="header-card">
-    <div class="header-icon"></div>
-    <div>
-      <div class="page-title">キャンドル計算機</div>
-      <div class="page-subtitle"></div>
+
+    <div class="title-with-icon">
+      <img src="candle.png" class="title-icon" alt="">
+      <div>
+        <div class="page-title">キャンドル計算機</div>
+        <div class="page-subtitle"></div>
+      </div>
     </div>
+
   </div>
 
   <div class="reset-row">
@@ -208,9 +219,7 @@
 
   <div id="southPanel">
     <div id="total">合計: 0</div>
-    <div id="required">
-      必要ライト: <b>2055（15キャンドル）</b>
-    </div>
+    <div id="required">必要ライト: <b>2055（15キャンドル）</b></div>
     <div>(16)2268 / (17)2481 / (18)2719 / (19)3207 / (20)4195</div>
   </div>
 
@@ -224,13 +233,13 @@
 const categories = ["孤島","草原","雨林","峡谷","捨て地","書庫","その他","ソーシャル"];
 
 const items = [
-  ["砂丘","予言者の席窟","水の試練","土の試練","風の試練","火の試練"],
-  ["蝶々","村","谷","8人エリア","鳥の巣","楽園"],
-  ["最初","小川","神殿前","晴れ間","神殿","ツリーハウス","地下洞窟"],
-  ["最初","陸レース","要塞","空レース","コロセウム","神殿","夢見","隠者","隠者レース"],
-  ["壊れた神殿","墓地","戦場","蟹エリア","箱舟","秘宝"],
-  ["１階","アーカイブ","避難所","２階","３階","４階","サミット"],
-  ["ホーム","オフィス","星月夜の砂漠","風の街道"],
+  ["初期エリア","予言者の席窟","水の試練","土の試練","風の試練","火の試練"],
+  ["初期エリア","村","谷","8人エリア","鳥の巣","楽園"],
+  ["初期エリア","小川","神殿前","晴れ間","神殿","ツリーハウス","地下洞窟"],
+  ["初期エリア","陸レース","要塞","空レース","コロセウム","神殿","夢見","隠者","隠者レース"],
+  ["初期エリア","墓地","戦場","蟹エリア","箱舟","秘宝"],
+  ["初期エリア","アーカイブ","避難所","２階","３階","４階","サミット"],
+  ["ホーム","風の街道","星月夜の砂漠","オフィス"],
   ["シナモン","大キャン4","キャンドル2倍","パン屋","ウニ焼き","闇の欠片"]
 ];
 
@@ -239,11 +248,11 @@ const values = [
   [200,50,100,105,200,200],
   [55,119,45,99,50,299],
   [45,227,175,42,83,55,57],
-  [104,135,79,150,10,93,100,50,200],
+  [104,135,79,150,10,93,100,50,215],
   [65,92,111,63,109,188],
   [16,50,31,110,12,222,64],
-  [23,57,140,30],
-  [50,200,200,600,200,200]
+  [23,30,140,57],
+  [50,200,200,600,300,200]
 ];
 
 /* 日曜値 */
@@ -345,10 +354,7 @@ categories.forEach((cat,i)=>{
   mainPanel.appendChild(catDiv);
 });
 
-/* --------------------------
-   計算
---------------------------- */
-
+/* 計算 */
 function updateTotal(){
   let total = 0;
   checkBoxes.forEach(row =>
@@ -359,9 +365,7 @@ function updateTotal(){
 
 updateTotal();
 
-/* --------------------------
-   リセット
---------------------------- */
+/* リセット */
 document.getElementById("resetButton").onclick = ()=>{
   checkBoxes.forEach(row =>
     row.forEach(cb => {
