@@ -12,6 +12,7 @@
     margin: 0;
     padding: 24px 12px;
     color: #222;
+    padding-bottom: 170px; /* 下部固定カードの分だけ余白を確保 */
   }
 
   .app {
@@ -65,11 +66,7 @@
     margin-bottom: 18px;
     box-shadow: 0 6px 18px rgba(70, 90, 150, 0.22);
     border: 2px solid rgba(210, 220, 255, 0.9);
-    position: relative;
-    overflow: hidden;
   }
-
-  .category-inner { position: relative; z-index: 1; }
 
   .category-header {
     display: flex;
@@ -81,7 +78,6 @@
   .category-label {
     font-size: 20px;
     font-weight: 600;
-    color: #222;
   }
 
   .category-toggle {
@@ -96,20 +92,18 @@
 
   .category-toggle:checked {
     background: linear-gradient(135deg, #ffb36b, #ff9b42);
-    box-shadow: 0 0 8px #ffcf8b, 0 0 16px rgba(255,180,100,0.4);
+    box-shadow: 0 0 8px #ffcf8b;
   }
 
-  /* PCでは4列 */
+  /* アイテム配置 */
   .items {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 8px;
   }
-
-  /* スマホは3列 */
   @media (max-width: 720px) {
     .items {
-      grid-template-columns: repeat(3, minmax(0,1fr));
+      grid-template-columns: repeat(3, minmax(0, 1fr));
     }
   }
 
@@ -141,7 +135,7 @@
 
   .check-input:checked {
     background: radial-gradient(circle, #6db3ff, #3a8cff 60%, #2d6fe0 100%);
-    box-shadow: 0 0 8px #6db3ff, 0 0 14px #89c3ff;
+    box-shadow: 0 0 8px #6db3ff;
     border-color: #3a8cff;
     transform: scale(1.15);
   }
@@ -157,7 +151,7 @@
     color: #2250a6;
   }
 
-  /* リセット行 */
+  /* リセットボタン */
   .reset-row {
     display: flex;
     justify-content: flex-end;
@@ -173,26 +167,47 @@
     border: none;
     font-size: 15px;
     font-weight: 600;
-    box-shadow: 0 8px 18px rgba(255, 71, 71, 0.32);
-    transition: 0.25s;
   }
 
-  #resetButton:hover { background: linear-gradient(135deg, #ff7676, #ff5252); }
+  #resetButton:hover {
+    background: linear-gradient(135deg, #ff7676, #ff5252);
+  }
 
+  /* ★★ 下部固定カード（追従 + 半透明 + 丸角）★★ */
   #southPanel {
-    background: linear-gradient(135deg, #ffffff 0%, #f1f6ff 100%);
-    border-radius: 26px;
-    padding: 18px 22px;
-    margin-top: 8px;
-    box-shadow: 0 10px 28px rgba(60, 80, 150, 0.28);
-    border: 2px solid rgba(150, 170, 240, 0.9);
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+
+    background: rgba(255, 255, 255, 0.85); /* 半透明 */
+    backdrop-filter: blur(10px);
+
+    border-radius: 20px 20px 0 0;
+    padding: 18px 22px 26px;
+
+    box-shadow: 0 -4px 25px rgba(60, 80, 150, 0.25);
+    border: 1px solid rgba(150, 170, 240, 0.6);
+
+    z-index: 9999;
   }
 
   #total {
-    font-size: 26px;
+    font-size: 28px;
     font-weight: 700;
     color: #2d3a80;
   }
+
+  /* ★ 合計が更新されたとき光るアニメーション */
+  @keyframes flash {
+    0% { text-shadow: 0 0 12px rgba(255, 210, 80, 0.8); color: #ffcf42; }
+    100% { text-shadow: none; color: #2d3a80; }
+  }
+
+  .flash {
+    animation: flash 0.6s ease-out;
+  }
+
 </style>
 </head>
 <body>
@@ -200,15 +215,10 @@
 
   <!-- タイトルカード -->
   <div class="header-card">
-
     <div class="title-with-icon">
-      <img src="candle.png" class="title-icon" alt="">
-      <div>
-        <div class="page-title">キャンドル計算機</div>
-        <div class="page-subtitle"></div>
-      </div>
+      <img src="candle.png" class="title-icon">
+      <div class="page-title">キャンドル計算機</div>
     </div>
-
   </div>
 
   <div class="reset-row">
@@ -217,6 +227,7 @@
 
   <div id="mainPanel"></div>
 
+  <!-- 下部固定カード -->
   <div id="southPanel">
     <div id="total">合計: 0</div>
     <div id="required">必要ライト: <b>2055（15キャンドル）</b></div>
@@ -267,14 +278,14 @@ const sundayValues = [
   [0,0]
 ];
 
-/* 曜日判定（0 = 日曜） */
+/* 日曜判定 */
 const isSunday = new Date().getDay() === 0;
 
-/* 今日使用する値セット */
+/* 今日使う値 */
 let activeValues = isSunday ? sundayValues : values;
 
 /* --------------------------
-   UI構築
+   UI生成
 --------------------------- */
 
 const mainPanel = document.getElementById("mainPanel");
@@ -354,13 +365,27 @@ categories.forEach((cat,i)=>{
   mainPanel.appendChild(catDiv);
 });
 
-/* 計算 */
+/* --------------------------
+   合計計算（変更時に光る）
+--------------------------- */
+
+let lastTotal = 0;
+
 function updateTotal(){
   let total = 0;
   checkBoxes.forEach(row =>
     row.forEach(cb => { if(cb.checked) total += parseInt(cb.dataset.value); })
   );
+
   totalLabel.textContent = "合計: " + total;
+
+  if(total !== lastTotal){
+    totalLabel.classList.remove("flash");
+    void totalLabel.offsetWidth; /* アニメ再発火 */
+    totalLabel.classList.add("flash");
+  }
+
+  lastTotal = total;
 }
 
 updateTotal();
