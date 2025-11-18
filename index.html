@@ -51,7 +51,7 @@
     opacity: 0.7;
   }
 
-  /* カテゴリカード（くっきり） */
+  /* カテゴリカード */
   .category {
     background: #ffffff;
     border-radius: 24px;
@@ -63,10 +63,7 @@
     overflow: hidden;
   }
 
-  .category-inner {
-    position: relative;
-    z-index: 1;
-  }
+  .category-inner { position: relative; z-index: 1; }
 
   .category-header {
     display: flex;
@@ -96,20 +93,19 @@
     box-shadow: 0 0 8px #ffcf8b, 0 0 16px rgba(255,180,100,0.4);
   }
 
-/* PCでは4列 並べる */
+  /* PCでは4列 */
   .items {
     display: grid;
-    grid-template-columns: repeat(4
-    , minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 8px;
   }
 
-/* スマホでは2列に落とす */
-@media (max-width: 720px) {
-  /items {
-    grid-template-columns: repeat(3, minmax(0,1fr));
-         }
-      }
+  /* スマホは3列 */
+  @media (max-width: 720px) {
+    .items {
+      grid-template-columns: repeat(3, minmax(0,1fr));
+    }
+  }
 
   .check-wrapper {
     display: flex;
@@ -145,6 +141,7 @@
   }
 
   .item-name { flex: 1; font-size: 14px; }
+
   .item-value {
     font-size: 12px;
     padding: 2px 8px;
@@ -154,7 +151,7 @@
     color: #2250a6;
   }
 
-  /* ★ リセットボタンを上側に独立配置 */
+  /* リセット行 */
   .reset-row {
     display: flex;
     justify-content: flex-end;
@@ -174,11 +171,8 @@
     transition: 0.25s;
   }
 
-  #resetButton:hover {
-    background: linear-gradient(135deg, #ff7676, #ff5252);
-  }
+  #resetButton:hover { background: linear-gradient(135deg, #ff7676, #ff5252); }
 
-  /* 合計カード */
   #southPanel {
     background: linear-gradient(135deg, #ffffff 0%, #f1f6ff 100%);
     border-radius: 26px;
@@ -186,7 +180,6 @@
     margin-top: 8px;
     box-shadow: 0 10px 28px rgba(60, 80, 150, 0.28);
     border: 2px solid rgba(150, 170, 240, 0.9);
-    position: relative;
   }
 
   #total {
@@ -207,7 +200,6 @@
     </div>
   </div>
 
-  <!-- ★ リセットボタンをここに配置 -->
   <div class="reset-row">
     <button id="resetButton">全てリセット</button>
   </div>
@@ -217,16 +209,20 @@
   <div id="southPanel">
     <div id="total">合計: 0</div>
     <div id="required">
-      必要ライト:
-      <b>2055（15キャンドル）</b> </div>
-       <div>(16)2268 / (17)2481 / (18)2719 / (19)3207 / (20)4195
+      必要ライト: <b>2055（15キャンドル）</b>
     </div>
+    <div>(16)2268 / (17)2481 / (18)2719 / (19)3207 / (20)4195</div>
   </div>
 
 </div>
 
 <script>
+/* --------------------------
+   データ定義
+--------------------------- */
+
 const categories = ["孤島","草原","雨林","峡谷","捨て地","書庫","その他","ソーシャル"];
+
 const items = [
   ["砂丘","予言者の席窟","水の試練","土の試練","風の試練","火の試練"],
   ["蝶々","村","谷","8人エリア","鳥の巣","楽園"],
@@ -237,6 +233,8 @@ const items = [
   ["ホーム","オフィス","星月夜の砂漠","風の街道"],
   ["シナモン","大キャン4","キャンドル2倍","パン屋","ウニ焼き","闇の欠片"]
 ];
+
+/* 通常値 */
 const values = [
   [200,50,100,105,200,200],
   [55,119,45,99,50,299],
@@ -247,6 +245,28 @@ const values = [
   [23,57,140,30],
   [50,200,200,600,200,200]
 ];
+
+/* 日曜値 */
+const sundayValues = [
+  [0,0,0,0,0,0],
+  [0,0,0,0,0,0],
+  [0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0],
+  [86,119,139,101,0,0],
+  [0,0,0,0,0,0,0],
+  [0,0,0,0],
+  [0,0]
+];
+
+/* 曜日判定（0 = 日曜） */
+const isSunday = new Date().getDay() === 0;
+
+/* 今日使用する値セット */
+let activeValues = isSunday ? sundayValues : values;
+
+/* --------------------------
+   UI構築
+--------------------------- */
 
 const mainPanel = document.getElementById("mainPanel");
 const totalLabel = document.getElementById("total");
@@ -296,7 +316,7 @@ categories.forEach((cat,i)=>{
     cb.type = "checkbox";
     cb.className = "check-input";
     cb.id = `cb_${i}_${j}`;
-    cb.dataset.value = values[i][j];
+    cb.dataset.value = activeValues[i][j];
     cb.checked = localStorage.getItem(cb.id) === "true";
 
     cb.addEventListener("change",()=>{
@@ -325,6 +345,10 @@ categories.forEach((cat,i)=>{
   mainPanel.appendChild(catDiv);
 });
 
+/* --------------------------
+   計算
+--------------------------- */
+
 function updateTotal(){
   let total = 0;
   checkBoxes.forEach(row =>
@@ -335,6 +359,9 @@ function updateTotal(){
 
 updateTotal();
 
+/* --------------------------
+   リセット
+--------------------------- */
 document.getElementById("resetButton").onclick = ()=>{
   checkBoxes.forEach(row =>
     row.forEach(cb => {
@@ -345,6 +372,7 @@ document.getElementById("resetButton").onclick = ()=>{
   document.querySelectorAll('input.category-toggle').forEach(m => m.checked = false);
   updateTotal();
 };
+
 </script>
 </body>
 </html>
