@@ -48,7 +48,7 @@
 
   /* アイテムグリッド */
   .items { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 8px; }
-  @media (max-width:900px){ .items { grid-template-columns: repeat(2, minmax(0,1fr)); } }
+  @media (max-width:480px){ .items { grid-template-columns: repeat(2, minmax(0,1fr)); } }
   .check-wrapper { display: flex; align-items: center; gap: 8px; padding: 6px 10px; cursor: pointer; border-radius: 999px; background: rgba(248,251,255,0.95); border: 1px solid rgba(185,211,255,0.6); transition: 0.18s; }
   .check-wrapper:hover { box-shadow:0 4px 10px rgba(149,177,255,0.25); transform: translateY(-1px); }
   .check-input { appearance:none; width:18px; height:18px; border:2px solid #87bfff; border-radius:50%; background:#fff; transition:0.2s; }
