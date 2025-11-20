@@ -90,6 +90,7 @@
   }
 
   .check-input {
+    display: none !important;
     appearance:none;
     width:18px; height:18px;
     border:2px solid #87bfff;
@@ -656,18 +657,16 @@ function updateDailyList(){
     `(20)${thresholdMap[20]}`;
 }
 
-/* ========= スマホ用：タップでON/OFF ========= */
-function applyMobileTapToggle(){
-  const isMobile = window.matchMedia("(max-width: 480px)").matches;
-  if(!isMobile) return;
-
+/* ========= 全デバイス共通：タップ/クリックで ON/OFF にする ========= */
+function applyWrapToggle(){
   checkBoxes.forEach((row)=>{
     row.forEach((cb)=>{
       const wrap = cb.parentElement;
 
-      // 初期ON反映
+      // 初期状態反映
       wrap.classList.toggle("checked", cb.checked);
 
+      // 行をクリックで ON/OFF
       wrap.addEventListener("click", ()=>{
         cb.checked = !cb.checked;
         localStorage.setItem(cb.id, cb.checked);
@@ -701,7 +700,7 @@ window.addEventListener("load",()=>{
   placeTopLabels();
   placeBottomLabels();
   updateDailyList();
-  applyMobileTapToggle();
+  applyWrapToggle();
 });
 
 /* サイズ変更 */
@@ -709,7 +708,7 @@ window.addEventListener("resize",()=>{
   placeTopLabels();
   placeBottomLabels();
   updateDailyList();
-  applyMobileTapToggle();
+  applyWrapToggle();
 });
 
 /* スクロール（位置補正） */
