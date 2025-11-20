@@ -28,17 +28,27 @@
     background: none !important;
     border: none !important;
     box-shadow: none !important;
-    padding: 0 !Important;
+    padding: 0 !important;
     margin-bottom: 20px;
     display: flex;
     align-items: center;
     gap: 14px;
   }
-  .page-title {
-    font-family: 'Roboto', sans-serif;
-    font-weight: 100;
-    font-size: 32px;
-    letter-spacing: 0.04em;
+
+
+  .page-title-wrapper {
+    display: inline-block;     /* 内容の幅に合わせる */
+    text-align: right;         /* 各行のお尻を揃える */
+    line-height: 1.15;         /* 行間調整（お好みで） */
+    margin-bottom: 20px;       /* 下にスペース */
+  }
+
+
+  .page-title-line {
+   font-family: 'Roboto', sans-serif;
+   font-weight: 100;
+   font-size: 32px;
+   letter-spacing: 0.04em;
   }
 
   /* カテゴリカード */
@@ -56,6 +66,7 @@
     gap:10px;
     margin-bottom:12px;
   }
+
   .category-label {
     font-family: 'Noto Sans JP', sans-serif;
     font-size:20px;
@@ -101,11 +112,11 @@
     border-color:#3a8cff;
   }
 
-  .item-name { 
+  .item-name {
     flex:1; 
     font-size:14px; 
-    font-family: 'Noto Sans JP', sans-serif;
-    font-weight: 600;
+    font-family:'Noto Sans JP', sans-serif;
+    font-weight:600;
   }
   .item-value {
     font-size:12px;
@@ -132,6 +143,7 @@
     border: 1px solid rgba(150,170,240,0.9);
     z-index: 1000;
   }
+
   #total {
     font-size: 22px;
     font-weight: 700;
@@ -139,54 +151,52 @@
     font-family:'Noto Sans JP',sans-serif;
   }
 
-  #required,
-  .thresholds {
-    font-size: 18px;
-    font-weight: 700;
-    color: #000;
-    font-family:'Noto Sans JP', sans-serif;
+  #required {
+    font-size:18px;
+    font-weight:700;
+    color:#000;
+    font-family:'Noto Sans JP',sans-serif;
   }
 
   /* ▼▼ ゲージ ▼▼ */
   .gauge-wrapper {
-    margin-top: 6px;
-    margin-bottom: 6px;
-    position: relative;
+    margin-top:6px;
+    margin-bottom:6px;
+    position:relative;
   }
+
   .gauge-track {
-    position: relative;
-    height: 18px;
-    border-radius: 999px;
-    background: #d0d0d0;
-    border: 1px solid #aaa;
-    overflow: hidden;
+    position:relative;
+    height:18px;
+    border-radius:999px;
+    background:#d0d0d0;
+    border:1px solid #aaa;
+    overflow:hidden;
   }
 
   .gauge-fill {
-    position: absolute;
+    position:absolute;
     top:0; left:0;
-    width: 0%;
-    height: 100%;
-    background: linear-gradient(180deg,#afc9f0,#3787ff);
-    transition: width 0.4s ease-out;
+    width:0%;
+    height:100%;
+    background:linear-gradient(180deg,#afc9f0,#3787ff);
+    transition:width 0.4s ease-out;
     z-index:2;
   }
 
   #gaugeMarker {
     position:absolute;
-    top:-30px;
+    top:-20px;
     transform:translateX(-50%);
     width:44px; height:44px;
-    z-index:5;
     pointer-events:none;
+    z-index:5;
     transition:left 0.4s ease-out 0.05s;
   }
   #gaugeMarker img {
-    width:44px; height:44px;
-    filter:none;
+    width:44px;
   }
 
-  /* 下側メモリ */
   .gauge-segment {
     position:absolute;
     width:2px;
@@ -203,36 +213,41 @@
     background:rgba(30,30,30,0.9);
   }
 
-  .gauge-labels {
-    display:flex;
-    justify-content:space-between;
-    font-size:11px;
-    margin-top:4px;
-    padding:0 6px;
-  }
-  .gauge-labels span:nth-child(1),
-  .gauge-labels span:nth-child(5) {
-    visibility: hidden;
-  }
-
-  /* ★ 上側ラベル専用レイヤー（southPanelの外に出す） */
   #topLabelLayer {
-    position: fixed;
-    left: 0;
-    top: 0;
-    width: 100vw;
-    height: 100vh;
-    pointer-events: none;
-    z-index: 5000;
+    position:fixed;
+    left:0;
+    top:0;
+    width:100vw;
+    height:100vh;
+    pointer-events:none;
+    z-index:5000;
   }
   .gauge-top-label {
-    position: absolute;
-    font-size: 12px;
-    font-family:'Noto Sans JP', sans-serif;
-    font-weight: 700;
-    color: #000;        /* ← ここが完全な黒で出る */
-    transform: translateX(-50%);
-    white-space: nowrap;
+    position:absolute;
+    font-size:12px;
+    color:#000;
+    font-weight:700;
+    font-family:'Noto Sans JP',sans-serif;
+    transform:translateX(-50%);
+    white-space:nowrap;
+  }
+
+  #bottomLabelLayer {
+    position:fixed;
+    left:0;
+    top:0;
+    width:100vw;
+    height:100vh;
+    pointer-events:none;
+    z-index:4000;
+  }
+  .bottom-gauge-label {
+    position:absolute;
+    font-size:11px;
+    color:#444;
+    font-family:'Noto Sans JP',sans-serif;
+    transform:translateX(-50%);
+    white-space:nowrap;
   }
 
   #resetButton {
@@ -246,28 +261,60 @@
   }
 
   .south-bottom-row {
-    margin-top:8px;
+    margin-top:30px;
     display:flex;
     justify-content:space-between;
     align-items:flex-start;
   }
+
+  /* ▼▼ 追加：カテゴリ名横の pill タグ ▼▼ */
+  .category-title {
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+
+  .category-sum {
+    display:inline-block;
+    font-size:14px;
+    padding:3px 12px;
+    border-radius:999px;
+    font-weight:600;
+    background:linear-gradient(145deg, rgba(250,252,255,0.8), rgba(235,242,255,0.8));
+    border:1px solid rgba(150,170,255,0.55);
+    color:#3a6cff;
+    box-shadow:
+      0 2px 6px rgba(70,100,200,0.15),
+      inset 0 0 4px rgba(255,255,255,0.6);
+    transition: opacity .25s ease, transform .25s ease, box-shadow .25s ease;
+  }
+
+  .category-sum.flash {
+    opacity:0.9;
+    transform:scale(1.12);
+    box-shadow:
+      0 0 14px rgba(120,150,255,0.45),
+      inset 0 0 6px rgba(255,255,255,0.8);
+  }
+
 </style>
 </head>
+
 <body>
 <div class="app">
+   <div class="page-title-wrapper">
+   <div class="page-title-line">Sky: Children of the Light</div>
+   <div class="page-title-line">Candle Calculator</div>
+</div>
 
-  <!-- タイトル -->
-  <div class="header-card">
-    <div class="page-title">キャンドル計算機</div>
-  </div>
 
   <div id="mainPanel"></div>
 
-  <!-- ▼ 合計カード ▼ -->
   <div id="southPanel">
     <div id="total">合計: 0 （0キャンドル）</div>
 
     <div class="gauge-wrapper">
+
       <div class="gauge-track" id="gaugeTrack">
         <div class="gauge-fill" id="gaugeFill"></div>
       </div>
@@ -276,9 +323,6 @@
         <img src="candle.png">
       </div>
 
-      <div class="gauge-labels">
-        <span>0</span><span>5</span><span>10</span><span>15</span><span>20</span>
-      </div>
     </div>
 
     <div class="south-bottom-row">
@@ -290,8 +334,10 @@
   </div>
 </div>
 
-<!-- ★ 上側ラベルを描画するレイヤー（パネルの外） -->
+<!-- 上側ラベル -->
 <div id="topLabelLayer"></div>
+<!-- 下側ラベル -->
+<div id="bottomLabelLayer"></div>
 
 <script>
 /* ========= データ ========= */
@@ -338,14 +384,8 @@ const candleThresholds=[
   {max:Infinity,candles:20}
 ];
 
-/* 上側しきい値 */
 const thresholdMap = {
-  15:2055,
-  16:2268,
-  17:2481,
-  18:2719,
-  19:3207,
-  20:4195
+  15:2055, 16:2268, 17:2481, 18:2719, 19:3207, 20:4195
 };
 
 const isSunday = (new Date().getDay() === 0);
@@ -357,11 +397,13 @@ const gaugeFill  = document.getElementById("gaugeFill");
 const gaugeMarker= document.getElementById("gaugeMarker");
 const gaugeTrack = document.getElementById("gaugeTrack");
 const topLabelLayer = document.getElementById("topLabelLayer");
+const bottomLabelLayer = document.getElementById("bottomLabelLayer");
 
 let checkBoxes=[];
 let lastCandles=0;
+let categorySumTags=[];
 
-/* 下メモリ 1〜19 生成 */
+/* 下メモリ生成 */
 for(let i=1;i<=19;i++){
   const mem=document.createElement("div");
   mem.classList.add("gauge-segment");
@@ -389,14 +431,27 @@ categories.forEach((cat,i)=>{
       localStorage.setItem(cb.id,cb.checked);
     });
     updateTotal();
+    updateCategoryTotals();
   });
+
+  /* ▼ カテゴリ名 + pill タグ */
+  const titleWrap=document.createElement("div");
+  titleWrap.className="category-title";
 
   const label=document.createElement("span");
   label.className="category-label";
   label.textContent=cat;
 
+  const sumTag=document.createElement("span");
+  sumTag.className="category-sum";
+  sumTag.textContent="(+0)";
+  categorySumTags[i]=sumTag;
+
+  titleWrap.appendChild(label);
+  titleWrap.appendChild(sumTag);
+
   head.appendChild(toggle);
-  head.appendChild(label);
+  head.appendChild(titleWrap);
   card.appendChild(head);
 
   const list=document.createElement("div");
@@ -418,6 +473,7 @@ categories.forEach((cat,i)=>{
     cb.addEventListener("change",()=>{
       localStorage.setItem(cb.id,cb.checked);
       updateTotal();
+      updateCategoryTotals();
     });
 
     const ns=document.createElement("span");
@@ -471,52 +527,101 @@ function updateTotal(){
   }
 }
 
-/* 上側ラベル配置（方式A） */
+/* ★ カテゴリ小計 pill 更新 */
+function updateCategoryTotals(){
+  categories.forEach((cat,i)=>{
+    let sum=0;
+    checkBoxes[i].forEach(cb=>{
+      if(cb.checked) sum+=parseInt(cb.dataset.value,10);
+    });
+
+    const tag = categorySumTags[i];
+    const newText = `(+${sum})`;
+
+    if(tag.textContent !== newText){
+      tag.textContent = newText;
+
+      tag.classList.add("flash");
+      setTimeout(()=>tag.classList.remove("flash"),250);
+    }
+  });
+}
+
+/* ★ 上側ラベル配置 */
 function placeTopLabels(){
   topLabelLayer.innerHTML = "";
-
   const rect = gaugeTrack.getBoundingClientRect();
-  if(rect.width === 0) return; // 念のため
-
-  const baseLeft = rect.left;
-  const topY     = rect.top - 24; // ゲージより少し上（好きに調整してOK）
+  const topY = rect.top - 24;
 
   for(let c=15;c<=20;c++){
-    const v = thresholdMap[c];
+    const v=thresholdMap[c];
     if(!v) continue;
 
-    const label = document.createElement("div");
-    label.className = "gauge-top-label";
+    const label=document.createElement("div");
+    label.className="gauge-top-label";
 
-    const ratio = c / 20;
-    const px = baseLeft + rect.width * ratio;
+    const px = rect.left + rect.width * (c/20);
 
-    label.style.left = px + "px";
-    label.style.top  = topY + "px";
+    label.style.left = px+"px";
+    label.style.top  = topY+"px";
     label.textContent = v;
 
     topLabelLayer.appendChild(label);
   }
 }
 
+/* ★ 下側ラベル配置 */
+function placeBottomLabels(){
+  bottomLabelLayer.innerHTML="";
+
+  const rect = gaugeTrack.getBoundingClientRect();
+  const y = rect.bottom + 4;
+
+  const positions={0:0,5:5,10:10,15:15,20:20};
+
+  for(const n in positions){
+    const ratio = positions[n]/20;
+    const px = rect.left + rect.width * ratio;
+
+    const label=document.createElement("div");
+    label.className="bottom-gauge-label";
+    label.style.left = px+"px";
+    label.style.top  = y+"px";
+    label.textContent = n;
+
+    bottomLabelLayer.appendChild(label);
+  }
+}
+
 /* リセット */
-document.getElementById("resetButton").onclick=()=>{
+resetButton.onclick=()=>{
   checkBoxes.forEach(row=>row.forEach(cb=>{
     cb.checked=false;
     localStorage.setItem(cb.id,false);
   }));
   document.querySelectorAll(".category-toggle").forEach(a=>a.checked=false);
   updateTotal();
+  updateCategoryTotals();
   placeTopLabels();
+  placeBottomLabels();
 };
 
-/* 初期描画 */
-window.addEventListener("load", ()=>{
+/* 初期表示 */
+window.addEventListener("load",()=>{
   updateTotal();
+  updateCategoryTotals();
   placeTopLabels();
+  placeBottomLabels();
 });
-window.addEventListener("resize", placeTopLabels);
-window.addEventListener("scroll", placeTopLabels);
+window.addEventListener("resize",()=>{
+  placeTopLabels();
+  placeBottomLabels();
+});
+window.addEventListener("scroll",()=>{
+  placeTopLabels();
+  placeBottomLabels();
+});
 </script>
+
 </body>
 </html>
