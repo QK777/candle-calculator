@@ -86,6 +86,7 @@
     border-radius:999px;
     background:rgba(248,251,255,0.95);
     border:1px solid rgba(185,211,255,0.6);
+    transition: background .25s, border-color .25s;
   }
 
   .check-input {
@@ -98,6 +99,12 @@
   .check-input:checked {
     background:#3a8cff;
     border-color:#3a8cff;
+  }
+
+  /* スマホ ON のとき */
+  .check-wrapper.checked {
+    background:rgba(255,200,120,0.25);
+    border-color:rgba(255,160,60,0.8);
   }
 
   /* アイテム名：スマホ基準 */
@@ -135,7 +142,7 @@
     z-index: 1000;
   }
 
-  #total {
+    #total {
     font-size: 22px;
     font-weight: 700;
     color: #2d3a80;
@@ -203,7 +210,7 @@
     background:rgba(30,30,30,0.9);
   }
 
-  /* ゲージ上ラベル */
+  /* 上側ラベル */
   #topLabelLayer {
     position:fixed;
     left:0;
@@ -222,7 +229,7 @@
     transform:translateX(-50%);
   }
 
-  /* ゲージ下ラベル（黒） */
+  /* 下側ラベル（黒） */
   #bottomLabelLayer {
     position:fixed;
     left:0;
@@ -297,14 +304,21 @@
       grid-template-columns:repeat(2,minmax(0,1fr)) !important;
     }
     .gauge-top-label{
-      display:none !important; /* 重なり防止：スマホでは非表示 */
+      display:none !important;
     }
-    
     .daily-list{
       display:block !important;
       visibility: visible !important;
       opacity: 1 !important;
-   }
+    }
+
+    /* ←ここがあなたの希望「スマホでチェックボックス消す」 */
+    .check-input {
+      display:none !important;
+    }
+    .check-wrapper {
+      cursor:pointer;
+    }
   }
 
   /* タブレット（481〜768px） */
@@ -333,7 +347,6 @@
     .daily-list{
       display:none;
     }
-    /* PCでは上ラベルを表示するので display:none は付けない */
   }
 </style>
 </head>
@@ -369,6 +382,7 @@
       <button id="resetButton">全てリセット</button>
     </div>
   </div>
+
 </div>
 
 <!-- 上側ラベル -->
@@ -377,6 +391,7 @@
 <div id="bottomLabelLayer"></div>
 
 <script>
+
 /* ========= データ ========= */
 const categories=["孤島","草原","雨林","峡谷","捨て地","書庫","その他","ソーシャル"];
 const items=[
@@ -466,6 +481,7 @@ categories.forEach((cat,i)=>{
       const cb=checkBoxes[i][j];
       cb.checked=toggle.checked;
       localStorage.setItem(cb.id,cb.checked);
+      cb.parentElement.classList.toggle("checked", cb.checked);
     });
     updateTotal();
     updateCategoryTotals();
@@ -506,8 +522,10 @@ categories.forEach((cat,i)=>{
     cb.dataset.value=activeValues[i][j];
     cb.checked=localStorage.getItem(cb.id)==="true";
 
+    /* PC用通常クリック */
     cb.addEventListener("change",()=>{
       localStorage.setItem(cb.id,cb.checked);
+      wrap.classList.toggle("checked", cb.checked);
       updateTotal();
       updateCategoryTotals();
     });
@@ -592,7 +610,7 @@ function placeTopLabels(){
     const label=document.createElement("div");
     label.className="gauge-top-label";
 
-    const px = rect.left + rect.width * (c/20);  // ゲージ上の実座標
+    const px = rect.left + rect.width * (c/20);
     label.style.left = px + "px";
     label.style.top  = topY + "px";
     label.textContent = v;
@@ -621,11 +639,8 @@ function placeBottomLabels(){
   }
 }
 
-
 function updateDailyList(){
   const list = document.getElementById("dailyList");
-
-  // CSS と同じ「max-width: 480px」
   const isMobile = window.matchMedia("(max-width: 480px)").matches;
 
   if (!isMobile) {
@@ -640,11 +655,36 @@ function updateDailyList(){
     `(19)${thresholdMap[19]} `+
     `(20)${thresholdMap[20]}`;
 }
+
+/* ========= スマホ用：タップでON/OFF ========= */
+function applyMobileTapToggle(){
+  const isMobile = window.matchMedia("(max-width: 480px)").matches;
+  if(!isMobile) return;
+
+  checkBoxes.forEach((row)=>{
+    row.forEach((cb)=>{
+      const wrap = cb.parentElement;
+
+      // 初期ON反映
+      wrap.classList.toggle("checked", cb.checked);
+
+      wrap.addEventListener("click", ()=>{
+        cb.checked = !cb.checked;
+        localStorage.setItem(cb.id, cb.checked);
+        wrap.classList.toggle("checked", cb.checked);
+        updateTotal();
+        updateCategoryTotals();
+      });
+    });
+  });
+}
+
 /* リセット */
 resetButton.onclick=()=>{
   checkBoxes.forEach(row=>row.forEach(cb=>{
     cb.checked=false;
     localStorage.setItem(cb.id,false);
+    cb.parentElement.classList.remove("checked");
   }));
   document.querySelectorAll(".category-toggle").forEach(a=>a.checked=false);
   updateTotal();
@@ -661,6 +701,7 @@ window.addEventListener("load",()=>{
   placeTopLabels();
   placeBottomLabels();
   updateDailyList();
+  applyMobileTapToggle();
 });
 
 /* サイズ変更 */
@@ -668,6 +709,7 @@ window.addEventListener("resize",()=>{
   placeTopLabels();
   placeBottomLabels();
   updateDailyList();
+  applyMobileTapToggle();
 });
 
 /* スクロール（位置補正） */
