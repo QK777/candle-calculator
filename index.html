@@ -363,7 +363,7 @@
 
     <div class="south-bottom-row">
       <div>
-        <div id="required">デイリーライト: <b>2055（15キャンドル）</b></div>
+        <div id="required">デイリーライト: <b>2055（15本）</b></div>
         <div id="dailyList" class="daily-list"></div>
       </div>
       <button id="resetButton">全てリセット</button>
@@ -634,11 +634,11 @@ function updateDailyList(){
   }
 
   list.textContent =
-    `16本：${thresholdMap[16]}　`+
-    `17本：${thresholdMap[17]}　`+
-    `18本：${thresholdMap[18]}　`+
-    `19本：${thresholdMap[19]}　`+
-    `20本：${thresholdMap[20]}`;
+    `(16)${thresholdMap[16]} `+
+    `(17)${thresholdMap[17]} `+
+    `(18)${thresholdMap[18]} `+
+    `(19)${thresholdMap[19]} `+
+    `(20)${thresholdMap[20]}`;
 }
 /* リセット */
 resetButton.onclick=()=>{
