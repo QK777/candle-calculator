@@ -435,13 +435,12 @@
 
 
 <script>/* ========= データ ========= */
-
-
-const categories=["孤島","草原","雨林","峡谷","捨てられた地","書庫","その他","ソーシャル"];
-const items=[
+/* ========= データ ========= */
+const categories = ["孤島","草原","雨林","峡谷","捨てられた地","書庫","その他","ソーシャル"];
+const items = [
   ["砂丘","予言者の石窟","水の試練","土の試練","風の試練","火の試練"],
   ["蝶々の住処","草原の村","洞窟","8人エリア","鳥の巣","楽園の島々"],
-  ["開拓地","小川","墓場","高台広場","神殿","ツリーハウス","地下洞窟"],
+  ["開拓地","小川","神殿前","高台広場","神殿","ツリーハウス","地下洞窟"],
   ["スロープ","陸レース","要塞","空レース","コロセウム","神殿","夢見の町","隠者","隠者レース"],
   ["倒壊した祠","墓地","戦場","座礁船","箱舟","秘宝"],
   ["１階","２階","３階","４階","最上部","保存庫","資料庫","星月夜の砂漠","オフィス"],
@@ -449,7 +448,7 @@ const items=[
   ["パン屋","パン屋2","ウニ焼き","ウニ焼き2","闇の欠片"]
 ];
 
-const values=[
+const values = [
   [200,50,100,105,200,200],
   [55,119,45,99,50,299],
   [45,227,175,42,83,55,57],
@@ -460,7 +459,7 @@ const values=[
   [540,540,300,300,200]
 ];
 
-const sundayValues=[
+const sundayValues = [
   [0,0,0,0,0,0],
   [0,0,0,0,0,0],
   [0,0,0,0,0,0,0],
@@ -471,7 +470,7 @@ const sundayValues=[
   [0,0]
 ];
 
-const candleThresholds=[
+const candleThresholds = [
   {max:93,candles:0},{max:187,candles:1},{max:281,candles:2},{max:375,candles:3},
   {max:469,candles:4},{max:608,candles:5},{max:747,candles:6},{max:886,candles:7},
   {max:1025,candles:8},{max:1164,candles:9},{max:1342,candles:10},{max:1520,candles:11},
@@ -480,26 +479,26 @@ const candleThresholds=[
   {max:Infinity,candles:20}
 ];
 
-const thresholdMap={
+const thresholdMap = {
   15:2055,16:2268,17:2481,18:2719,19:3207,20:4195
 };
 
-const isSunday=(new Date().getDay()===0);
-let activeValues=isSunday?sundayValues:values;
+const isSunday = (new Date().getDay()===0);
+let activeValues = isSunday ? sundayValues : values;
 
-const mainPanel=document.getElementById("mainPanel");
-const totalLabel=document.getElementById("total");
-const gaugeFill=document.getElementById("gaugeFill");
-const gaugeMarker=document.getElementById("gaugeMarker");
-const gaugeTrack=document.getElementById("gaugeTrack");
-const topLabelLayer=document.getElementById("topLabelLayer");
-const bottomLabelLayer=document.getElementById("bottomLabelLayer");
+const mainPanel = document.getElementById("mainPanel");
+const totalLabel = document.getElementById("total");
+const gaugeFill = document.getElementById("gaugeFill");
+const gaugeMarker = document.getElementById("gaugeMarker");
+const gaugeTrack = document.getElementById("gaugeTrack");
+const topLabelLayer = document.getElementById("topLabelLayer");
+const bottomLabelLayer = document.getElementById("bottomLabelLayer");
 
-let checkBoxes=[];
-let lastCandles=0;
-let categorySumTags=[];
+let checkBoxes = [];
+let lastCandles = 0;
+let categorySumTags = [];
 
-/* 下メモリ生成 */
+/* ===== メモリ生成 ===== */
 for(let i=1;i<=19;i++){
   const mem=document.createElement("div");
   mem.classList.add("gauge-segment");
@@ -508,7 +507,7 @@ for(let i=1;i<=19;i++){
   gaugeTrack.appendChild(mem);
 }
 
-/* カテゴリ生成 */
+/* ===== カテゴリ生成 ===== */
 categories.forEach((cat,i)=>{
   const card=document.createElement("div");
   card.className="category";
@@ -593,7 +592,7 @@ categories.forEach((cat,i)=>{
   mainPanel.appendChild(card);
 });
 
-/* キャンドル数計算 */
+/* ===== キャンドル変換 ===== */
 function getCandleCount(t){
   for(const x of candleThresholds){
     if(t<=x.max) return x.candles;
@@ -601,22 +600,19 @@ function getCandleCount(t){
   return 0;
 }
 
-/* ゲージ更新 */
+/* ===== ゲージ更新 ===== */
 function updateGauge(c){
   const ratio=c/20;
   gaugeFill.style.width=(ratio*100)+"%";
   gaugeMarker.style.left=(ratio*100)+"%";
 }
 
-/* ========= パン屋仕様：カンスト + UI変更 ここから ========= */
-
+/* ===== パン屋カンスト対応版 updateTotal（今回の修正点） ===== */
 function updateTotal(){
   let total=0;
 
-  // ▼ パン屋とパン屋2
-  const p1=checkBoxes[7][0];
-  const p2=checkBoxes[7][1];
-
+  const p1=checkBoxes[7][0]; // パン屋
+  const p2=checkBoxes[7][1]; // パン屋2
   const v1=parseInt(p1.dataset.value,10);
   const v2=parseInt(p2.dataset.value,10);
 
@@ -624,33 +620,31 @@ function updateTotal(){
   if(p1.checked) panyaSum+=v1;
   if(p2.checked) panyaSum+=v2;
 
-  // ▼ カンスト適用
   const cappedPanya=Math.min(panyaSum,1000);
 
-  // ▼ 全体合計
+  // 全体合計
   checkBoxes.forEach(row=>{
     row.forEach(cb=>{
-      if(cb.checked) total+=parseInt(cb.dataset.value,10);
+      if(cb.checked) total += parseInt(cb.dataset.value,10);
     });
   });
 
-  // ▼ パン屋差し替え
-  total=total-panyaSum+cappedPanya;
+  // パン屋だけ置き換え
+  total = total - panyaSum + cappedPanya;
 
-  /* ▼ パン屋2の UI 表示変更 */
-  const p2_label=p2.parentElement.querySelector(".item-value");
-
+  // パン屋2のラベル変更
+  const p2Label = p2.parentElement.querySelector(".item-value");
   if(p1.checked && p2.checked){
-    p2_label.textContent="+460";
-    p2_label.style.color="red";
-    p2_label.style.fontWeight="700";
+    p2Label.textContent = "+460";
+    p2Label.style.color = "red";
+    p2Label.style.fontWeight = "700";
   }else{
-    p2_label.textContent=`+${v2}`;
-    p2_label.style.color="";
-    p2_label.style.fontWeight="";
+    p2Label.textContent = `+${v2}`;
+    p2Label.style.color = "";
+    p2Label.style.fontWeight = "";
   }
 
-  /* ▼ 合計反映 */
+  // 表示
   const c=getCandleCount(total);
   totalLabel.innerHTML=`合計: ${total} （${c}キャンドル）`;
 
@@ -660,10 +654,7 @@ function updateTotal(){
   }
 }
 
-/* ========= パン屋仕様：ここまで ========= */
-
-
-/* カテゴリ小計 pill 更新 */
+/* ===== カテゴリ小計更新 ===== */
 function updateCategoryTotals(){
   categories.forEach((cat,i)=>{
     let sum=0;
@@ -682,12 +673,88 @@ function updateCategoryTotals(){
   });
 }
 
-/* 各種ラベル・リセット処理・初期化 */
-function placeTopLabels(){/* 省略：元のまま */}
-function placeBottomLabels(){/* 省略：元のまま */}
-function updateDailyList(){/* 省略：元のまま */}
-function applyWrapToggle(){/* 省略：元のまま */}
+/* ===== 上側ラベル（あなたの元コードそのまま） ===== */
+function placeTopLabels(){
+  topLabelLayer.innerHTML="";
+  const rect=gaugeTrack.getBoundingClientRect();
+  const topY=rect.top-24;
 
+  for(let c=15;c<=20;c++){
+    const v=thresholdMap[c];
+    if(!v) continue;
+
+    const label=document.createElement("div");
+    label.className="gauge-top-label";
+    label.textContent=v;
+
+    const px=rect.left + rect.width*(c/20);
+    label.style.left=px+"px";
+    label.style.top=topY+"px";
+
+    topLabelLayer.appendChild(label);
+  }
+}
+
+/* ===== 下側ラベル（元コードそのまま） ===== */
+function placeBottomLabels(){
+  bottomLabelLayer.innerHTML="";
+  const rect=gaugeTrack.getBoundingClientRect();
+  const y=rect.bottom+4;
+
+  const positions={0:0,5:5,10:10,15:15,20:20};
+
+  for(const n in positions){
+    const ratio=positions[n]/20;
+    const px=rect.left+rect.width*ratio;
+
+    const label=document.createElement("div");
+    label.className="bottom-gauge-label";
+    label.textContent=n;
+    label.style.left=px+"px";
+    label.style.top=y+"px";
+
+    bottomLabelLayer.appendChild(label);
+  }
+}
+
+/* ===== スマホ用更新 ===== */
+function updateDailyList(){
+  const list=document.getElementById("dailyList");
+  const isMobile=window.matchMedia("(max-width: 480px)").matches;
+
+  if(!isMobile){
+    list.textContent="";
+    return;
+  }
+
+  list.textContent =
+    `(16)${thresholdMap[16]} `+
+    `(17)${thresholdMap[17]} `+
+    `(18)${thresholdMap[18]} `+
+    `(19)${thresholdMap[19]} `+
+    `(20)${thresholdMap[20]}`;
+}
+
+/* ===== wrapクリックでトグル ===== */
+function applyWrapToggle(){
+  checkBoxes.forEach(row=>{
+    row.forEach(cb=>{
+      const wrap=cb.parentElement;
+
+      wrap.classList.toggle("checked",cb.checked);
+
+      wrap.addEventListener("click",()=>{
+        cb.checked=!cb.checked;
+        localStorage.setItem(cb.id,cb.checked);
+        wrap.classList.toggle("checked",cb.checked);
+        updateTotal();
+        updateCategoryTotals();
+      });
+    });
+  });
+}
+
+/* ===== リセット ===== */
 resetButton.onclick=()=>{
   checkBoxes.forEach(row=>row.forEach(cb=>{
     cb.checked=false;
@@ -695,6 +762,7 @@ resetButton.onclick=()=>{
     cb.parentElement.classList.remove("checked");
   }));
   document.querySelectorAll(".category-toggle").forEach(a=>a.checked=false);
+
   updateTotal();
   updateCategoryTotals();
   placeTopLabels();
@@ -702,6 +770,7 @@ resetButton.onclick=()=>{
   updateDailyList();
 };
 
+/* ===== 初期表示 ===== */
 window.addEventListener("load",()=>{
   updateTotal();
   updateCategoryTotals();
@@ -711,18 +780,18 @@ window.addEventListener("load",()=>{
   applyWrapToggle();
 });
 
+/* ===== サイズ変更 ===== */
 window.addEventListener("resize",()=>{
   placeTopLabels();
   placeBottomLabels();
   updateDailyList();
-  applyWrapToggle();
 });
 
+/* ===== スクロール ===== */
 window.addEventListener("scroll",()=>{
   placeTopLabels();
   placeBottomLabels();
 });
-
 
 </script>
 
