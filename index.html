@@ -453,10 +453,12 @@
     white-space: nowrap; /* ←改行させない。重要！ */
   }
 }
-
-
-
+  #dailyList {
+    white-space: nowrap !important;  /* ← 改行禁止 */
+    display: block !important;       /* ← 表示 */
+    overflow-x: auto;                /* ← 画面狭い場合は横スクロール */
   }
+
 
   /* タブレット（481〜768px） */
   @media (min-width:481px) and (max-width:768px){
