@@ -30,17 +30,17 @@
     margin-bottom: 20px;
     line-height: 1.15;
     user-select: none;
-    -webkit-user-select: none; /* Safari対応 */
-    -ms-user-select: none;      /* 古いIE対応 */
+    -webkit-user-select: none;
+    -ms-user-select: none;
   }
   .page-title-line {
     font-family: 'Roboto', sans-serif;
     font-weight: 100;
     font-size: 32px;
     letter-spacing: 0.04em;
-     user-select: none;
-    -webkit-user-select: none; /* Safari対応 */
-    -ms-user-select: none;      /* 古いIE対応 */
+    user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
   }
   .page-title-line:first-child {
     font-size: 22px;
@@ -62,16 +62,16 @@
     gap:10px;
     margin-bottom:12px;
     user-select: none;
-    -webkit-user-select: none; /* Safari対応 */
-    -ms-user-select: none;      /* 古いIE対応 */
+    -webkit-user-select: none;
+    -ms-user-select: none;
   }
   .category-label {
     font-family: 'Noto Sans JP', sans-serif;
     font-size:20px;
     font-weight:700;
     user-select: none;
-    -webkit-user-select: none; /* Safari対応 */
-    -ms-user-select: none;      /* 古いIE対応 */
+    -webkit-user-select: none;
+    -ms-user-select: none;
   }
   .category-toggle {
     appearance:none;
@@ -80,8 +80,8 @@
     border:2px solid #ff9b42;
     background:#fff;
     user-select: none;
-    -webkit-user-select: none; /* Safari対応 */
-    -ms-user-select: none;      /* 古いIE対応 */
+    -webkit-user-select: none;
+    -ms-user-select: none;
   }
   .category-toggle:checked {
     background:linear-gradient(135deg,#ffb36b,#ff9b42);
@@ -103,8 +103,8 @@
     border:1px solid rgba(185,211,255,0.6);
     transition: background .25s, border-color .25s;
     user-select: none;
-    -webkit-user-select: none; /* Safari対応 */
-    -ms-user-select: none;      /* 古いIE対応 */
+    -webkit-user-select: none;
+    -ms-user-select: none;
   }
 
   .check-input {
@@ -134,8 +134,8 @@
     font-weight:300;
     white-space:nowrap;
     user-select: none;
-    -webkit-user-select: none; /* Safari対応 */
-    -ms-user-select: none;      /* 古いIE対応 */
+    -webkit-user-select: none;
+    -ms-user-select: none;
   }
 
   .item-value {
@@ -146,38 +146,38 @@
     background:rgba(61,138,255,0.08);
     border:1px solid rgba(61,138,255,0.25);
     user-select: none;
-    -webkit-user-select: none; /* Safari対応 */
-    -ms-user-select: none;      /* 古いIE対応 */
+    -webkit-user-select: none;
+    -ms-user-select: none;
   }
 
   /* ▼ 合計カード ▼ */
   #southPanel {
     position: fixed;
-    left: 50%;
-    transform: translateX(-50%);
-    bottom: 16px;
-    width: 100%;
-    max-width: 960px;
-    padding-left: 22px;
-    padding-right: 22px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    width: auto;
+    max-width: none;
+    padding: 14px 16px;
+
     background: rgba(255,255,255,0.88);
     backdrop-filter: blur(12px);
-    border-radius: 20px;
-    padding-top: 12px;
-    padding-bottom: 10px;
-    box-shadow: 0 8px 24px rgba(60,80,150,0.35);
-    border: 1px solid rgba(150,170,240,0.9);
+    border-radius: 0;
+    box-shadow: 0 -4px 18px rgba(60,80,150,0.25);
+    border-top: 1px solid rgba(150,170,240,0.9);
+
     z-index: 1000;
   }
 
-    #total {
+  #total {
     font-size: 22px;
     font-weight: 700;
     color: #2d3a80;
     font-family:'Noto Sans JP',sans-serif;
-     user-select: none;
-    -webkit-user-select: none; /* Safari対応 */
-    -ms-user-select: none;      /* 古いIE対応 */
+    user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
   }
 
   #required {
@@ -223,8 +223,8 @@
   #gaugeMarker img {
     width:44px;
     user-select: none;
-    -webkit-user-select: none; /* Safari対応 */
-    -ms-user-select: none;      /* 古いIE対応 */
+    -webkit-user-select: none;
+    -ms-user-select: none;
   }
 
   /* ゲージの下メモリ */
@@ -282,8 +282,8 @@
     transform:translateX(-50%);
     white-space:nowrap;
     user-select: none;
-    -webkit-user-select: none; /* Safari対応 */
-    -ms-user-select: none;      /* 古いIE対応 */
+    -webkit-user-select: none;
+    -ms-user-select: none;
   }
 
   #resetButton {
@@ -295,8 +295,8 @@
     cursor:pointer;
     font-weight:700;
     user-select: none;
-    -webkit-user-select: none; /* Safari対応 */
-    -ms-user-select: none;      /* 古いIE対応 */
+    -webkit-user-select: none;
+    -ms-user-select: none;
   }
 
   .south-bottom-row {
@@ -305,8 +305,8 @@
     justify-content:space-between;
     align-items:flex-start;
     user-select: none;
-    -webkit-user-select: none; /* Safari対応 */
-    -ms-user-select: none;      /* 古いIE対応 */
+    -webkit-user-select: none;
+    -ms-user-select: none;
   }
 
   /* カテゴリ名横の pill タグ */
@@ -315,8 +315,8 @@
     align-items:center;
     gap:10px;
     user-select: none;
-    -webkit-user-select: none; /* Safari対応 */
-    -ms-user-select: none;      /* 古いIE対応 */
+    -webkit-user-select: none;
+    -ms-user-select: none;
   }
   .category-sum {
     display:inline-block;
@@ -340,6 +340,81 @@
       inset 0 0 6px rgba(255,255,255,0.8);
   }
 
+  /* ゲージ光エフェクト（ゲージ本体がふわっと光る） */
+  @keyframes flashGauge {
+    0% {
+      box-shadow: 0 0 0px rgba(255,255,255,0);
+      filter: brightness(1);
+    }
+    50% {
+      box-shadow: 0 0 16px rgba(255,255,255,0.9);
+      filter: brightness(1.8);
+    }
+    100% {
+      box-shadow: 0 0 0px rgba(255,255,255,0);
+      filter: brightness(1);
+    }
+  }
+
+  .gauge-fill.flash {
+    animation: flashGauge 0.45s ease-out;
+  }
+
+  /* ================================
+     🔥 ゲージ：横へ流れるスキャンライト
+     ================================ */
+  @keyframes scanLight {
+    0% {
+      left: -20%;
+      opacity: 0;
+    }
+    40% {
+      opacity: 1;
+    }
+    100% {
+      left: 120%;
+      opacity: 0;
+    }
+  }
+
+  .scan-light {
+    position:absolute;
+    top:0;
+    width:40%;
+    height:100%;
+    background:linear-gradient(90deg,
+      rgba(255,255,255,0) 0%,
+      rgba(255,255,255,0.8) 50%,
+      rgba(255,255,255,0) 100%);
+    pointer-events:none;
+    z-index:3;
+    border-radius:999px;
+    opacity:0;
+  }
+
+  .scan-light.run {
+    animation: scanLight 0.5s ease-out;
+  }
+
+  /* ================================
+     🔥 マーカー（ろうそく）が光る
+     ================================ */
+  @keyframes markerFlash {
+    0% {
+      filter: brightness(1);
+    }
+    50% {
+      filter: brightness(1.8) drop-shadow(0 0 8px rgba(255,255,200,0.9));
+    }
+    100% {
+      filter: brightness(1);
+    }
+  }
+
+  #gaugeMarker.flash {
+    animation: markerFlash 0.45s ease-out;
+  }
+
   /* ================================
      Responsive Layout
      ================================ */
@@ -358,7 +433,6 @@
       opacity: 1 !important;
     }
 
-    /* ←ここがあなたの希望「スマホでチェックボックス消す」 */
     .check-input {
       display:none !important;
     }
@@ -373,7 +447,7 @@
       grid-template-columns:repeat(3,minmax(0,1fr)) !important;
     }
     .gauge-top-label{
-      display:none !important;
+      display:none !重要;
     }
     .daily-list{
       display:none !important;
@@ -414,6 +488,8 @@
     <div class="gauge-wrapper">
       <div class="gauge-track" id="gaugeTrack">
         <div class="gauge-fill" id="gaugeFill"></div>
+        <!-- 横へ流れる光 -->
+        <div id="scanLight" class="scan-light"></div>
       </div>
       <div id="gaugeMarker">
         <img src="candle.png">
@@ -437,7 +513,7 @@
 <div id="bottomLabelLayer"></div>
 
 
-<script>/* ========= データ ========= */
+<script>
 /* ========= データ ========= */
 const categories = ["孤島","草原","雨林","峡谷","捨てられた地","書庫","その他","ソーシャル"];
 const items = [
@@ -453,23 +529,22 @@ const items = [
 
 const values = [
   [200,50,100,105,200,200],           // 孤島（6）
-  [55,119,45,99,50,299],              // 草原（6
+  [55,119,45,99,50,299],              // 草原（6）
   [45,227,175,42,83,55,57],           // 雨林（7）
   [104,135,79,150,10,93,100,50,215],  // 峡谷（9）
-  [65,92,111,63,109,188],             // 捨て地（6
-  [16,110,12,222,64,31,50,140,57],    // 書庫（9
+  [65,92,111,63,109,188],             // 捨て地（6）
+  [16,110,12,222,64,31,50,140,57],    // 書庫（9）
   [23,23,50,200,200,30],              // その他（6）
   [540,540,300,300,200]               // ソーシャル（5）
-
 ];
 
 const sundayValues = [
   [200,50,100,105,200,200],           // 孤島（6）
-  [55,119,45,99,50,299],              // 草原（6
+  [55,119,45,99,50,299],              // 草原（6）
   [45,227,175,42,83,55,57],           // 雨林（7）
   [104,135,79,150,10,93,100,50,215],  // 峡谷（9）
-  [86,119,139,101,109,188],           // 捨て地（6
-  [16,110,12,222,64,31,50,140,57],    // 書庫（9
+  [86,119,139,101,109,188],           // 捨て地（6）
+  [16,110,12,222,64,31,50,140,57],    // 書庫（9）
   [23,23,50,200,200,30],              // その他（6）
   [540,540,300,300,200]               // ソーシャル（5）
 ];
@@ -497,6 +572,7 @@ const gaugeMarker = document.getElementById("gaugeMarker");
 const gaugeTrack = document.getElementById("gaugeTrack");
 const topLabelLayer = document.getElementById("topLabelLayer");
 const bottomLabelLayer = document.getElementById("bottomLabelLayer");
+const scanLight = document.getElementById("scanLight");
 
 let checkBoxes = [];
 let lastCandles = 0;
@@ -604,14 +680,34 @@ function getCandleCount(t){
   return 0;
 }
 
-/* ===== ゲージ更新 ===== */
+/* ===== ゲージ更新（光エフェクト込み） ===== */
 function updateGauge(c){
-  const ratio=c/20;
-  gaugeFill.style.width=(ratio*100)+"%";
-  gaugeMarker.style.left=(ratio*100)+"%";
+  const ratio = c / 20;
+
+  // ゲージ増加時だけ光らせる
+  if (c > lastCandles) {
+    // ゲージ本体のフラッシュ
+    gaugeFill.classList.add("flash");
+    setTimeout(()=>gaugeFill.classList.remove("flash"),450);
+
+    // スキャンライトを左→右へ走らせる
+    if (scanLight) {
+      scanLight.classList.remove("run");
+      // reflow でアニメーションリセット
+      void scanLight.offsetWidth;
+      scanLight.classList.add("run");
+    }
+
+    // マーカー（ろうそく）を光らせる
+    gaugeMarker.classList.add("flash");
+    setTimeout(()=>gaugeMarker.classList.remove("flash"),450);
+  }
+
+  gaugeFill.style.width = (ratio * 100) + "%";
+  gaugeMarker.style.left = (ratio * 100) + "%";
 }
 
-/* ===== パン屋カンスト対応版 updateTotal（今回の修正点） ===== */
+/* ===== パン屋カンスト対応版 updateTotal ===== */
 function updateTotal(){
   let total=0;
 
@@ -677,7 +773,7 @@ function updateCategoryTotals(){
   });
 }
 
-/* ===== 上側ラベル（あなたの元コードそのまま） ===== */
+/* ===== 上側ラベル ===== */
 function placeTopLabels(){
   topLabelLayer.innerHTML="";
   const rect=gaugeTrack.getBoundingClientRect();
@@ -699,7 +795,7 @@ function placeTopLabels(){
   }
 }
 
-/* ===== 下側ラベル（元コードそのまま） ===== */
+/* ===== 下側ラベル ===== */
 function placeBottomLabels(){
   bottomLabelLayer.innerHTML="";
   const rect=gaugeTrack.getBoundingClientRect();
@@ -796,7 +892,6 @@ window.addEventListener("scroll",()=>{
   placeTopLabels();
   placeBottomLabels();
 });
-
 </script>
 
 </body>
