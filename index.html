@@ -286,9 +286,17 @@
     -ms-user-select: none;
   }
 
-  #resetButton {
+  /* ボタン群 */
+  .button-group{
+    display:flex;
+    gap:8px;
+    align-items:flex-start;
+  }
+
+  #resetButton,
+  #undoButton,
+  #redoButton {
     padding:8px 18px;
-    background:linear-gradient(135deg,#ff8b8b,#ff6b6b);
     border-radius:999px;
     color:white;
     border:none;
@@ -298,6 +306,16 @@
     white-space: nowrap;
     -webkit-user-select: none;
     -ms-user-select: none;
+  }
+
+  #resetButton {
+    background:linear-gradient(135deg,#ff8b8b,#ff6b6b);
+  }
+  #undoButton {
+    background:linear-gradient(135deg,#8bb4ff,#6b8dff);
+  }
+  #redoButton {
+    background:linear-gradient(135deg,#9fd9a3,#6bcf7a);
   }
 
   .south-bottom-row {
@@ -439,7 +457,9 @@
       cursor:pointer;
     }
 
-    #resetButton {
+    #resetButton,
+    #undoButton,
+    #redoButton {
       font-size: 14px;
       margin-right: 0;
       white-space: nowrap;
@@ -506,7 +526,7 @@
       <div id="gaugeMarker">
         <img src="candle.png">
       </div>
-      <!-- ★ 下側ラベルをゲージ内に置く -->
+      <!-- 下側ラベルをゲージ内に置く -->
       <div id="bottomLabelLayer"></div>
     </div>
 
@@ -515,7 +535,11 @@
         <div id="required">デイリーライト: <b>2055（15本）</b></div>
         <div id="dailyList" class="daily-list"></div>
       </div>
-      <button id="resetButton">全てリセット</button>
+      <div class="button-group">
+        <button id="resetButton">全てリセット</button>
+        <button id="undoButton" style="display:none;">元に戻す</button>
+        <button id="redoButton" style="display:none;">やり直し</button>
+      </div>
     </div>
   </div>
 
@@ -584,10 +608,16 @@ const gaugeTrack = document.getElementById("gaugeTrack");
 const topLabelLayer = document.getElementById("topLabelLayer");
 const bottomLabelLayer = document.getElementById("bottomLabelLayer");
 const scanLight = document.getElementById("scanLight");
+const undoButton = document.getElementById("undoButton");
+const redoButton = document.getElementById("redoButton");
 
 let checkBoxes = [];
 let lastCandles = 0;
 let categorySumTags = [];
+
+/* Undo / Redo 用 */
+let undoState = null;
+let redoState = null;
 
 /* ===== メモリ生成 ===== */
 for(let i=1;i<=19;i++){
@@ -828,7 +858,7 @@ function placeBottomLabels(){
     label.className="bottom-gauge-label";
     label.textContent=n;
 
-    // ゲージ幅に対する割合で配置（スクロールしても上下に動かない）
+    // ゲージ幅に対する割合で配置
     label.style.left = (ratio * 100) + "%";
     label.style.top = "0px";
 
@@ -873,8 +903,52 @@ function applyWrapToggle(){
   });
 }
 
+/* ===== 状態スナップショット & 復元 ===== */
+function snapshotState(){
+  // 2次元配列でチェック状態だけ保存
+  return checkBoxes.map(row => row.map(cb => cb.checked));
+}
+
+function restoreState(state){
+  if (!state) return;
+
+  checkBoxes.forEach((row,i)=>{
+    row.forEach((cb,j)=>{
+      const checked = !!state[i][j];
+      cb.checked = checked;
+      localStorage.setItem(cb.id, checked);
+      cb.parentElement.classList.toggle("checked", checked);
+    });
+  });
+
+  // カテゴリトグル同期（全部ONのときだけON）
+  document.querySelectorAll(".category-toggle").forEach((toggle, i)=>{
+    const row = state[i];
+    const allChecked = row.every(v => v === true);
+    toggle.checked = allChecked;
+  });
+
+  updateTotal();
+  updateCategoryTotals();
+  placeTopLabels();
+  placeBottomLabels();
+  updateDailyList();
+}
+
+/* Undo/Redoボタン表示更新 */
+function updateUndoRedoButtons(){
+  undoButton.style.display = undoState ? "inline-block" : "none";
+  redoButton.style.display = redoState ? "inline-block" : "none";
+}
+
 /* ===== リセット ===== */
 resetButton.onclick=()=>{
+  // リセット前の状態を保存（Undo 用）
+  undoState = snapshotState();
+  // Redo はクリア
+  redoState = null;
+  updateUndoRedoButtons();
+
   checkBoxes.forEach(row=>row.forEach(cb=>{
     cb.checked=false;
     localStorage.setItem(cb.id,false);
@@ -889,6 +963,27 @@ resetButton.onclick=()=>{
   updateDailyList();
 };
 
+/* ===== Undo（元に戻す） ===== */
+undoButton.onclick = () => {
+  if (!undoState) return;
+  // 今の状態を Redo 用に保存
+  redoState = snapshotState();
+  restoreState(undoState);
+  // Undo は一回きり
+  undoState = null;
+  updateUndoRedoButtons();
+};
+
+/* ===== Redo（やり直し） ===== */
+redoButton.onclick = () => {
+  if (!redoState) return;
+  // 現状態を Undo 用に保存（もう一度戻せるように）
+  undoState = snapshotState();
+  restoreState(redoState);
+  redoState = null;
+  updateUndoRedoButtons();
+};
+
 /* ===== 初期表示 ===== */
 window.addEventListener("load",()=>{
   updateTotal();
@@ -897,6 +992,7 @@ window.addEventListener("load",()=>{
   placeBottomLabels();
   updateDailyList();
   applyWrapToggle();
+  updateUndoRedoButtons(); // 初期はどちらも非表示
 });
 
 /* ===== サイズ変更 ===== */
