@@ -421,40 +421,39 @@
      ================================ */
 
   /* スマホ（〜480px） */
-  @media (max-width:480px){
-    .items {
-      grid-template-columns:repeat(2,minmax(0,1fr)) !important;
-    }
-    .gauge-top-label{
-      display:none !important;
-    }
-    .daily-list{
-      display:block !important;
-      visibility: visible !important;
-      opacity: 1 !important;
-    }
+@media (max-width:480px){
+  .items {
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+  }
 
-    .south-bottom-row {
-     justify-content: flex-end; /* ←右側に寄せる */
-     gap: 8px;                  /* 左ブロックと少し間隔 */
-    }
+  .gauge-top-label{
+    display:none !important;
+  }
+  .daily-list{
+    display:block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
 
-    .check-input {
-      display:none !important;
-    }
-    .check-wrapper {
-      cursor:pointer;
-    }
+  .south-bottom-row {
+    justify-content: flex-end;
+    gap: 8px;
+  }
 
-    #resetButton {
-     font-size: 14px;
-     margin-right: 0;           /* ←右の余白完全削除 */
+  .check-input {
+    display:none !important;
+  }
+  .check-wrapper {
+    cursor:pointer;
+  }
 
-    }
+  #resetButton {
+    font-size: 14px;
+    margin-right: 0;     /* ←右の余白完全削除 */
+    white-space: nowrap; /* ←改行させない。重要！ */
+  }
+}
 
-    #resetButton::before {
-     content: "リセット";   /* ← スマホ表示 */
-    }
 
 
   }
@@ -725,6 +724,23 @@ function updateGauge(c){
   gaugeMarker.style.left = (ratio * 100) + "%";
 }
 
+// スマホの時だけ「全てリセット」を「リセット」に変更
+function updateResetButtonLabel() {
+  const isMobile = window.matchMedia("(max-width: 480px)").matches;
+  const btn = document.getElementById("resetButton");
+  if (!btn) return;
+
+  if (isMobile) {
+    btn.textContent = "リセット";
+  } else {
+    btn.textContent = "全てリセット";
+  }
+}
+
+window.addEventListener("load", updateResetButtonLabel);
+window.addEventListener("resize", updateResetButtonLabel);
+
+
 /* ===== パン屋カンスト対応版 updateTotal ===== */
 function updateTotal(){
   let total=0;
@@ -905,11 +921,7 @@ window.addEventListener("resize",()=>{
   updateDailyList();
 });
 
-/* ===== スクロール ===== */
-window.addEventListener("scroll",()=>{
-  placeTopLabels();
-  placeBottomLabels();
-});
+
 </script>
 
 </body>
