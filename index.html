@@ -434,6 +434,11 @@
       opacity: 1 !important;
     }
 
+    .south-bottom-row {
+     justify-content: flex-end; /* ←右側に寄せる */
+     gap: 8px;                  /* 左ブロックと少し間隔 */
+    }
+
     .check-input {
       display:none !important;
     }
@@ -443,6 +448,8 @@
 
     #resetButton {
      font-size: 14px;
+     margin-right: 0;           /* ←右の余白完全削除 */
+
     }
 
     #resetButton::before {
