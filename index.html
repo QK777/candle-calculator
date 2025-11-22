@@ -9,497 +9,352 @@
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600&family=Roboto:wght@100;300&family=Noto+Sans+JP:wght@100&display=swap" rel="stylesheet">
 
 <style>
-  /* 全体 */
-  body {
-    font-family: 'Baloo 2', cursive;
-    background: linear-gradient(135deg, #fdfbff 0%, #eef5ff 40%, #fdf6ff 100%);
-    margin: 0;
-    padding: 24px 12px 260px;
-    color: #222;
-    position: relative;
-  }
-  .app {
-    max-width: 960px;
-    margin: 0 auto;
+/* ================================
+   全体スタイル
+================================ */
+body {
+  font-family: 'Baloo 2', cursive;
+  background: linear-gradient(135deg, #fdfbff 0%, #eef5ff 40%, #fdf6ff 100%);
+  margin: 0;
+  padding: 24px 12px 260px;
+  color: #222;
+  position: relative;
+}
+.app {
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+/* ================================
+   タイトル
+================================ */
+.page-title-wrapper {
+  width: 100%;
+  text-align: right;
+  margin-bottom: 20px;
+  line-height: 1.15;
+  user-select: none;
+}
+.page-title-line {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 100;
+  font-size: 32px;
+  letter-spacing: 0.04em;
+}
+.page-title-line:first-child {
+  font-size: 22px;
+  opacity: 0.9;
+}
+
+/* ================================
+   カテゴリカード
+================================ */
+.category {
+  background:#fff;
+  border-radius:24px;
+  padding:18px 22px 16px;
+  margin-bottom:18px;
+  box-shadow:0 6px 18px rgba(70,90,150,0.22);
+  border:2px solid rgba(210,220,255,0.9);
+}
+.category-header {
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-bottom:12px;
+  user-select: none;
+}
+.category-label {
+  font-family: 'Noto Sans JP', sans-serif;
+  font-size:20px;
+  font-weight:700;
+}
+.category-toggle {
+  appearance:none;
+  width:20px; height:20px;
+  border-radius:6px;
+  border:2px solid #ff9b42;
+  background:#fff;
+}
+.category-toggle:checked {
+  background:linear-gradient(135deg,#ffb36b,#ff9b42);
+}
+
+/* アイテムグリッド */
+.items {
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:8px;
+}
+
+/* チェックボックス */
+.check-wrapper {
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:6px 10px;
+  border-radius:999px;
+  background:rgba(248,251,255,0.95);
+  border:1px solid rgba(185,211,255,0.6);
+  transition: background .25s, border-color .25s;
+  user-select: none;
+}
+.check-input {
+  display: none !important;
+}
+.check-wrapper.checked {
+  background:rgba(255,200,120,0.25);
+  border-color:rgba(255,160,60,0.8);
+}
+
+/* アイテム名 */
+.item-name {
+  flex:1;
+  font-size:12px;
+  font-family:'Roboto','Noto Sans JP',sans-serif;
+  font-weight:300;
+  white-space:nowrap;
+}
+
+/* 数値 */
+.item-value {
+  font-size:12px;
+  font-weight:400;
+  padding:2px 8px;
+  border-radius:999px;
+  background:rgba(61,138,255,0.08);
+  border:1px solid rgba(61,138,255,0.25);
+}
+
+/* ================================
+   合計カード（固定下部）
+================================ */
+#southPanel {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 14px 16px;
+  background: rgba(255,255,255,0.88);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 -4px 18px rgba(60,80,150,0.25);
+  border-top: 1px solid rgba(150,170,240,0.9);
+  z-index: 1000;
+}
+
+#total {
+  font-size: 22px;
+  font-weight: 700;
+  color: #2d3a80;
+  font-family:'Noto Sans JP',sans-serif;
+}
+
+#required {
+  font-size:18px;
+  font-weight:700;
+  color:#000;
+  font-family:'Noto Sans JP',sans-serif;
+}
+
+/* ================================
+   ゲージ
+================================ */
+.gauge-wrapper {
+  margin-top:6px;
+  margin-bottom:6px;
+  position:relative;
+}
+
+.gauge-track {
+  position:relative;
+  height:18px;
+  border-radius:999px;
+  background:#d0d0d0;
+  border:1px solid #aaa;
+  overflow:hidden;
+}
+
+.gauge-fill {
+  position:absolute;
+  top:0; left:0;
+  width:0%;
+  height:100%;
+  background:linear-gradient(180deg,#afc9f0,#3787ff);
+  transition:width 0.4s ease-out;
+  z-index:2;
+}
+
+#gaugeMarker {
+  position:absolute;
+  top:-20px;
+  transform:translateX(-50%);
+  width:44px; height:44px;
+  pointer-events:none;
+  z-index:5;
+  transition:left 0.4s ease-out 0.05s;
+}
+#gaugeMarker img {
+  width:44px;
+}
+
+/* ゲージ下のメモリ線 */
+.gauge-segment {
+  position:absolute;
+  width:2px;
+  height:10px;
+  bottom:-6px;
+  background:rgba(80,80,80,0.45);
+  border-radius:2px;
+  z-index:3;
+}
+.gauge-segment.major {
+  width:3px;
+  height:16px;
+  bottom:-8px;
+  background:rgba(30,30,30,0.9);
+}
+
+/* 上側ラベル */
+#topLabelLayer {
+  position:fixed;
+  left:0;
+  top:0;
+  width:100vw;
+  height:100vh;
+  pointer-events:none;
+  z-index:5000;
+}
+.gauge-top-label {
+  position:absolute;
+  font-size:12px;
+  color:#000;
+  font-weight:700;
+  transform:translateX(-50%);
+}
+
+/* 下側ラベル（ゲージ内） */
+#bottomLabelLayer {
+  position:absolute;
+  left:0;
+  top:100%;
+  width:100%;
+  pointer-events:none;
+  z-index:4000;
+}
+.bottom-gauge-label {
+  position:absolute;
+  font-size:14px;
+  color:#000;
+  font-weight:700;
+  transform:translateX(-50%);
+}
+
+/* ================================
+   ボタン
+================================ */
+.button-group{
+  display:flex;
+  gap:8px;
+}
+
+#resetButton,
+#undoButton {
+  padding:8px 18px;
+  border-radius:999px;
+  color:white;
+  border:none;
+  cursor:pointer;
+  font-weight:700;
+  white-space: nowrap;
+}
+
+/* リセット */
+#resetButton {
+  background:linear-gradient(135deg,#ff8b8b,#ff6b6b);
+}
+
+/* Undo */
+#undoButton {
+  background:linear-gradient(135deg,#8bb4ff,#6b8dff);
+}
+
+/* 下段レイアウト */
+.south-bottom-row {
+  margin-top:30px;
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+}
+
+/* ================================
+   スマホ対応（押し出し対策）
+================================ */
+@media (max-width:480px){
+
+  /* 左側（required + dailyList）を押し出されないように */
+  .south-bottom-row > div:first-child {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
   }
 
-  /* タイトル（右寄せ） */
-  .page-title-wrapper {
-    width: 100%;
-    text-align: right;
-    margin-bottom: 20px;
-    line-height: 1.15;
-    user-select: none;
-    -webkit-user-select: none;
-    -ms-user-select: none;
-  }
-  .page-title-line {
-    font-family: 'Roboto', sans-serif;
-    font-weight: 100;
-    font-size: 32px;
-    letter-spacing: 0.04em;
-    user-select: none;
-    -webkit-user-select: none;
-    -ms-user-select: none;
-  }
-  .page-title-line:first-child {
-    font-size: 22px;
-    opacity: 0.9;
-  }
-
-  /* カテゴリカード */
-  .category {
-    background:#fff;
-    border-radius:24px;
-    padding:18px 22px 16px;
-    margin-bottom:18px;
-    box-shadow:0 6px 18px rgba(70,90,150,0.22);
-    border:2px solid rgba(210,220,255,0.9);
-  }
-  .category-header {
-    display:flex;
-    align-items:center;
-    gap:10px;
-    margin-bottom:12px;
-    user-select: none;
-    -webkit-user-select: none;
-    -ms-user-select: none;
-  }
-  .category-label {
-    font-family: 'Noto Sans JP', sans-serif;
-    font-size:20px;
-    font-weight:700;
-    user-select: none;
-    -webkit-user-select: none;
-    -ms-user-select: none;
-  }
-  .category-toggle {
-    appearance:none;
-    width:20px; height:20px;
-    border-radius:6px;
-    border:2px solid #ff9b42;
-    background:#fff;
-    user-select: none;
-    -webkit-user-select: none;
-    -ms-user-select: none;
-  }
-  .category-toggle:checked {
-    background:linear-gradient(135deg,#ffb36b,#ff9b42);
-  }
-
-  .items {
-    display:grid;
-    grid-template-columns:repeat(4,minmax(0,1fr));
-    gap:8px;
-  }
-
-  .check-wrapper {
-    display:flex;
-    align-items:center;
-    gap:8px;
-    padding:6px 10px;
-    border-radius:999px;
-    background:rgba(248,251,255,0.95);
-    border:1px solid rgba(185,211,255,0.6);
-    transition: background .25s, border-color .25s;
-    user-select: none;
-    -webkit-user-select: none;
-    -ms-user-select: none;
-  }
-
-  .check-input {
-    display: none !important;
-    appearance:none;
-    width:18px; height:18px;
-    border:2px solid #87bfff;
-    border-radius:50%;
-    background:#fff;
-  }
-  .check-input:checked {
-    background:#3a8cff;
-    border-color:#3a8cff;
-  }
-
-  /* スマホ ON のとき */
-  .check-wrapper.checked {
-    background:rgba(255,200,120,0.25);
-    border-color:rgba(255,160,60,0.8);
-  }
-
-  /* アイテム名：スマホ基準 */
-  .item-name {
-    flex:1;
-    font-size:12px;
-    font-family:'Roboto','Noto Sans JP',sans-serif;
-    font-weight:300;
-    white-space:nowrap;
-    user-select: none;
-    -webkit-user-select: none;
-    -ms-user-select: none;
-  }
-
-  .item-value {
-    font-size:12px;
-    font-weight:400;
-    padding:2px 8px;
-    border-radius:999px;
-    background:rgba(61,138,255,0.08);
-    border:1px solid rgba(61,138,255,0.25);
-    user-select: none;
-    -webkit-user-select: none;
-    -ms-user-select: none;
-  }
-
-  /* ▼ 合計カード ▼ */
-  #southPanel {
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: 0;
-
-    width: auto;
-    max-width: none;
-    padding: 14px 16px;
-
-    background: rgba(255,255,255,0.88);
-    backdrop-filter: blur(12px);
-    border-radius: 0;
-    box-shadow: 0 -4px 18px rgba(60,80,150,0.25);
-    border-top: 1px solid rgba(150,170,240,0.9);
-
-    z-index: 1000;
-  }
-
-  #total {
-    font-size: 22px;
-    font-weight: 700;
-    color: #2d3a80;
-    font-family:'Noto Sans JP',sans-serif;
-    user-select: none;
-    -webkit-user-select: none;
-    -ms-user-select: none;
-  }
-
-  #required {
-    font-size:18px;
-    font-weight:700;
-    color:#000;
-    font-family:'Noto Sans JP',sans-serif;
-  }
-
-  /* ゲージ */
-  .gauge-wrapper {
-    margin-top:6px;
-    margin-bottom:6px;
-    position:relative;
-  }
-  .gauge-track {
-    position:relative;
-    height:18px;
-    border-radius:999px;
-    background:#d0d0d0;
-    border:1px solid #aaa;
-    overflow:hidden;
-  }
-  .gauge-fill {
-    position:absolute;
-    top:0; left:0;
-    width:0%;
-    height:100%;
-    background:linear-gradient(180deg,#afc9f0,#3787ff);
-    transition:width 0.4s ease-out;
-    z-index:2;
-  }
-
-  #gaugeMarker {
-    position:absolute;
-    top:-20px;
-    transform:translateX(-50%);
-    width:44px; height:44px;
-    pointer-events:none;
-    z-index:5;
-    transition:left 0.4s ease-out 0.05s;
-  }
-  #gaugeMarker img {
-    width:44px;
-    user-select: none;
-    -webkit-user-select: none;
-    -ms-user-select: none;
-  }
-
-  /* ゲージの下メモリ */
-  .gauge-segment {
-    position:absolute;
-    width:2px;
-    height:10px;
-    bottom:-6px;
-    background:rgba(80,80,80,0.45);
-    border-radius:2px;
-    z-index:3;
-  }
-  .gauge-segment.major {
-    width:3px;
-    height:16px;
-    bottom:-8px;
-    background:rgba(30,30,30,0.9);
-  }
-
-  /* 上側ラベル */
-  #topLabelLayer {
-    position:fixed;
-    left:0;
-    top:0;
-    width:100vw;
-    height:100vh;
-    pointer-events:none;
-    z-index:5000;
-  }
-  .gauge-top-label {
-    position:absolute;
-    font-size:12px;
-    color:#000;
-    font-weight:700;
-    white-space:nowrap;
-    transform:translateX(-50%);
-  }
-
-  /* 下側ラベル（黒） */
-  #bottomLabelLayer {
-    position: absolute;   /* ゲージ内で絶対位置 */
-    left: 0;
-    top: 100%;            /* ゲージのすぐ下 */
-    width: 100%;
-    height: auto;
-    pointer-events: none;
-    z-index: 4000;
-  }
-  .bottom-gauge-label {
-    position:absolute;
-    font-size:14px;
-    color:#000;
-    font-weight:700;
-    text-shadow:0 0 1px #000;
-    transform:translateX(-50%);
-    white-space:nowrap;
-    user-select: none;
-    -webkit-user-select: none;
-    -ms-user-select: none;
-  }
-
-  /* ボタン群 */
-  .button-group{
-    display:flex;
-    gap:8px;
-    align-items:flex-start;
-  }
-
-  #resetButton,
-  #undoButton,
-  #redoButton {
-    padding:8px 18px;
-    border-radius:999px;
-    color:white;
-    border:none;
-    cursor:pointer;
-    font-weight:700;
-    user-select: none;
+  /* dailyListは横スクロール */
+  #dailyList {
     white-space: nowrap;
-    -webkit-user-select: none;
-    -ms-user-select: none;
+    overflow-x: auto;
+    max-width: 100%;
   }
 
-  #resetButton {
-    background:linear-gradient(135deg,#ff8b8b,#ff6b6b);
-  }
+  /* 右のボタンは縮まない */
+  #resetButton,
   #undoButton {
-    background:linear-gradient(135deg,#8bb4ff,#6b8dff);
-  }
-  #redoButton {
-    background:linear-gradient(135deg,#9fd9a3,#6bcf7a);
+    flex-shrink: 0;
   }
 
-  .south-bottom-row {
-    margin-top:30px;
-    display:flex;
-    justify-content:space-between;
-    align-items:flex-start;
-    user-select: none;
-    -webkit-user-select: none;
-    -ms-user-select: none;
+  /* アイテム列数変更 */
+  .items {
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
   }
 
-  /* カテゴリ名横の pill タグ */
-  .category-title {
-    display:flex;
-    align-items:center;
-    gap:10px;
-    user-select: none;
-    -webkit-user-select: none;
-    -ms-user-select: none;
-  }
-  .category-sum {
-    display:inline-block;
-    font-size:14px;
-    padding:3px 12px;
-    border-radius:999px;
-    font-weight:600;
-    background:linear-gradient(145deg, rgba(250,252,255,0.8), rgba(235,242,255,0.8));
-    border:1px solid rgba(150,170,255,0.55);
-    color:#3a6cff;
-    box-shadow:
-      0 2px 6px rgba(70,100,200,0.15),
-      inset 0 0 4px rgba(255,255,255,0.6);
-    transition: opacity .25s ease, transform .25s ease, box-shadow .25s ease;
-  }
-  .category-sum.flash {
-    opacity:0.9;
-    transform:scale(1.12);
-    box-shadow:
-      0 0 14px rgba(120,150,255,0.45),
-      inset 0 0 6px rgba(255,255,255,0.8);
+  /* 上側ラベル非表示 */
+  .gauge-top-label{
+    display:none !important;
   }
 
-  /* ゲージ光エフェクト（ゲージ本体がふわっと光る） */
-  @keyframes flashGauge {
-    0% {
-      box-shadow: 0 0 0px rgba(255,255,255,0);
-      filter: brightness(1);
-    }
-    50% {
-      box-shadow: 0 0 16px rgba(255,255,255,0.9);
-      filter: brightness(1.8);
-    }
-    100% {
-      box-shadow: 0 0 0px rgba(255,255,255,0);
-      filter: brightness(1);
-    }
+  /* dailyList 表示 */
+  .daily-list{
+    display:block !important;
   }
 
-  .gauge-fill.flash {
-    animation: flashGauge 0.45s ease-out;
+  /* スマホ用 Reset 表示変更 */
+  #resetButton {
+    font-size: 14px;
   }
+}
 
-  /* スキャンライト */
-  @keyframes scanLight {
-    0% {
-      left: -20%;
-      opacity: 0;
-    }
-    40% {
-      opacity: 1;
-    }
-    100% {
-      left: 120%;
-      opacity: 0;
-    }
+/* ================================
+   タブレット
+================================ */
+@media (min-width:481px) and (max-width:768px){
+  .items {
+    grid-template-columns:repeat(3,minmax(0,1fr)) !important;
   }
-
-  .scan-light {
-    position:absolute;
-    top:0;
-    width:40%;
-    height:100%;
-    background:linear-gradient(90deg,
-      rgba(255,255,255,0) 0%,
-      rgba(255,255,255,0.8) 50%,
-      rgba(255,255,255,0) 100%);
-    pointer-events:none;
-    z-index:3;
-    border-radius:999px;
-    opacity:0;
+  .daily-list{
+    display:none !important;
   }
+}
 
-  .scan-light.run {
-    animation: scanLight 0.5s ease-out;
+/* ================================
+   PC
+================================ */
+@media (min-width:769px){
+  .items {
+    grid-template-columns:repeat(4,minmax(0,1fr));
   }
-
-  /* マーカー（ろうそく）光る */
-  @keyframes markerFlash {
-    0% {
-      filter: brightness(1);
-    }
-    50% {
-      filter: brightness(1.8) drop-shadow(0 0 8px rgba(255,255,200,0.9));
-    }
-    100% {
-      filter: brightness(1);
-    }
+  .daily-list{
+    display:none;
   }
-
-  #gaugeMarker.flash {
-    animation: markerFlash 0.45s ease-out;
-  }
-
-  /* スマホ（〜480px） */
-  @media (max-width:480px){
-    .items {
-      grid-template-columns:repeat(2,minmax(0,1fr)) !important;
-    }
-
-    .gauge-top-label{
-      display:none !important;
-    }
-    .daily-list{
-      display:block !important;
-      visibility: visible !important;
-      opacity: 1 !important;
-    }
-
-    .south-bottom-row {
-      justify-content: flex-end;
-      gap: 8px;
-    }
-
-    .check-input {
-      display:none !important;
-    }
-    .check-wrapper {
-      cursor:pointer;
-    }
-
-    #resetButton,
-    #undoButton,
-    #redoButton {
-      font-size: 14px;
-      margin-right: 0;
-      white-space: nowrap;
-    }
-
-    /* スマホの (16)2268 などを 1 行で */
-    #dailyList {
-      white-space: nowrap !important;
-      display: block !important;
-      overflow-x: auto;
-    }
-  }
-
-  /* タブレット（481〜768px） */
-  @media (min-width:481px) and (max-width:768px){
-    .items {
-      grid-template-columns:repeat(3,minmax(0,1fr)) !important;
-    }
-    .gauge-top-label{
-      display:none !important;
-    }
-    .daily-list{
-      display:none !important;
-    }
-  }
-
-  /* PC（769px〜） */
-  @media (min-width:769px){
-    .items {
-      grid-template-columns:repeat(4,minmax(0,1fr));
-    }
-    .item-name{
-      font-size:14px !important;
-      font-family:'Noto Sans JP',sans-serif !important;
-      font-weight:600 !important;
-    }
-    .daily-list{
-      display:none;
-    }
-  }
+}
 </style>
 </head>
 
@@ -520,13 +375,13 @@
     <div class="gauge-wrapper">
       <div class="gauge-track" id="gaugeTrack">
         <div class="gauge-fill" id="gaugeFill"></div>
-        <!-- 横へ流れる光 -->
         <div id="scanLight" class="scan-light"></div>
       </div>
+
       <div id="gaugeMarker">
         <img src="candle.png">
       </div>
-      <!-- 下側ラベルをゲージ内に置く -->
+
       <div id="bottomLabelLayer"></div>
     </div>
 
@@ -535,10 +390,10 @@
         <div id="required">デイリーライト: <b>2055（15本）</b></div>
         <div id="dailyList" class="daily-list"></div>
       </div>
+
       <div class="button-group">
         <button id="resetButton">全てリセット</button>
         <button id="undoButton" style="display:none;">元に戻す</button>
-        <button id="redoButton" style="display:none;">やり直し</button>
       </div>
     </div>
   </div>
@@ -549,7 +404,9 @@
 <div id="topLabelLayer"></div>
 
 <script>
-/* ========= データ ========= */
+/* ===================
+   データ
+=================== */
 const categories = ["孤島","草原","雨林","峡谷","捨てられた地","書庫","その他","ソーシャル"];
 const items = [
   ["砂丘","予言者の石窟","水の試練","土の試練","風の試練","火の試練"],
@@ -563,27 +420,28 @@ const items = [
 ];
 
 const values = [
-  [200,50,100,105,200,200],           // 孤島（6）
-  [55,119,45,99,50,299],              // 草原（6）
-  [45,227,175,42,83,55,57],           // 雨林（7）
-  [104,135,79,150,10,93,100,50,215],  // 峡谷（9）
-  [65,92,111,63,109,188],             // 捨て地（6）
-  [16,110,12,222,64,31,50,140,57],    // 書庫（9）
-  [23,23,50,200,200,30],              // その他（6）
-  [540,540,300,300,200]               // ソーシャル（5）
+  [200,50,100,105,200,200],
+  [55,119,45,99,50,299],
+  [45,227,175,42,83,55,57],
+  [104,135,79,150,10,93,100,50,215],
+  [65,92,111,63,109,188],
+  [16,110,12,222,64,31,50,140,57],
+  [23,23,50,200,200,30],
+  [540,540,300,300,200]
 ];
 
 const sundayValues = [
-  [200,50,100,105,200,200],           // 孤島（6）
-  [55,119,45,99,50,299],              // 草原（6）
-  [45,227,175,42,83,55,57],           // 雨林（7）
-  [104,135,79,150,10,93,100,50,215],  // 峡谷（9）
-  [86,119,139,101,109,188],           // 捨て地（6）
-  [16,110,12,222,64,31,50,140,57],    // 書庫（9）
-  [23,23,50,200,200,30],              // その他（6）
-  [540,540,300,300,200]               // ソーシャル（5）
+  [200,50,100,105,200,200],
+  [55,119,45,99,50,299],
+  [45,227,175,42,83,55,57],
+  [104,135,79,150,10,93,100,50,215],
+  [86,119,139,101,109,188],
+  [16,110,12,222,64,31,50,140,57],
+  [23,23,50,200,200,30],
+  [540,540,300,300,200]
 ];
 
+/* キャンドル到達値 */
 const candleThresholds = [
   {max:93,candles:0},{max:187,candles:1},{max:281,candles:2},{max:375,candles:3},
   {max:469,candles:4},{max:608,candles:5},{max:747,candles:6},{max:886,candles:7},
@@ -597,9 +455,10 @@ const thresholdMap = {
   15:2055,16:2268,17:2481,18:2719,19:3207,20:4195
 };
 
-const isSunday = (new Date().getDay()===0);
-let activeValues = isSunday ? sundayValues : values;
+/* 曜日判定 */
+let activeValues = (new Date().getDay()===0) ? sundayValues : values;
 
+/* DOM取得 */
 const mainPanel = document.getElementById("mainPanel");
 const totalLabel = document.getElementById("total");
 const gaugeFill = document.getElementById("gaugeFill");
@@ -607,19 +466,19 @@ const gaugeMarker = document.getElementById("gaugeMarker");
 const gaugeTrack = document.getElementById("gaugeTrack");
 const topLabelLayer = document.getElementById("topLabelLayer");
 const bottomLabelLayer = document.getElementById("bottomLabelLayer");
-const scanLight = document.getElementById("scanLight");
 const undoButton = document.getElementById("undoButton");
-const redoButton = document.getElementById("redoButton");
 
 let checkBoxes = [];
-let lastCandles = 0;
 let categorySumTags = [];
 
-/* Undo / Redo 用 */
-let undoState = null;
-let redoState = null;
+let lastCandles = 0;
 
-/* ===== メモリ生成 ===== */
+/* Undo 用状態保持 */
+let undoState = null;
+
+/* ===============================
+   メモリ線生成
+================================ */
 for(let i=1;i<=19;i++){
   const mem=document.createElement("div");
   mem.classList.add("gauge-segment");
@@ -628,7 +487,9 @@ for(let i=1;i<=19;i++){
   gaugeTrack.appendChild(mem);
 }
 
-/* ===== カテゴリ生成 ===== */
+/* ===============================
+   カテゴリ生成
+================================ */
 categories.forEach((cat,i)=>{
   const card=document.createElement("div");
   card.className="category";
@@ -713,7 +574,9 @@ categories.forEach((cat,i)=>{
   mainPanel.appendChild(card);
 });
 
-/* ===== キャンドル変換 ===== */
+/* ===============================
+   キャンドル変換
+================================ */
 function getCandleCount(t){
   for(const x of candleThresholds){
     if(t<=x.max) return x.candles;
@@ -721,50 +584,44 @@ function getCandleCount(t){
   return 0;
 }
 
-/* ===== ゲージ更新（光エフェクト込み） ===== */
+/* ===============================
+   ゲージ更新
+================================ */
 function updateGauge(c){
   const ratio = c / 20;
 
   if (c > lastCandles) {
     gaugeFill.classList.add("flash");
     setTimeout(()=>gaugeFill.classList.remove("flash"),450);
-
-    if (scanLight) {
-      scanLight.classList.remove("run");
-      void scanLight.offsetWidth;
-      scanLight.classList.add("run");
-    }
-
     gaugeMarker.classList.add("flash");
     setTimeout(()=>gaugeMarker.classList.remove("flash"),450);
   }
 
   gaugeFill.style.width = (ratio * 100) + "%";
   gaugeMarker.style.left = (ratio * 100) + "%";
+
+  lastCandles = c;
 }
 
-/* ===== スマホ用：「全てリセット」→「リセット」 ===== */
+/* ===============================
+   Reset ボタンの文字変更（スマホのみ）
+================================ */
 function updateResetButtonLabel() {
   const isMobile = window.matchMedia("(max-width: 480px)").matches;
-  const btn = document.getElementById("resetButton");
-  if (!btn) return;
-
-  if (isMobile) {
-    btn.textContent = "リセット";
-  } else {
-    btn.textContent = "全てリセット";
-  }
+  resetButton.textContent = isMobile ? "リセット" : "全てリセット";
 }
-
 window.addEventListener("load", updateResetButtonLabel);
 window.addEventListener("resize", updateResetButtonLabel);
 
-/* ===== パン屋カンスト対応版 updateTotal ===== */
+/* ===============================
+   合計計算（パン屋カンスト対応）
+================================ */
 function updateTotal(){
   let total=0;
 
-  const p1=checkBoxes[7][0]; // パン屋
-  const p2=checkBoxes[7][1]; // パン屋2
+  const p1=checkBoxes[7][0];
+  const p2=checkBoxes[7][1];
+
   const v1=parseInt(p1.dataset.value,10);
   const v2=parseInt(p2.dataset.value,10);
 
@@ -774,39 +631,34 @@ function updateTotal(){
 
   const cappedPanya=Math.min(panyaSum,1000);
 
-  // 全体合計
   checkBoxes.forEach(row=>{
     row.forEach(cb=>{
       if(cb.checked) total += parseInt(cb.dataset.value,10);
     });
   });
 
-  // パン屋だけ置き換え
   total = total - panyaSum + cappedPanya;
 
-  // パン屋2のラベル変更
   const p2Label = p2.parentElement.querySelector(".item-value");
   if(p1.checked && p2.checked){
     p2Label.textContent = "+460";
     p2Label.style.color = "red";
     p2Label.style.fontWeight = "700";
-  }else{
+  } else {
     p2Label.textContent = `+${v2}`;
     p2Label.style.color = "";
     p2Label.style.fontWeight = "";
   }
 
-  // 表示
   const c=getCandleCount(total);
   totalLabel.innerHTML=`合計: ${total} （${c}キャンドル）`;
 
-  if(c!==lastCandles){
-    updateGauge(c);
-    lastCandles=c;
-  }
+  updateGauge(c);
 }
 
-/* ===== カテゴリ小計更新 ===== */
+/* ===============================
+   カテゴリ小計更新
+================================ */
 function updateCategoryTotals(){
   categories.forEach((cat,i)=>{
     let sum=0;
@@ -825,7 +677,9 @@ function updateCategoryTotals(){
   });
 }
 
-/* ===== 上側ラベル ===== */
+/* ===============================
+   上側ラベル配置
+================================ */
 function placeTopLabels(){
   topLabelLayer.innerHTML="";
   const rect=gaugeTrack.getBoundingClientRect();
@@ -833,8 +687,6 @@ function placeTopLabels(){
 
   for(let c=15;c<=20;c++){
     const v=thresholdMap[c];
-    if(!v) continue;
-
     const label=document.createElement("div");
     label.className="gauge-top-label";
     label.textContent=v;
@@ -847,26 +699,26 @@ function placeTopLabels(){
   }
 }
 
-/* ===== 下側ラベル ===== */
+/* ===============================
+   下側ラベル配置
+================================ */
 function placeBottomLabels(){
   bottomLabelLayer.innerHTML="";
 
   for(const n of [0,5,10,15,20]){
     const ratio = n / 20;
-
     const label=document.createElement("div");
     label.className="bottom-gauge-label";
     label.textContent=n;
-
-    // ゲージ幅に対する割合で配置
     label.style.left = (ratio * 100) + "%";
     label.style.top = "0px";
-
     bottomLabelLayer.appendChild(label);
   }
 }
 
-/* ===== スマホ用 デイリーリスト ===== */
+/* ===============================
+   スマホ用デイリーリスト
+================================ */
 function updateDailyList(){
   const list=document.getElementById("dailyList");
   const isMobile=window.matchMedia("(max-width: 480px)").matches;
@@ -877,14 +729,16 @@ function updateDailyList(){
   }
 
   list.textContent =
-    `(16)${thresholdMap[16]} `+
-    `(17)${thresholdMap[17]} `+
-    `(18)${thresholdMap[18]} `+
-    `(19)${thresholdMap[19]} `+
-    `(20)${thresholdMap[20]}`;
+    `(16)${thresholdMap[16]} `
+  + `(17)${thresholdMap[17]} `
+  + `(18)${thresholdMap[18]} `
+  + `(19)${thresholdMap[19]} `
+  + `(20)${thresholdMap[20]}`;
 }
 
-/* ===== wrapクリックでトグル ===== */
+/* ===============================
+   ラベルクリックでトグル
+================================ */
 function applyWrapToggle(){
   checkBoxes.forEach(row=>{
     row.forEach(cb=>{
@@ -903,28 +757,25 @@ function applyWrapToggle(){
   });
 }
 
-/* ===== 状態スナップショット & 復元 ===== */
+/* ===============================
+   Undo 用状態管理
+================================ */
 function snapshotState(){
-  // 2次元配列でチェック状態だけ保存
   return checkBoxes.map(row => row.map(cb => cb.checked));
 }
 
 function restoreState(state){
-  if (!state) return;
-
   checkBoxes.forEach((row,i)=>{
     row.forEach((cb,j)=>{
-      const checked = !!state[i][j];
+      const checked = state[i][j];
       cb.checked = checked;
       localStorage.setItem(cb.id, checked);
       cb.parentElement.classList.toggle("checked", checked);
     });
   });
 
-  // カテゴリトグル同期（全部ONのときだけON）
-  document.querySelectorAll(".category-toggle").forEach((toggle, i)=>{
-    const row = state[i];
-    const allChecked = row.every(v => v === true);
+  document.querySelectorAll(".category-toggle").forEach((toggle,i)=>{
+    const allChecked = state[i].every(v=>v);
     toggle.checked = allChecked;
   });
 
@@ -935,19 +786,17 @@ function restoreState(state){
   updateDailyList();
 }
 
-/* Undo/Redoボタン表示更新 */
-function updateUndoRedoButtons(){
+/* Undo ボタン表示切替 */
+function updateUndoButton(){
   undoButton.style.display = undoState ? "inline-block" : "none";
-  redoButton.style.display = redoState ? "inline-block" : "none";
 }
 
-/* ===== リセット ===== */
+/* ===============================
+   リセット
+================================ */
 resetButton.onclick=()=>{
-  // リセット前の状態を保存（Undo 用）
   undoState = snapshotState();
-  // Redo はクリア
-  redoState = null;
-  updateUndoRedoButtons();
+  updateUndoButton();
 
   checkBoxes.forEach(row=>row.forEach(cb=>{
     cb.checked=false;
@@ -963,28 +812,19 @@ resetButton.onclick=()=>{
   updateDailyList();
 };
 
-/* ===== Undo（元に戻す） ===== */
-undoButton.onclick = () => {
-  if (!undoState) return;
-  // 今の状態を Redo 用に保存
-  redoState = snapshotState();
+/* ===============================
+   Undo（元に戻す）
+================================ */
+undoButton.onclick=()=>{
+  if(!undoState) return;
   restoreState(undoState);
-  // Undo は一回きり
   undoState = null;
-  updateUndoRedoButtons();
+  updateUndoButton();
 };
 
-/* ===== Redo（やり直し） ===== */
-redoButton.onclick = () => {
-  if (!redoState) return;
-  // 現状態を Undo 用に保存（もう一度戻せるように）
-  undoState = snapshotState();
-  restoreState(redoState);
-  redoState = null;
-  updateUndoRedoButtons();
-};
-
-/* ===== 初期表示 ===== */
+/* ===============================
+   初期表示
+================================ */
 window.addEventListener("load",()=>{
   updateTotal();
   updateCategoryTotals();
@@ -992,10 +832,12 @@ window.addEventListener("load",()=>{
   placeBottomLabels();
   updateDailyList();
   applyWrapToggle();
-  updateUndoRedoButtons(); // 初期はどちらも非表示
+  updateUndoButton();
 });
 
-/* ===== サイズ変更 ===== */
+/* ===============================
+   ウィンドウリサイズ
+================================ */
 window.addEventListener("resize",()=>{
   placeTopLabels();
   placeBottomLabels();
