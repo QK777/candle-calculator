@@ -321,7 +321,7 @@ body {
 /* ロウソク画像そのもの */
 #gaugeMarker img {
   width: 48px;
-  opacity: 0.9;
+  opacity: 1.0;
   transition: filter 0.4s ease;
   
   /* ▼ ロウソクの影：柔らかいバージョン ▼ */
@@ -496,3 +496,4 @@ body {
 @media (min-width:769px){
   .items { grid-template-columns:repeat(4,1fr); }
 }
+
