@@ -6,9 +6,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <!-- フォント -->
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600&family=Roboto:wght@100;300&family=Noto+Sans+JP:wght@100;700&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Sawarabi+Gothic&display=swap" rel="stylesheet">
+<link
+  href="https://fonts.googleapis.com/css2?
+    family=Baloo+2:wght@400;600&
+    family=Roboto:wght@100;300&
+    family=Noto+Sans+JP:wght@100;700&
+    family=Zen+Maru+Gothic:wght@400;500&
+    family=Sawarabi+Gothic
+    &display=swap"
+  rel="stylesheet"
+>
 
 <!-- 外部CSS -->
 <link rel="stylesheet" href="style.css">
@@ -28,7 +35,6 @@
 
   <!-- 画面下固定パネル -->
   <div id="southPanel">
-    <div id="total">合計: 0 （0キャンドル）</div>
 
     <div class="gauge-wrapper">
       <div class="gauge-track" id="gaugeTrack">
@@ -36,25 +42,32 @@
       </div>
 
       <div id="gaugeMarker">
-        <img src="candle.png" alt="candle">
+        <img src="Sky_Candle3.png" alt="candle">
       </div>
 
       <div id="bottomLabelLayer"></div>
     </div>
 
+    <!-- 合計 + ボタン行 -->
     <div class="south-bottom-row">
-      <div>
-        <div id="required">デイリーライト: <b>2055（15本）</b></div>
+
+      <!-- 左：合計 -->
+      <div class="south-left">
+        <div id="total" class="total-bottom"></div>
         <div id="dailyList" class="daily-list"></div>
       </div>
 
-      <div class="button-group">
+      <!-- 右：ボタン -->
+      <div class="south-right">
         <button id="resetButton">全てリセット</button>
         <button id="undoButton" style="display:none;">元に戻す</button>
       </div>
+
     </div>
-  </div>
-</div>
+
+  </div><!-- ← southPanel END 正しい閉じタグ -->
+
+</div><!-- app END -->
 
 <!-- 上側ラベル -->
 <div id="topLabelLayer"></div>
