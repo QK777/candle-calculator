@@ -9,6 +9,7 @@
    ✔ カテゴリ小計（ソーシャルも1000上限で補正）
    ✔ ローカルストレージ保存
    ✔ ロウソクアイコン差し替え & ボヨンアニメ
+   ✔ 合計スロット：変化した桁だけ回転
    ============================================================ */
 
 
@@ -103,7 +104,6 @@ let undoState = null;
 
 /* ============================================================
    ゲージのメモリ線（0〜20の中間線）生成
-   ※ レイアウトはそのまま、JS で線だけ追加
 ============================================================ */
 for (let i = 1; i <= 19; i++) {
   const mem = document.createElement("div");
@@ -293,10 +293,49 @@ function calcPanya(){
 
 
 /* ============================================================
-   合計計算
+   合計計算（スロット4桁アニメ付き・変化した桁だけ回転）
 ============================================================ */
+let prevDigits = null;
+let slotInitialized = false;
+
+function initTotalSlotDisplay() {
+  if (slotInitialized) return;
+  slotInitialized = true;
+
+  // スロット4桁のHTMLを生成
+  let slotInner = "";
+  for (let i = 0; i < 4; i++) {
+    slotInner += `
+      <span class="digit-slot">
+        <span class="digit-reel" id="slot_reel_${i}">
+          <span>0</span>
+          <span>1</span>
+          <span>2</span>
+          <span>3</span>
+          <span>4</span>
+          <span>5</span>
+          <span>6</span>
+          <span>7</span>
+          <span>8</span>
+          <span>9</span>
+        </span>
+      </span>`;
+  }
+
+  totalLabel.innerHTML = `
+    合計：
+    <span id="totalSlot" class="slot-wrapper">
+      ${slotInner}
+    </span>
+    （<span id="totalCandles">0</span>キャンドル）
+  `;
+}
+
 function updateTotal(){
   let total = 0;
+
+  // ▼ 初回のみ：スロットDOM構築
+  initTotalSlotDisplay();
 
   // 全アイテム合計
   checkBoxes.forEach(row=>{
@@ -312,7 +351,53 @@ function updateTotal(){
   total = total - raw + capped;
 
   const c = getCandleCount(total);
-  totalLabel.innerHTML = `合計: ${total} （${c}キャンドル）`;
+
+  // キャンドル本数表示だけ更新
+  const candleSpan = document.getElementById("totalCandles");
+  if (candleSpan) {
+    candleSpan.textContent = c;
+  }
+
+  /* ----------------------------
+     ▼ スロット4桁に変換（ゼロ埋め）
+  ---------------------------- */
+  const padded = total.toString().padStart(4, "0");
+  const digits = padded.split(""); // [ "0","1","2","3" ]
+
+  /* ----------------------------
+     ▼ スロットに数字を反映（変化した桁だけアニメ）
+  ---------------------------- */
+  digits.forEach((d, i) => {
+    const reel = document.getElementById(`slot_reel_${i}`);
+    if (!reel) return;
+
+    const offset = parseInt(d, 10) * -32;  // サイズ32px（上方向へスクロール）
+
+    // 初回は prevDigits が null → 全桁アニメ
+    if (prevDigits === null) {
+      reel.style.transition = "transform 0.45s ease-out";
+      requestAnimationFrame(() => {
+        reel.style.transform = `translateY(${offset}px)`;
+      });
+      return;
+    }
+
+    const prev = prevDigits[i];
+
+    // ▼ 同じ数字 → 何もしない（位置もそのまま、回転もしない）
+    if (prev === d) {
+      return;
+    }
+
+    // ▼ 異なる数字 → アニメさせる
+    reel.style.transition = "transform 0.45s ease-out";
+    requestAnimationFrame(() => {
+      reel.style.transform = `translateY(${offset}px)`;
+    });
+  });
+
+  // 次回比較用に保存
+  prevDigits = digits;
 
   updateGauge(c, total);
   updateDailyList();
@@ -367,7 +452,7 @@ function updateCategoryTotals(){
 function updateCandleIcon(total) {
   let newIcon = "";
 
-  // ▼ アイコン選択（柔らかい影付き PNG を用意しておく）
+  // ▼ アイコン選択
   if (total <= 607) {
     newIcon = "Sky_Candle3.png";
   } else if (total <= 1341) {
@@ -381,9 +466,8 @@ function updateCandleIcon(total) {
   }
 
   const img = gaugeMarker.querySelector("img");
-  if (!img) return; // 念のためガード
+  if (!img) return;
 
-  // 変更が発生したときだけ光らせる
   if (img.dataset.currentIcon !== newIcon) {
     img.dataset.currentIcon = newIcon;
     img.src = newIcon;
@@ -392,14 +476,13 @@ function updateCandleIcon(total) {
     setTimeout(() => gaugeMarker.classList.remove("flash-icon"), 900);
   }
 
-  // ゲージ移動時の上下ボヨン
   gaugeMarker.classList.add("bounce");
   setTimeout(() => gaugeMarker.classList.remove("bounce"), 500);
 }
 
 
 /* ============================================================
-   ゲージ更新（アイコン更新もここから呼ぶ）
+   ゲージ更新
 ============================================================ */
 function updateGauge(c, total){
   const ratio = c / 20;
@@ -417,7 +500,6 @@ function updateGauge(c, total){
 
   lastCandles = c;
 
-  // 合計値に応じてロウソクアイコン差し替え
   updateCandleIcon(total);
 }
 
