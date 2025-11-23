@@ -111,7 +111,7 @@ body {
   100% { transform: scale(1.0); opacity: 1; }
 }
 
-/* カテゴリ名横の pill タグ */
+/* pill タグ */
 .category-title {
   display:flex;
   align-items:center;
@@ -187,7 +187,7 @@ body {
 }
 
 /* ================================
-   日曜日スイッチ（捨てられた地カード右端）
+   日曜日スイッチ
 ================================ */
 .sunday-toggle-container{
   display:flex;
@@ -240,12 +240,9 @@ body {
   transform: translateX(28px);
   box-shadow: 0 2px 5px rgba(0,0,0,0.35);
 }
-.sunday-switch:active .sunday-slider::before {
-  box-shadow: 0 1px 3px rgba(0,0,0,0.25);
-}
 
 /* ================================
-   合計カード（固定下部）
+   合計カード（固定）
 ================================ */
 #southPanel {
   position: fixed;
@@ -274,23 +271,33 @@ body {
   font-family:'Noto Sans JP',sans-serif;
 }
 
-/* デイリーライン (スマホ用で主に表示) */
+/* デイリーライン（スマホ） */
 .daily-list {
   display:none;
   font-size:13px;
   margin-top:4px;
 }
 
-/* スマホ用しきい値ラベルのスタイル（ここを変えれば色やサイズ調整可） */
+/* スマホ用しきい値ラベル */
 .sp-threshold-label {
   font-size: 12px;
   color: #333;
   margin-right: 6px;
 }
 .sp-threshold-label-highlight {
-  font-size: 14px;
+  font-size: 16px;
   color: #d33;
   font-weight: 700;
+}
+
+/* 光アニメ */
+.sp-glow {
+  animation: spGlow 0.7s ease-in-out;
+}
+@keyframes spGlow {
+  0% { filter: brightness(1); text-shadow:0 0 0px rgba(255,100,100,0); }
+  50%{ filter: brightness(1.7); text-shadow:0 0 12px rgba(255,120,120,1); }
+  100%{ filter: brightness(1); text-shadow:0 0 0px rgba(0,0,0,0); }
 }
 
 /* ================================
@@ -332,7 +339,7 @@ body {
   width:44px;
 }
 
-/* ゲージ下のメモリ線 */
+/* メモリ線 */
 .gauge-segment {
   position:absolute;
   width:2px;
@@ -349,7 +356,7 @@ body {
   background:rgba(30,30,30,0.9);
 }
 
-/* 上側ラベル（2055,2268...） */
+/* 上側ラベル */
 #topLabelLayer {
   position:fixed;
   left:0;
@@ -368,7 +375,7 @@ body {
   white-space:nowrap;
 }
 
-/* 下側ラベル（0,5,10,15,20）ゲージ直下に固定 */
+/* 下側ラベル */
 #bottomLabelLayer {
   position:absolute;
   left:0;
@@ -386,7 +393,7 @@ body {
   white-space:nowrap;
 }
 
-/* ゲージ光エフェクト */
+/* ゲージ光 */
 @keyframes flashGauge {
   0% { box-shadow: 0 0 0px rgba(255,255,255,0); filter: brightness(1); }
   50%{ box-shadow: 0 0 16px rgba(255,255,255,0.9); filter: brightness(1.8); }
@@ -428,7 +435,7 @@ body {
   background:linear-gradient(135deg,#8bb4ff,#6b8dff);
 }
 
-/* 下段レイアウト */
+/* 下段 */
 .south-bottom-row {
   margin-top:30px;
   display:flex;
@@ -437,23 +444,23 @@ body {
 }
 
 /* ================================
-   スマホ対応（押し出し対策 + 新デザイン）
+   スマホ最適化
 ================================ */
 @media (max-width:480px){
 
-  /* 左側（required + dailyList）が押し出されないように */
+  .category-label {
+    font-size:16px !important;
+    top:-1px;
+  }
+
   .south-bottom-row > div:first-child {
     flex: 1;
     min-width: 0;
     overflow: hidden;
   }
 
-  /* 旧：デイリーライト行 → スマホでは非表示 */
-  #required {
-    display:none;
-  }
+  #required { display:none; }
 
-  /* (15)〜(20) を1行に並べて横スクロール可 */
   #dailyList {
     white-space: nowrap;
     overflow-x: auto;
@@ -478,15 +485,11 @@ body {
     display:block !important;
   }
 
-  /* スマホ時アイテム名を 14px に統一 */
   .item-name {
     font-size:14px !important;
   }
 }
 
-/* ================================
-   タブレット
-================================ */
 @media (min-width:481px) and (max-width:768px){
   .items {
     grid-template-columns:repeat(3,minmax(0,1fr)) !important;
@@ -496,9 +499,6 @@ body {
   }
 }
 
-/* ================================
-   PC
-================================ */
 @media (min-width:769px){
   .items {
     grid-template-columns:repeat(4,minmax(0,1fr));
@@ -510,6 +510,7 @@ body {
 </style>
 </head>
 
+
 <body>
 <div class="app">
 
@@ -519,8 +520,10 @@ body {
     <div class="page-title-line">Candle Calculator</div>
   </div>
 
+  <!-- カテゴリカードが入る -->
   <div id="mainPanel"></div>
 
+  <!-- 画面下固定の合計パネル -->
   <div id="southPanel">
     <div id="total">合計: 0 （0キャンドル）</div>
 
@@ -551,8 +554,10 @@ body {
 
 </div>
 
-<!-- 上側ラベル -->
+<!-- 上側ラベル（2055, 2268...） -->
 <div id="topLabelLayer"></div>
+
+
 
 <script>
 /* ===================
@@ -611,7 +616,7 @@ let activeValues = values;
 let sundayMode = false;
 const SUNDAY_MODE_KEY = "sky_candle_sunday_mode";
 
-/* DOM取得 */
+/* DOM */
 const mainPanel = document.getElementById("mainPanel");
 const totalLabel = document.getElementById("total");
 const gaugeFill = document.getElementById("gaugeFill");
@@ -687,7 +692,7 @@ categories.forEach((cat,i)=>{
   leftBox.appendChild(titleWrap);
   head.appendChild(leftBox);
 
-  /* 捨てられた地の右端に「日曜日」＋スイッチ */
+  /* 捨てられた地の右端に日曜日トグル */
   if(i===4){
     const sundayContainer = document.createElement("div");
     sundayContainer.className = "sunday-toggle-container";
@@ -768,7 +773,7 @@ categories.forEach((cat,i)=>{
 });
 
 /* ===============================
-   キャンドル変換
+   キャンドル数計算
 ================================ */
 function getCandleCount(t){
   for(const x of candleThresholds){
@@ -797,7 +802,7 @@ function updateGauge(c){
 }
 
 /* ===============================
-   Reset ボタンの文字変更（スマホのみ）
+   Reset ボタンの文字更新（スマホのみ）
 ================================ */
 function updateResetButtonLabel() {
   const isMobile = window.matchMedia("(max-width: 480px)").matches;
@@ -810,6 +815,7 @@ function updateResetButtonLabel() {
 function updateTotal(){
   let total=0;
 
+  // パン屋カンスト処理
   const p1=checkBoxes[7][0];
   const p2=checkBoxes[7][1];
 
@@ -830,6 +836,7 @@ function updateTotal(){
 
   total = total - panyaSum + cappedPanya;
 
+  // パン屋2 表示切替
   const p2Label = p2.parentElement.querySelector(".item-value");
   if(p1.checked && p2.checked){
     p2Label.textContent = "+460";
@@ -845,6 +852,9 @@ function updateTotal(){
   totalLabel.innerHTML=`合計: ${total} （${c}キャンドル）`;
 
   updateGauge(c);
+
+  // ★ スマホしきい値更新
+  updateDailyList();
 }
 
 /* ===============================
@@ -869,7 +879,7 @@ function updateCategoryTotals(){
 }
 
 /* ===============================
-   上側ラベル配置（2055, 2268...）
+   上側ラベル配置（PC用）
 ================================ */
 function placeTopLabels(){
   topLabelLayer.innerHTML="";
@@ -908,24 +918,77 @@ function placeBottomLabels(){
 }
 
 /* ===============================
-   スマホ用デイリーリスト
+   ★ スマホ用デイリーリスト（2055 → 2268 → … → 灰キャン）
 ================================ */
 function updateDailyList(){
   const isMobile=window.matchMedia("(max-width: 480px)").matches;
-
   if(!isMobile){
     dailyListEl.textContent="";
     return;
   }
 
-  // (15)〜(20) を span で区切って、(15) は強調 & 赤
-  dailyListEl.innerHTML =
-    `<span class="sp-threshold-label sp-threshold-label-highlight">(15)${thresholdMap[15]}</span>` +
-    `<span class="sp-threshold-label">(16)${thresholdMap[16]}</span>` +
-    `<span class="sp-threshold-label">(17)${thresholdMap[17]}</span>` +
-    `<span class="sp-threshold-label">(18)${thresholdMap[18]}</span>` +
-    `<span class="sp-threshold-label">(19)${thresholdMap[19]}</span>` +
-    `<span class="sp-threshold-label">(20)${thresholdMap[20]}</span>`;
+  // 合計値の再取得（updateTotal の totalLabel とは別管理）
+  let total=0;
+  checkBoxes.forEach(row=>{
+    row.forEach(cb=>{
+      if(cb.checked) total += parseInt(cb.dataset.value,10);
+    });
+  });
+
+  // パン屋反映は updateTotal の中ですでに調整済みなのでここはシンプルでOK
+
+  const thresholds = [
+    { base: 2055, next: 2268, candle: 15 },
+    { base: 2268, next: 2481, candle: 16 },
+    { base: 2481, next: 2719, candle: 17 },
+    { base: 2719, next: 3207, candle: 18 },
+    { base: 3207, next: 4195, candle: 19 }
+  ];
+
+  let baseText = "";
+  let nextText = "";
+  let glow = false;
+
+  // 4195以上 → 灰キャン
+  if (total >= 4195){
+    baseText = `4195（20本）`;
+    nextText = `灰キャン`;
+    glow = true;
+  } else {
+    let found = false;
+
+    for (let t of thresholds){
+      if(total < 2055){
+        baseText = `2055（15本）`;
+        nextText = `2268（16本）`;
+        found = true;
+        break;
+      }
+
+      if(total >= t.base && total < t.next){
+        baseText = `${t.base}（${t.candle}本）`;
+        nextText = `${t.next}（${t.candle+1}本）`;
+        glow = true;
+        found = true;
+        break;
+      }
+    }
+
+    if(!found){
+      baseText = `3207（19本）`;
+      nextText = `4195（20本）`;
+      glow = true;
+    }
+  }
+
+  // HTML生成
+  dailyListEl.innerHTML = `
+    <span class="sp-threshold-label-highlight ${glow ? "sp-glow" : ""}">
+      ${baseText}
+    </span>
+    <span style="font-size:14px; color:#000; margin:0 6px;">➡</span>
+    <span class="sp-threshold-label">${nextText}</span>
+  `;
 }
 
 /* ===============================
@@ -949,7 +1012,7 @@ function applyWrapToggle(){
 }
 
 /* ===============================
-   Undo 用状態管理
+   Undo 状態管理
 ================================ */
 function snapshotState(){
   return checkBoxes.map(row => row.map(cb => cb.checked));
@@ -1013,6 +1076,7 @@ resetButton.onclick=()=>{
     localStorage.setItem(cb.id,false);
     cb.parentElement.classList.remove("checked");
   }));
+
   document.querySelectorAll(".category-toggle").forEach(a=>a.checked=false);
 
   updateTotal();
@@ -1023,7 +1087,7 @@ resetButton.onclick=()=>{
 };
 
 /* ===============================
-   Undo（元に戻す）
+   Undo
 ================================ */
 undoButton.onclick=()=>{
   if(!undoState) return;
@@ -1036,7 +1100,7 @@ undoButton.onclick=()=>{
    初期表示
 ================================ */
 window.addEventListener("load",()=>{
-  /* 日曜日モード復元 */
+
   const savedMode = localStorage.getItem(SUNDAY_MODE_KEY);
   if(savedMode === "true"){
     sundayMode = true;
@@ -1057,7 +1121,7 @@ window.addEventListener("load",()=>{
 });
 
 /* ===============================
-   ウィンドウリサイズ
+   リサイズ時
 ================================ */
 window.addEventListener("resize",()=>{
   placeTopLabels();
