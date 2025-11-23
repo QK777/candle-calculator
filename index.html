@@ -6,7 +6,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <!-- フォント -->
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600&family=Roboto:wght@100;300&family=Noto+Sans+JP:wght@100&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600&family=Roboto:wght@100;300&family=Noto+Sans+JP:wght@100;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Sawarabi+Gothic&display=swap" rel="stylesheet">
+
 
 <style>
 /* ================================
@@ -60,24 +63,86 @@ body {
 .category-header {
   display:flex;
   align-items:center;
+  justify-content:space-between;
   gap:10px;
   margin-bottom:12px;
   user-select: none;
 }
+.category-left {
+  display:flex;
+  align-items:center;
+  gap:1px;
+}
 .category-label {
-  font-family: 'Noto Sans JP', sans-serif;
-  font-size:20px;
-  font-weight:700;
+  font-family: 'Sawarabi Gothic', 'Noto Sans JP', sans-serif;
+  font-size:24px;
+  font-weight:500;
+  position: relative;
+  top: -2px;
 }
+/* ================================
+   カテゴリトグル（四角 → 丸）
+================================ */
 .category-toggle {
-  appearance:none;
-  width:20px; height:20px;
-  border-radius:6px;
-  border:2px solid #ff9b42;
-  background:#fff;
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;  /* ← 四角 → まる */
+  border: 2px solid #ff9b42;
+  background: #fff;
+  cursor: pointer;
+  position: relative;
+  transition: 
+    background 0.25s ease,
+    box-shadow 0.25s ease,
+    border-color 0.25s ease;
 }
+
+/* チェック時（● が灯るイメージ） */
 .category-toggle:checked {
-  background:linear-gradient(135deg,#ffb36b,#ff9b42);
+  background: radial-gradient(circle, #ffb36b 0%, #ff9b42 70%);
+  border-color: #ff9b42;
+  box-shadow: 0 0 6px rgba(255,150,50,0.6);
+}
+
+/* 点灯アニメ（自然にぽわっと増える） */
+.category-toggle:checked {
+  animation: catPop 0.25s ease-out;
+}
+
+@keyframes catPop {
+  0%   { transform: scale(0.6); opacity: 0.4; }
+  60%  { transform: scale(1.15); opacity: 1; }
+  100% { transform: scale(1.0); opacity: 1; }
+}
+
+
+/* カテゴリ名横の pill タグ */
+.category-title {
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.category-sum {
+  display:inline-block;
+  font-size:14px;
+  padding:3px 12px;
+  border-radius:999px;
+  font-weight:600;
+  background:linear-gradient(145deg, rgba(250,252,255,0.8), rgba(235,242,255,0.8));
+  border:1px solid rgba(150,170,255,0.55);
+  color:#3a6cff;
+  box-shadow:
+    0 2px 6px rgba(70,100,200,0.15),
+    inset 0 0 4px rgba(255,255,255,0.6);
+  transition: opacity .25s ease, transform .25s ease, box-shadow .25s ease;
+}
+.category-sum.flash {
+  opacity:0.9;
+  transform:scale(1.12);
+  box-shadow:
+    0 0 14px rgba(120,150,255,0.45),
+    inset 0 0 6px rgba(255,255,255,0.8);
 }
 
 /* アイテムグリッド */
@@ -100,7 +165,7 @@ body {
   user-select: none;
 }
 .check-input {
-  display: none !important;
+  display:none !important;
 }
 .check-wrapper.checked {
   background:rgba(255,200,120,0.25);
@@ -110,9 +175,10 @@ body {
 /* アイテム名 */
 .item-name {
   flex:1;
-  font-size:12px;
-  font-family:'Roboto','Noto Sans JP',sans-serif;
-  font-weight:300;
+  font-family: 'Sawarabi Gothic', 'Noto Sans JP', sans-serif !important;
+  font-weight: 400;
+  font-size: 18px;
+  letter-spacing: 0.2px;
   white-space:nowrap;
 }
 
@@ -124,6 +190,74 @@ body {
   border-radius:999px;
   background:rgba(61,138,255,0.08);
   border:1px solid rgba(61,138,255,0.25);
+}
+
+/* ================================
+   日曜日スイッチ（捨てられた地カード右端）
+================================ */
+.sunday-toggle-container{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.sunday-label-text {
+  font-size:16px;
+  font-family: 'Sawarabi Gothic', 'Noto Sans JP', sans-serif;
+  position: relative;
+  top: -1px;  /* ← 他のテキストと高さを揃える微調整 */
+}
+
+.sunday-switch {
+  position: relative;
+  width: 60px;
+  height: 32px;
+  display: inline-block;
+}
+
+.sunday-switch input {
+  display: none;
+}
+
+.sunday-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: #cfd3da;
+  border-radius: 32px;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.15);
+  transition: background 0.25s ease, box-shadow 0.25s ease;
+}
+
+.sunday-slider::before {
+  content: "";
+  position: absolute;
+  width: 26px;
+  height: 26px;
+  left: 3px;
+  bottom: 3px;
+  background: white;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  transition: transform 0.22s cubic-bezier(0.22, 0.61, 0.36, 1), box-shadow 0.22s ease;
+}
+
+/* ON */
+.sunday-switch input:checked + .sunday-slider {
+  background: linear-gradient(135deg, #4cd964, #3ac569);
+  box-shadow:
+    inset 0 0 0 rgba(0,0,0,0),
+    0 0 6px rgba(76,217,100,0.6);
+}
+
+.sunday-switch input:checked + .sunday-slider::before {
+  transform: translateX(28px);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.35);
+}
+
+/* タップ中のちょい伸び */
+.sunday-switch:active .sunday-slider::before {
+  box-shadow: 0 1px 3px rgba(0,0,0,0.25);
 }
 
 /* ================================
@@ -154,6 +288,13 @@ body {
   font-weight:700;
   color:#000;
   font-family:'Noto Sans JP',sans-serif;
+}
+
+/* デイリーライン (スマホ用で主に表示) */
+.daily-list {
+  display:none;
+  font-size:13px;
+  margin-top:4px;
 }
 
 /* ================================
@@ -188,7 +329,8 @@ body {
   position:absolute;
   top:-20px;
   transform:translateX(-50%);
-  width:44px; height:44px;
+  width:44px;
+  height:44px;
   pointer-events:none;
   z-index:5;
   transition:left 0.4s ease-out 0.05s;
@@ -214,7 +356,7 @@ body {
   background:rgba(30,30,30,0.9);
 }
 
-/* 上側ラベル */
+/* 上側ラベル（2055,2268...） */
 #topLabelLayer {
   position:fixed;
   left:0;
@@ -230,9 +372,10 @@ body {
   color:#000;
   font-weight:700;
   transform:translateX(-50%);
+  white-space:nowrap;
 }
 
-/* 下側ラベル（ゲージ内） */
+/* 下側ラベル（0,5,10,15,20）ゲージ直下に固定 */
 #bottomLabelLayer {
   position:absolute;
   left:0;
@@ -247,6 +390,26 @@ body {
   color:#000;
   font-weight:700;
   transform:translateX(-50%);
+  white-space:nowrap;
+}
+
+/* ゲージ光エフェクト */
+@keyframes flashGauge {
+  0% { box-shadow: 0 0 0px rgba(255,255,255,0); filter: brightness(1); }
+  50%{ box-shadow: 0 0 16px rgba(255,255,255,0.9); filter: brightness(1.8); }
+  100%{ box-shadow: 0 0 0px rgba(255,255,255,0); filter: brightness(1); }
+}
+.gauge-fill.flash {
+  animation: flashGauge 0.45s ease-out;
+}
+
+@keyframes markerFlash {
+  0% { filter: brightness(1); }
+  50%{ filter: brightness(1.8) drop-shadow(0 0 8px rgba(255,255,200,0.9)); }
+  100%{ filter: brightness(1); }
+}
+#gaugeMarker.flash {
+  animation: markerFlash 0.45s ease-out;
 }
 
 /* ================================
@@ -291,44 +454,35 @@ body {
 ================================ */
 @media (max-width:480px){
 
-  /* 左側（required + dailyList）を押し出されないように */
+  /* 左側（required + dailyList）が押し出されないように */
   .south-bottom-row > div:first-child {
     flex: 1;
     min-width: 0;
     overflow: hidden;
   }
 
-  /* dailyListは横スクロール */
   #dailyList {
     white-space: nowrap;
     overflow-x: auto;
     max-width: 100%;
   }
 
-  /* 右のボタンは縮まない */
   #resetButton,
   #undoButton {
     flex-shrink: 0;
+    font-size: 14px;
   }
 
-  /* アイテム列数変更 */
   .items {
     grid-template-columns:repeat(2,minmax(0,1fr)) !important;
   }
 
-  /* 上側ラベル非表示 */
   .gauge-top-label{
     display:none !important;
   }
 
-  /* dailyList 表示 */
   .daily-list{
     display:block !important;
-  }
-
-  /* スマホ用 Reset 表示変更 */
-  #resetButton {
-    font-size: 14px;
   }
 }
 
@@ -375,11 +529,10 @@ body {
     <div class="gauge-wrapper">
       <div class="gauge-track" id="gaugeTrack">
         <div class="gauge-fill" id="gaugeFill"></div>
-        <div id="scanLight" class="scan-light"></div>
       </div>
 
       <div id="gaugeMarker">
-        <img src="candle.png">
+        <img src="candle.png" alt="candle">
       </div>
 
       <div id="bottomLabelLayer"></div>
@@ -425,8 +578,8 @@ const values = [
   [45,227,175,42,83,55,57],
   [104,135,79,150,10,93,100,50,215],
   [65,92,111,63,109,188],
-  [16,110,12,222,64,31,50,140,57],
-  [23,23,50,200,200,30],
+  [69,110,12,222,64,31,50,140,57],
+  [23,23,50,200,200,80],
   [540,540,300,300,200]
 ];
 
@@ -436,8 +589,8 @@ const sundayValues = [
   [45,227,175,42,83,55,57],
   [104,135,79,150,10,93,100,50,215],
   [86,119,139,101,109,188],
-  [16,110,12,222,64,31,50,140,57],
-  [23,23,50,200,200,30],
+  [69,110,12,222,64,31,50,140,57],
+  [23,23,50,200,200,80],
   [540,540,300,300,200]
 ];
 
@@ -455,8 +608,10 @@ const thresholdMap = {
   15:2055,16:2268,17:2481,18:2719,19:3207,20:4195
 };
 
-/* 曜日判定 */
-let activeValues = (new Date().getDay()===0) ? sundayValues : values;
+/* 日曜日モード */
+let activeValues = values;
+let sundayMode = false;
+const SUNDAY_MODE_KEY = "sky_candle_sunday_mode";
 
 /* DOM取得 */
 const mainPanel = document.getElementById("mainPanel");
@@ -466,15 +621,15 @@ const gaugeMarker = document.getElementById("gaugeMarker");
 const gaugeTrack = document.getElementById("gaugeTrack");
 const topLabelLayer = document.getElementById("topLabelLayer");
 const bottomLabelLayer = document.getElementById("bottomLabelLayer");
+const resetButton = document.getElementById("resetButton");
 const undoButton = document.getElementById("undoButton");
+const dailyListEl = document.getElementById("dailyList");
 
 let checkBoxes = [];
 let categorySumTags = [];
-
 let lastCandles = 0;
-
-/* Undo 用状態保持 */
 let undoState = null;
+let sundaySwitchInput = null;
 
 /* ===============================
    メモリ線生成
@@ -496,6 +651,9 @@ categories.forEach((cat,i)=>{
 
   const head=document.createElement("div");
   head.className="category-header";
+
+  const leftBox=document.createElement("div");
+  leftBox.className="category-left";
 
   const toggle=document.createElement("input");
   toggle.type="checkbox";
@@ -527,8 +685,45 @@ categories.forEach((cat,i)=>{
   titleWrap.appendChild(label);
   titleWrap.appendChild(sumTag);
 
-  head.appendChild(toggle);
-  head.appendChild(titleWrap);
+  leftBox.appendChild(toggle);
+  leftBox.appendChild(titleWrap);
+  head.appendChild(leftBox);
+
+  /* 捨てられた地の右端に「日曜日」＋スイッチ */
+  if(i===4){
+    const sundayContainer = document.createElement("div");
+    sundayContainer.className = "sunday-toggle-container";
+
+    const text = document.createElement("span");
+    text.className = "sunday-label-text";
+    text.textContent = "日曜日";
+
+    const sundayWrap=document.createElement("label");
+    sundayWrap.className="sunday-switch";
+
+    const sunInput=document.createElement("input");
+    sunInput.type="checkbox";
+    sunInput.id="sundayToggle";
+
+    const slider=document.createElement("span");
+    slider.className="sunday-slider";
+
+    sundayWrap.appendChild(sunInput);
+    sundayWrap.appendChild(slider);
+
+    sundayContainer.appendChild(text);
+    sundayContainer.appendChild(sundayWrap);
+    head.appendChild(sundayContainer);
+
+    sundaySwitchInput = sunInput;
+
+    sunInput.addEventListener("change",()=>{
+      sundayMode = sunInput.checked;
+      localStorage.setItem(SUNDAY_MODE_KEY, sundayMode);
+      applySundayMode();
+    });
+  }
+
   card.appendChild(head);
 
   const list=document.createElement("div");
@@ -610,8 +805,6 @@ function updateResetButtonLabel() {
   const isMobile = window.matchMedia("(max-width: 480px)").matches;
   resetButton.textContent = isMobile ? "リセット" : "全てリセット";
 }
-window.addEventListener("load", updateResetButtonLabel);
-window.addEventListener("resize", updateResetButtonLabel);
 
 /* ===============================
    合計計算（パン屋カンスト対応）
@@ -678,7 +871,7 @@ function updateCategoryTotals(){
 }
 
 /* ===============================
-   上側ラベル配置
+   上側ラベル配置（2055, 2268...）
 ================================ */
 function placeTopLabels(){
   topLabelLayer.innerHTML="";
@@ -700,7 +893,7 @@ function placeTopLabels(){
 }
 
 /* ===============================
-   下側ラベル配置
+   下側ラベル配置（0,5,10,15,20）
 ================================ */
 function placeBottomLabels(){
   bottomLabelLayer.innerHTML="";
@@ -720,30 +913,28 @@ function placeBottomLabels(){
    スマホ用デイリーリスト
 ================================ */
 function updateDailyList(){
-  const list=document.getElementById("dailyList");
   const isMobile=window.matchMedia("(max-width: 480px)").matches;
 
   if(!isMobile){
-    list.textContent="";
+    dailyListEl.textContent="";
     return;
   }
 
-  list.textContent =
-    `(16)${thresholdMap[16]} `
-  + `(17)${thresholdMap[17]} `
-  + `(18)${thresholdMap[18]} `
-  + `(19)${thresholdMap[19]} `
-  + `(20)${thresholdMap[20]}`;
+  dailyListEl.textContent =
+    `(16)${thresholdMap[16]} `+
+    `(17)${thresholdMap[17]} `+
+    `(18)${thresholdMap[18]} `+
+    `(19)${thresholdMap[19]} `+
+    `(20)${thresholdMap[20]}`;
 }
 
 /* ===============================
-   ラベルクリックでトグル
+   wrapクリックでトグル
 ================================ */
 function applyWrapToggle(){
   checkBoxes.forEach(row=>{
     row.forEach(cb=>{
       const wrap=cb.parentElement;
-
       wrap.classList.toggle("checked",cb.checked);
 
       wrap.addEventListener("click",()=>{
@@ -786,9 +977,28 @@ function restoreState(state){
   updateDailyList();
 }
 
-/* Undo ボタン表示切替 */
 function updateUndoButton(){
   undoButton.style.display = undoState ? "inline-block" : "none";
+}
+
+/* ===============================
+   日曜日モード適用
+================================ */
+function applySundayMode(){
+  activeValues = sundayMode ? sundayValues : values;
+
+  categories.forEach((cat,i)=>{
+    items[i].forEach((name,j)=>{
+      const cb = checkBoxes[i][j];
+      const v  = activeValues[i][j];
+      cb.dataset.value = v;
+      const vs = cb.parentElement.querySelector(".item-value");
+      vs.textContent = `+${v}`;
+    });
+  });
+
+  updateTotal();
+  updateCategoryTotals();
 }
 
 /* ===============================
@@ -826,6 +1036,16 @@ undoButton.onclick=()=>{
    初期表示
 ================================ */
 window.addEventListener("load",()=>{
+  /* 日曜日モード復元 */
+  const savedMode = localStorage.getItem(SUNDAY_MODE_KEY);
+  if(savedMode === "true"){
+    sundayMode = true;
+    if(sundaySwitchInput){
+      sundaySwitchInput.checked = true;
+    }
+  }
+  applySundayMode();
+
   updateTotal();
   updateCategoryTotals();
   placeTopLabels();
@@ -833,6 +1053,7 @@ window.addEventListener("load",()=>{
   updateDailyList();
   applyWrapToggle();
   updateUndoButton();
+  updateResetButtonLabel();
 });
 
 /* ===============================
@@ -842,6 +1063,7 @@ window.addEventListener("resize",()=>{
   placeTopLabels();
   placeBottomLabels();
   updateDailyList();
+  updateResetButtonLabel();
 });
 </script>
 
