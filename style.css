@@ -380,43 +380,79 @@ body {
   align-items: flex-end;
   margin-top: 0px;
 }
-
 /* ============================================
-   🟦 スマホ最適化
-   ============================================ */
+   🟧 スマホ最適化（完全統合版）
+============================================ */
 @media (max-width:480px){
 
-  /* ▼ 合計パネルの「合計：」を非表示 */
+  /* ▼ 合計パネル文字（“合計：”を非表示） */
   #total {
-    font-size: 0;    /* ← 文字を消す（一番きれいに消える） */
+    font-size: 0;
   }
 
-  /* ▼ 合計スロット（数字）はそのまま表示する */
+  /* ▼ 合計スロットの数字はそのまま見せる */
   #total .slot-wrapper,
   #total .slot-wrapper * {
-    font-size: 20px !important;  /* 合計スロット数字の大きさは維持 */
+    font-size: 20px !important;
   }
 
-  /* ▼ （xxキャンドル）だけ小さく */
+  /* ▼ “（xxキャンドル）” を小型化 */
+  #total span,
   #totalCandles {
     font-size: 14px !important;
   }
 
-  /* ▼ カッコ全体も小さく */
-  #total span {
-    font-size: 14px !important;
-  }
-
-  /* ▼ 蝋燭アイコンを小型化 */
+  /* ▼ 蝋燭マーカー小型化 */
   #gaugeMarker {
     width: 32px !important;
     height: 32px !important;
     top: -36px !important;
   }
-
   #gaugeMarker img {
     width: 100%;
     height: 100%;
+  }
+
+  /* ▼ アイテムを 2 カラムに */
+  .items {
+    grid-template-columns:repeat(2,1fr) !important;
+  }
+
+  /* ▼ 上側のゲージ数字を隠す（2055 / 2268 など） */
+  .gauge-top-label {
+    display:none !important;
+  }
+
+  /* ▼ デイリー（(15)〜(20)）を横スクロール */
+  #dailyList {
+    display:block !important;
+    white-space: nowrap;
+    overflow-x: auto;
+    max-width: 100%;
+  }
+
+  /* ▼ スマホ時のアイテム名小型化 */
+  .item-name {
+    font-size:14px !important;
+  }
+
+  /* ▼ 左側（required + dailyList）が圧迫されないように */
+  .south-bottom-row > div:first-child {
+    flex:1;
+    min-width:0;
+    overflow:hidden;
+  }
+
+  /* ▼ Reset ボタン文字調整 */
+  #resetButton,
+  #undoButton {
+    flex-shrink:0;
+    font-size:14px;
+  }
+
+  /* ▼ “デイリーライト：2055…” を非表示（スマホでは dailyList で代替） */
+  #required {
+    display:none;
   }
 }
 /* ============================================
