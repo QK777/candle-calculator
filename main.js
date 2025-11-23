@@ -6,8 +6,9 @@
    ✔ Undo 対応
    ✔ スマホ用「15 → 16」しきい値表示
    ✔ ゲージアニメーション
-   ✔ カテゴリ小計
+   ✔ カテゴリ小計（ソーシャルも1000上限で補正）
    ✔ ローカルストレージ保存
+   ✔ ロウソクアイコン差し替え & ボヨンアニメ
    ============================================================ */
 
 
@@ -69,7 +70,6 @@ const thresholdMap = {
 };
 
 
-
 /* ============================
    Sunday モード
 ============================= */
@@ -97,9 +97,23 @@ let categorySumTags = [];
 let sundaySwitchInput = null;
 let lastCandles = 0;
 
-
 // Undo 用
 let undoState = null;
+
+
+/* ============================================================
+   ゲージのメモリ線（0〜20の中間線）生成
+   ※ レイアウトはそのまま、JS で線だけ追加
+============================================================ */
+for (let i = 1; i <= 19; i++) {
+  const mem = document.createElement("div");
+  mem.classList.add("gauge-segment");
+  mem.style.left = (i / 20 * 100) + "%";
+  if (i === 5 || i === 10 || i === 15) {
+    mem.classList.add("major");
+  }
+  gaugeTrack.appendChild(mem);
+}
 
 
 /* ============================================================
@@ -203,7 +217,7 @@ categories.forEach((cat,i)=>{
     cb.dataset.value=activeValues[i][j];
 
     // restore from localStorage
-    cb.checked=localStorage.getItem(cb.id)==="true";
+    cb.checked = localStorage.getItem(cb.id)==="true";
     wrap.classList.toggle("checked",cb.checked);
 
     cb.addEventListener("change",()=>{
@@ -293,32 +307,31 @@ function updateTotal(){
     });
   });
 
-  // パン屋補正（差し替える）
+  // パン屋補正（raw → capped に差し替え）
   const {raw, capped} = calcPanya();
   total = total - raw + capped;
 
   const c = getCandleCount(total);
   totalLabel.innerHTML = `合計: ${total} （${c}キャンドル）`;
 
-  updateGauge(c);
+  updateGauge(c, total);
   updateDailyList();
 }
 
 
-
 /* ============================================================
-   カテゴリ小計
+   カテゴリ小計（ソーシャルのみパン屋補正）
 ============================================================ */
 function updateCategoryTotals(){
   categories.forEach((cat,i)=>{
     let sum = 0;
 
-    // ---- 通常合計 ----
-    checkBoxes[i].forEach((cb,j)=>{
+    // まず通常の合計
+    checkBoxes[i].forEach(cb=>{
       if(cb.checked) sum += parseInt(cb.dataset.value,10);
     });
 
-    // ---- ソーシャルカテゴリのみ パン屋補正を適用 ----
+    // ソーシャルカテゴリだけパン屋補正
     if(i === 7){
       const p1 = checkBoxes[7][0];
       const p2 = checkBoxes[7][1];
@@ -332,15 +345,14 @@ function updateCategoryTotals(){
 
       const capped = Math.min(raw, 1000);
 
-      // 生値 raw を capped に置き換え
+      // 生のパン屋合計 raw を capped に置き換え
       sum = sum - raw + capped;
     }
 
-    // ---- 表示更新 ----
-    const tag = categorySumTags[i];
-    const newText = `(+${sum})`;
+    const tag=categorySumTags[i];
+    const newText=`(+${sum})`;
 
-    if(tag.textContent !== newText){
+    if(tag.textContent!==newText){
       tag.textContent=newText;
       tag.classList.add("flash");
       setTimeout(()=>tag.classList.remove("flash"),250);
@@ -349,11 +361,47 @@ function updateCategoryTotals(){
 }
 
 
+/* ==========================================
+   ロウソクアイコンの差し替え処理
+========================================== */
+function updateCandleIcon(total) {
+  let newIcon = "";
+
+  // ▼ アイコン選択（柔らかい影付き PNG を用意しておく）
+  if (total <= 607) {
+    newIcon = "Sky_Candle3.png";
+  } else if (total <= 1341) {
+    newIcon = "Sky_Candle2.png";
+  } else if (total <= 2054) {
+    newIcon = "Sky_Candle1.png";
+  } else if (total <= 4194) {
+    newIcon = "Sky_Candle0.png";
+  } else {
+    newIcon = "Sky_Candle0-.png"; // 灰キャン
+  }
+
+  const img = gaugeMarker.querySelector("img");
+  if (!img) return; // 念のためガード
+
+  // 変更が発生したときだけ光らせる
+  if (img.dataset.currentIcon !== newIcon) {
+    img.dataset.currentIcon = newIcon;
+    img.src = newIcon;
+
+    gaugeMarker.classList.add("flash-icon");
+    setTimeout(() => gaugeMarker.classList.remove("flash-icon"), 900);
+  }
+
+  // ゲージ移動時の上下ボヨン
+  gaugeMarker.classList.add("bounce");
+  setTimeout(() => gaugeMarker.classList.remove("bounce"), 500);
+}
+
 
 /* ============================================================
-   ゲージ更新
+   ゲージ更新（アイコン更新もここから呼ぶ）
 ============================================================ */
-function updateGauge(c){
+function updateGauge(c, total){
   const ratio = c / 20;
 
   if (c > lastCandles) {
@@ -368,8 +416,10 @@ function updateGauge(c){
   gaugeMarker.style.left = (ratio * 100) + "%";
 
   lastCandles = c;
-}
 
+  // 合計値に応じてロウソクアイコン差し替え
+  updateCandleIcon(total);
+}
 
 
 /* ============================================================
@@ -382,13 +432,12 @@ function updateDailyList(){
     return;
   }
 
-  // 再計算
+  // 再計算（パン屋補正込み）
   let total = 0;
   checkBoxes.forEach(r=>r.forEach(cb=>{
     if(cb.checked) total += parseInt(cb.dataset.value,10);
   }));
 
-  // パン屋補正
   const {raw,capped} = calcPanya();
   total = total - raw + capped;
 
@@ -443,7 +492,6 @@ function updateDailyList(){
 }
 
 
-
 /* ============================================================
    上側ラベル配置
 ============================================================ */
@@ -467,7 +515,6 @@ function placeTopLabels(){
 }
 
 
-
 /* ============================================================
    下側ラベル配置
 ============================================================ */
@@ -484,7 +531,6 @@ function placeBottomLabels(){
     bottomLabelLayer.appendChild(label);
   }
 }
-
 
 
 /* ============================================================
@@ -507,7 +553,6 @@ function applySundayMode(){
   updateTotal();
   updateCategoryTotals();
 }
-
 
 
 /* ============================================================
@@ -542,7 +587,6 @@ function restoreState(state){
 function updateUndoButton(){
   undoButton.style.display = undoState ? "inline-block" : "none";
 }
-
 
 
 /* ============================================================
@@ -604,8 +648,7 @@ function applyWrapToggle(){
    初期化
 ============================================================ */
 window.addEventListener("load",()=>{
-
-  // Sunday
+  // Sunday モード復元
   const savedMode = localStorage.getItem(SUNDAY_MODE_KEY);
   if(savedMode === "true"){
     sundayMode = true;
