@@ -390,22 +390,23 @@ body {
     font-size: 0;
   }
 
-/* カテゴリタイトル（捨てられた地 / 倉庫 など） */
+/* カテゴリタイトル（孤島 / 草原 / 捨てられた地 / 倉庫 など全部） */
 .category-title {
-  font-size: 20px;      /* ← タイトルを小さくする（デフォルトより2〜4pt下げる） */
+  font-size: 20px;        /* ← タイトルを小さく */
+  font-weight: 600;
   line-height: 1.2;
   display: flex;
   align-items: center;
-  gap: 8px;             /* タイトルとアイコンの余白 */
+  gap: 8px;
 }
 
-/* タイトル行の全体レイアウトをスッキリさせる */
+/* タイトル行全体を整えて重なり防止 */
 .category-header {
   display: flex;
   align-items: center;
-  justify-content: space-between; 
-  flex-wrap: nowrap;    /* ← 折り返さない */
-  margin-bottom: 6px;   /* 下のアイテムとの隙間 */
+  justify-content: space-between;
+  flex-wrap: nowrap;      /* ← 改行させず、行の高さを保つ */
+  margin-bottom: 6px;
 }
 
   /* ▼ 合計スロットの数字はそのまま見せる */
@@ -480,6 +481,11 @@ body {
   }
 
 
+    .candle-icon {
+    width: 30px;              /* スマホだけ小さく */
+    top: -10px;               /* スマホだけ上の位置を調整 */
+    transform: translateX(-50%) translateX(4px); /* 横方向の微調整 */
+  }
 /* ============================================
    🟦 タブレット
    ============================================ */
