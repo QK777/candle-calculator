@@ -5,142 +5,558 @@
 <title>Sky キャンドル計算機</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<!-- Fonts -->
+<!-- フォント -->
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600&family=Roboto:wght@100;300&family=Noto+Sans+JP:wght@100;700&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Sawarabi+Gothic&display=swap" rel="stylesheet">
 
 <style>
-/* ===== Base ===== */
-body{
-  font-family:'Baloo 2',cursive;
-  background:linear-gradient(135deg,#fdfbff 0%,#eef5ff 40%,#fdf6ff 100%);
-  margin:0;padding:24px 12px 260px;color:#222;
+/* ================================
+   全体スタイル
+================================ */
+body {
+  font-family: 'Baloo 2', cursive;
+  background: linear-gradient(135deg, #fdfbff 0%, #eef5ff 40%, #fdf6ff 100%);
+  margin: 0;
+  padding: 24px 12px 260px;
+  color: #222;
+  position: relative;
 }
-.app{max-width:960px;margin:0 auto;}
-
-/* ===== Title ===== */
-.page-title-wrapper{text-align:right;margin-bottom:20px;line-height:1.15;}
-.page-title-line{font-family:'Roboto',sans-serif;font-weight:100;font-size:32px;}
-.page-title-line:first-child{font-size:22px;opacity:.9;}
-
-/* ===== Category Card ===== */
-.category{background:#fff;border-radius:24px;padding:18px 22px 16px;margin-bottom:18px;
-  box-shadow:0 6px 18px rgba(70,90,150,0.22);border:2px solid rgba(210,220,255,0.9);}
-.category-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
-.category-left{display:flex;align-items:center;gap:1px;}
-.category-label{font-family:'Sawarabi Gothic','Noto Sans JP';font-size:24px;font-weight:500;position:relative;top:-2px;}
-
-.category-toggle{appearance:none;width:22px;height:22px;border-radius:50%;border:2px solid #ff9b42;
-  background:#fff;cursor:pointer;transition:.25s;}
-.category-toggle:checked{
-  background:radial-gradient(circle,#ffb36b 0%,#ff9b42 70%);
-  border-color:#ff9b42;box-shadow:0 0 6px rgba(255,150,50,.6);
-  animation:catPop .25s ease-out;
-}
-@keyframes catPop{0%{transform:scale(.6);}60%{transform:scale(1.15);}100%{transform:scale(1);}}
-
-.category-title{display:flex;align-items:center;gap:10px;}
-.category-sum{font-size:14px;padding:3px 12px;border-radius:999px;font-weight:600;
-  background:linear-gradient(145deg,rgba(250,252,255,.8),rgba(235,242,255,.8));
-  border:1px solid rgba(150,170,255,.55);color:#3a6cff;transition:.25s;}
-.category-sum.flash{transform:scale(1.12);box-shadow:0 0 14px rgba(120,150,255,.45);}
-
-.items{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;}
-
-.check-wrapper{display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:999px;
-  background:rgba(248,251,255,.95);border:1px solid rgba(185,211,255,.6);transition:.25s;}
-.check-wrapper.checked{background:rgba(255,200,120,.25);border-color:rgba(255,160,60,.8);}
-.check-input{display:none;}
-.item-name{flex:1;font-family:'Sawarabi Gothic','Noto Sans JP';font-size:18px;white-space:nowrap;}
-.item-value{font-size:12px;padding:2px 8px;border-radius:999px;background:rgba(61,138,255,.08);border:1px solid rgba(61,138,255,.25);}
-
-/* ===== Sunday Toggle ===== */
-.sunday-toggle-container{display:flex;align-items:center;gap:8px;}
-.sunday-label-text{font-size:16px;font-family:'Sawarabi Gothic','Noto Sans JP';}
-.sunday-switch{position:relative;width:60px;height:32px;}
-.sunday-switch input{display:none;}
-.sunday-slider{position:absolute;top:0;left:0;right:0;bottom:0;background:#cfd3da;border-radius:32px;}
-.sunday-slider:before{content:"";position:absolute;width:26px;height:26px;left:3px;bottom:3px;
-  background:#fff;border-radius:50%;transition:.22s;}
-.sunday-switch input:checked + .sunday-slider{background:linear-gradient(135deg,#4cd964,#3ac569);}
-.sunday-switch input:checked + .sunday-slider:before{transform:translateX(28px);}
-
-/* ===== Bottom Fixed Panel ===== */
-#southPanel{position:fixed;left:0;right:0;bottom:0;padding:14px 16px;background:rgba(255,255,255,.88);
-  backdrop-filter:blur(12px);box-shadow:0 -4px 18px rgba(60,80,150,.25);border-top:1px solid rgba(150,170,240,.9);}
-#total{font-size:22px;font-weight:700;color:#2d3a80;}
-#required{font-size:18px;font-weight:700;color:#000;}
-
-.daily-list{display:none;font-size:13px;margin-top:4px;}
-.sp-line1{font-size:18px;font-weight:700;color:#d33;}
-.sp-line2{font-size:14px;color:#000;}
-
-.sp-arrow{font-weight:700;margin-right:4px;}
-
-/* Glow animation */
-.sp-glow{animation:spGlow .7s ease-in-out;}
-@keyframes spGlow{
-  0%{filter:brightness(1);}
-  50%{filter:brightness(1.7) drop-shadow(0 0 10px rgba(255,120,120,1));}
-  100%{filter:brightness(1);}
+.app {
+  max-width: 960px;
+  margin: 0 auto;
 }
 
-/* ===== Gauge ===== */
-.gauge-wrapper{margin-top:6px;margin-bottom:6px;position:relative;}
-.gauge-track{height:18px;border-radius:999px;background:#d0d0d0;border:1px solid #aaa;overflow:hidden;}
-.gauge-fill{position:absolute;top:0;left:0;height:100%;width:0%;
-  background:linear-gradient(180deg,#afc9f0,#3787ff);transition:.4s;}
-#gaugeMarker{position:absolute;top:-20px;transform:translateX(-50%);width:44px;height:44px;}
-#gaugeMarker img{width:44px;}
+/* ================================
+   タイトル
+================================ */
+.page-title-wrapper {
+  width: 100%;
+  text-align: right;
+  margin-bottom: 20px;
+  line-height: 1.15;
+  user-select: none;
+}
+.page-title-line {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 100;
+  font-size: 32px;
+  letter-spacing: 0.04em;
+}
+.page-title-line:first-child {
+  font-size: 22px;
+  opacity: 0.9;
+}
 
-.gauge-segment{position:absolute;width:2px;height:10px;bottom:-6px;background:rgba(80,80,80,.45);}
-.gauge-segment.major{height:16px;bottom:-8px;background:rgba(30,30,30,.9);}
+/* ================================
+   カテゴリカード
+================================ */
+.category {
+  background:#fff;
+  border-radius:24px;
+  padding:18px 22px 16px;
+  margin-bottom:18px;
+  box-shadow:0 6px 18px rgba(70,90,150,0.22);
+  border:2px solid rgba(210,220,255,0.9);
+}
+.category-header {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:12px;
+  user-select: none;
+}
+.category-left {
+  display:flex;
+  align-items:center;
+  gap:1px;
+}
+.category-label {
+  font-family: 'Sawarabi Gothic', 'Noto Sans JP', sans-serif;
+  font-size:24px;
+  font-weight:500;
+  position: relative;
+  top: -2px;
+}
 
-#topLabelLayer{position:fixed;left:0;top:0;width:100vw;height:100vh;pointer-events:none;}
-.gauge-top-label{position:absolute;font-size:12px;font-weight:700;color:#000;transform:translateX(-50%);}
+/* ================================
+   カテゴリトグル（丸）
+================================ */
+.category-toggle {
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid #ff9b42;
+  background: #fff;
+  cursor: pointer;
+  position: relative;
+  transition:
+    background 0.25s ease,
+    box-shadow 0.25s ease,
+    border-color 0.25s ease;
+}
+.category-toggle:checked {
+  background: radial-gradient(circle, #ffb36b 0%, #ff9b42 70%);
+  border-color: #ff9b42;
+  box-shadow: 0 0 6px rgba(255,150,50,0.6);
+}
+.category-toggle:checked {
+  animation: catPop 0.25s ease-out;
+}
+@keyframes catPop {
+  0%   { transform: scale(0.6); opacity: 0.4; }
+  60%  { transform: scale(1.15); opacity: 1; }
+  100% { transform: scale(1.0); opacity: 1; }
+}
 
-#bottomLabelLayer{position:absolute;left:0;top:100%;width:100%;pointer-events:none;}
-.bottom-gauge-label{position:absolute;font-size:14px;font-weight:700;color:#000;transform:translateX(-50%);}
+/* pill タグ */
+.category-title {
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.category-sum {
+  display:inline-block;
+  font-size:14px;
+  padding:3px 12px;
+  border-radius:999px;
+  font-weight:600;
+  background:linear-gradient(145deg, rgba(250,252,255,0.8), rgba(235,242,255,0.8));
+  border:1px solid rgba(150,170,255,0.55);
+  color:#3a6cff;
+  box-shadow:
+    0 2px 6px rgba(70,100,200,0.15),
+    inset 0 0 4px rgba(255,255,255,0.6);
+  transition: opacity .25s ease, transform .25s ease, box-shadow .25s ease;
+}
+.category-sum.flash {
+  opacity:0.9;
+  transform:scale(1.12);
+  box-shadow:
+    0 0 14px rgba(120,150,255,0.45),
+    inset 0 0 6px rgba(255,255,255,0.8);
+}
 
-/* ===== Buttons ===== */
-.button-group{display:flex;gap:8px;}
-#resetButton,#undoButton{
-  padding:8px 18px;border-radius:999px;color:white;border:none;font-weight:700;cursor:pointer;}
-#resetButton{background:linear-gradient(135deg,#ff8b8b,#ff6b6b);}
-#undoButton{background:linear-gradient(135deg,#8bb4ff,#6b8dff);}
+/* アイテムグリッド */
+.items {
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:8px;
+}
 
-/* ===== Smartphone Layout ===== */
-@media(max-width:480px){
+/* チェックボックス */
+.check-wrapper {
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:6px 10px;
+  border-radius:999px;
+  background:rgba(248,251,255,0.95);
+  border:1px solid rgba(185,211,255,0.6);
+  transition: background .25s, border-color .25s;
+  user-select: none;
+}
+.check-input {
+  display:none !important;
+}
+.check-wrapper.checked {
+  background:rgba(255,200,120,0.25);
+  border-color:rgba(255,160,60,0.8);
+}
 
-  .category-label{font-size:16px;top:-1px;}
-  .daily-list{display:block!important;margin-top:10px;}
+/* アイテム名 */
+.item-name {
+  flex:1;
+  font-family: 'Sawarabi Gothic', 'Noto Sans JP', sans-serif !important;
+  font-weight: 400;
+  font-size: 18px;
+  letter-spacing: 0.2px;
+  white-space:nowrap;
+}
 
-  /* 2 行目： ➡：2268（16本） ＋ ボタン */
-  .sp-line2{
-    display:flex;justify-content:space-between;align-items:center;width:100%;margin-top:6px;
+/* 数値 */
+.item-value {
+  font-size:12px;
+  font-weight:400;
+  padding:2px 8px;
+  border-radius:999px;
+  background:rgba(61,138,255,0.08);
+  border:1px solid rgba(61,138,255,0.25);
+}
+
+/* ================================
+   日曜日スイッチ
+================================ */
+.sunday-toggle-container{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.sunday-label-text {
+  font-size:16px;
+  font-family: 'Sawarabi Gothic', 'Noto Sans JP', sans-serif;
+  position: relative;
+  top: -1px;
+}
+.sunday-switch {
+  position: relative;
+  width: 60px;
+  height: 32px;
+  display: inline-block;
+}
+.sunday-switch input {
+  display: none;
+}
+.sunday-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: #cfd3da;
+  border-radius: 32px;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.15);
+  transition: background 0.25s ease, box-shadow 0.25s ease;
+}
+.sunday-slider::before {
+  content: "";
+  position: absolute;
+  width: 26px;
+  height: 26px;
+  left: 3px;
+  bottom: 3px;
+  background: white;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  transition: transform 0.22s cubic-bezier(0.22, 0.61, 0.36, 1), box-shadow 0.22s ease;
+}
+.sunday-switch input:checked + .sunday-slider {
+  background: linear-gradient(135deg, #4cd964, #3ac569);
+  box-shadow:
+    inset 0 0 0 rgba(0,0,0,0),
+    0 0 6px rgba(76,217,100,0.6);
+}
+.sunday-switch input:checked + .sunday-slider::before {
+  transform: translateX(28px);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.35);
+}
+
+/* ================================
+   合計カード（固定）
+================================ */
+#southPanel {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 14px 16px;
+  background: rgba(255,255,255,0.88);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 -4px 18px rgba(60,80,150,0.25);
+  border-top: 1px solid rgba(150,170,240,0.9);
+  z-index: 1000;
+}
+
+#total {
+  font-size: 22px;
+  font-weight: 700;
+  color: #2d3a80;
+  font-family:'Noto Sans JP',sans-serif;
+}
+
+#required {
+  font-size:18px;
+  font-weight:700;
+  color:#000;
+  font-family:'Noto Sans JP',sans-serif;
+}
+
+/* デイリーライン（スマホ用に主に表示） */
+.daily-list {
+  display:none;
+  font-size:13px;
+  margin-top:4px;
+}
+
+/* 旧しきい値ラベル（今は未使用だが残しておく） */
+.sp-threshold-label {
+  font-size: 12px;
+  color: #333;
+  margin-right: 6px;
+}
+.sp-threshold-label-highlight {
+  font-size: 16px;
+  color: #d33;
+  font-weight: 700;
+}
+
+/* 新レイアウト用：1行目/2行目/矢印 */
+.sp-line1 {
+  display:block;
+  font-size:18px;
+  font-weight:700;
+  color:#d33;
+}
+.sp-line2 {
+  display:block;
+  font-size:14px;
+  color:#000;
+  margin-top:2px;
+}
+.sp-arrow {
+  font-weight:700;
+  margin-right:4px;
+}
+
+/* 光アニメ */
+.sp-glow {
+  animation: spGlow 0.7s ease-in-out;
+}
+@keyframes spGlow {
+  0% { filter: brightness(1); text-shadow:0 0 0px rgba(255,100,100,0); }
+  50%{ filter: brightness(1.7); text-shadow:0 0 12px rgba(255,120,120,1); }
+  100%{ filter: brightness(1); text-shadow:0 0 0px rgba(0,0,0,0); }
+}
+
+/* ================================
+   ゲージ
+================================ */
+.gauge-wrapper {
+  margin-top:6px;
+  margin-bottom:6px;
+  position:relative;
+}
+.gauge-track {
+  position:relative;
+  height:18px;
+  border-radius:999px;
+  background:#d0d0d0;
+  border:1px solid #aaa;
+  overflow:hidden;
+}
+.gauge-fill {
+  position:absolute;
+  top:0; left:0;
+  width:0%;
+  height:100%;
+  background:linear-gradient(180deg,#afc9f0,#3787ff);
+  transition:width 0.4s ease-out;
+  z-index:2;
+}
+#gaugeMarker {
+  position:absolute;
+  top:-20px;
+  transform:translateX(-50%);
+  width:44px;
+  height:44px;
+  pointer-events:none;
+  z-index:5;
+  transition:left 0.4s ease-out 0.05s;
+}
+#gaugeMarker img {
+  width:44px;
+}
+
+/* メモリ線 */
+.gauge-segment {
+  position:absolute;
+  width:2px;
+  height:10px;
+  bottom:-6px;
+  background:rgba(80,80,80,0.45);
+  border-radius:2px;
+  z-index:3;
+}
+.gauge-segment.major {
+  width:3px;
+  height:16px;
+  bottom:-8px;
+  background:rgba(30,30,30,0.9);
+}
+
+/* 上側ラベル */
+#topLabelLayer {
+  position:fixed;
+  left:0;
+  top:0;
+  width:100vw;
+  height:100vh;
+  pointer-events:none;
+  z-index:5000;
+}
+.gauge-top-label {
+  position:absolute;
+  font-size:12px;
+  color:#000;
+  font-weight:700;
+  transform:translateX(-50%);
+  white-space:nowrap;
+}
+
+/* 下側ラベル */
+#bottomLabelLayer {
+  position:absolute;
+  left:0;
+  top:100%;
+  width:100%;
+  pointer-events:none;
+  z-index:4000;
+}
+.bottom-gauge-label {
+  position:absolute;
+  font-size:14px;
+  color:#000;
+  font-weight:700;
+  transform:translateX(-50%);
+  white-space:nowrap;
+}
+
+/* ゲージ光 */
+@keyframes flashGauge {
+  0% { box-shadow: 0 0 0px rgba(255,255,255,0); filter: brightness(1); }
+  50%{ box-shadow: 0 0 16px rgba(255,255,255,0.9); filter: brightness(1.8); }
+  100%{ box-shadow: 0 0 0px rgba(255,255,255,0); filter: brightness(1); }
+}
+.gauge-fill.flash {
+  animation: flashGauge 0.45s ease-out;
+}
+@keyframes markerFlash {
+  0% { filter: brightness(1); }
+  50%{ filter: brightness(1.8) drop-shadow(0 0 8px rgba(255,255,200,0.9)); }
+  100%{ filter: brightness(1); }
+}
+#gaugeMarker.flash {
+  animation: markerFlash 0.45s ease-out;
+}
+
+/* ================================
+   ボタン
+================================ */
+.button-group{
+  display:flex;
+  gap:8px;
+}
+#resetButton,
+#undoButton {
+  padding:8px 18px;
+  border-radius:999px;
+  color:white;
+  border:none;
+  cursor:pointer;
+  font-weight:700;
+  white-space: nowrap;
+}
+#resetButton {
+  background:linear-gradient(135deg,#ff8b8b,#ff6b6b);
+}
+#undoButton {
+  background:linear-gradient(135deg,#8bb4ff,#6b8dff);
+}
+
+/* 下段 */
+.south-bottom-row {
+  margin-top:30px;
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+}
+
+/* ================================
+   スマホ最適化
+================================ */
+@media (max-width:480px){
+
+  .category-label {
+    font-size:16px !important;
+    top:-1px;
   }
-  .sp-buttons{display:flex;gap:6px;}
 
-  #resetButton,#undoButton{
-    padding:6px 12px;font-size:12px;
+  /* 南パネルの左右レイアウトを保ちつつ、dailyListを優先的に広げる */
+  .south-bottom-row {
+    margin-top:20px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
   }
 
-  /* ボタンを southPanel の旧位置から消す */
-  .south-bottom-row .button-group{display:none!important;}
+  .south-bottom-row > div:first-child {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+  }
 
-  .item-name{font-size:14px!important;}
+  /* PC用の required はスマホでは非表示 */
+  #required { display:none; }
 
-  .gauge-top-label{display:none!important;}
+  /* dailyList を複数行OK＋flex対象に */
+  #dailyList {
+    flex:1;
+    min-width:0;
+    white-space:normal;
+    overflow:visible;
+    max-width:100%;
+  }
 
-  .items{grid-template-columns:repeat(2,minmax(0,1fr))!important;}
+  .daily-list{
+    display:block !important;
+    margin-top:4px;
+  }
 
+  /* 2行目を「左：➡＋数値 / 右：ボタン」に見せるため */
+  .sp-line2 {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    width:100%;
+    margin-top:4px;
+    font-size:14px;
+  }
+
+  #resetButton,
+  #undoButton {
+    flex-shrink: 0;
+    font-size: 12px;
+    padding:6px 12px;
+  }
+
+  .items {
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+  }
+
+  .gauge-top-label{
+    display:none !important;
+  }
+
+  .item-name {
+    font-size:14px !important;
+  }
+}
+
+/* タブレット */
+@media (min-width:481px) and (max-width:768px){
+  .items {
+    grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+  }
+  .daily-list{
+    display:none !important;
+  }
+}
+
+/* PC */
+@media (min-width:769px){
+  .items {
+    grid-template-columns:repeat(4,minmax(0,1fr));
+  }
+  .daily-list{
+    display:none;
+  }
 }
 </style>
 </head>
 
+
 <body>
-  <div class="app">
+<div class="app">
 
   <!-- タイトル -->
   <div class="page-title-wrapper">
@@ -148,16 +564,13 @@ body{
     <div class="page-title-line">Candle Calculator</div>
   </div>
 
-  <!-- カテゴリカードが自動生成される領域 -->
+  <!-- カテゴリカードが入る -->
   <div id="mainPanel"></div>
 
-  <!-- 画面下・固定ポータル -->
+  <!-- 画面下固定の合計パネル -->
   <div id="southPanel">
-
-    <!-- 合計表示 -->
     <div id="total">合計: 0 （0キャンドル）</div>
 
-    <!-- ゲージ -->
     <div class="gauge-wrapper">
       <div class="gauge-track" id="gaugeTrack">
         <div class="gauge-fill" id="gaugeFill"></div>
@@ -170,35 +583,30 @@ body{
       <div id="bottomLabelLayer"></div>
     </div>
 
-    <!-- デイリーライン + ボタン -->
     <div class="south-bottom-row">
-
       <div>
-        <!-- PCでは見える/スマホでは消える -->
         <div id="required">デイリーライト: <b>2055（15本）</b></div>
-
-        <!-- スマホ用：2055 → 2268 → 灰キャン の2行表示 -->
         <div id="dailyList" class="daily-list"></div>
       </div>
 
-      <!-- PC・タブレット用のボタン（スマホでは非表示） -->
       <div class="button-group">
         <button id="resetButton">全てリセット</button>
         <button id="undoButton" style="display:none;">元に戻す</button>
       </div>
-
     </div>
   </div>
 
-  </div>
+</div>
 
-<!-- ゲージの上部ラベル（PC専用） -->
+<!-- 上側ラベル（2055, 2268...） -->
 <div id="topLabelLayer"></div>
 
+
+
 <script>
-/* ===========================
-    データ定義
-=========================== */
+/* ===================
+   データ
+=================== */
 const categories = ["孤島","草原","雨林","峡谷","捨てられた地","書庫","その他","ソーシャル"];
 const items = [
   ["砂丘","予言者の石窟","水の試練","土の試練","風の試練","火の試練"],
@@ -233,7 +641,7 @@ const sundayValues = [
   [540,540,300,300,200]
 ];
 
-/* キャンドル変換しきい値 */
+/* キャンドル到達値 */
 const candleThresholds = [
   {max:93,candles:0},{max:187,candles:1},{max:281,candles:2},{max:375,candles:3},
   {max:469,candles:4},{max:608,candles:5},{max:747,candles:6},{max:886,candles:7},
@@ -247,18 +655,12 @@ const thresholdMap = {
   15:2055,16:2268,17:2481,18:2719,19:3207,20:4195
 };
 
-/* 状態 */
+/* 日曜日モード */
 let activeValues = values;
 let sundayMode = false;
 const SUNDAY_MODE_KEY = "sky_candle_sunday_mode";
 
-let checkBoxes = [];
-let categorySumTags = [];
-let lastCandles = 0;
-let undoState = null;
-let sundaySwitchInput = null;
-
-/* DOM 取得 */
+/* DOM */
 const mainPanel = document.getElementById("mainPanel");
 const totalLabel = document.getElementById("total");
 const gaugeFill = document.getElementById("gaugeFill");
@@ -266,13 +668,19 @@ const gaugeMarker = document.getElementById("gaugeMarker");
 const gaugeTrack = document.getElementById("gaugeTrack");
 const topLabelLayer = document.getElementById("topLabelLayer");
 const bottomLabelLayer = document.getElementById("bottomLabelLayer");
-const dailyListEl = document.getElementById("dailyList");
 const resetButton = document.getElementById("resetButton");
 const undoButton = document.getElementById("undoButton");
+const dailyListEl = document.getElementById("dailyList");
 
-/* ===========================
-   ゲージのメモリ線生成
-=========================== */
+let checkBoxes = [];
+let categorySumTags = [];
+let lastCandles = 0;
+let undoState = null;
+let sundaySwitchInput = null;
+
+/* ===============================
+   メモリ線生成
+================================ */
 for(let i=1;i<=19;i++){
   const mem=document.createElement("div");
   mem.classList.add("gauge-segment");
@@ -281,9 +689,9 @@ for(let i=1;i<=19;i++){
   gaugeTrack.appendChild(mem);
 }
 
-/* ===========================
-   カテゴリカード生成
-=========================== */
+/* ===============================
+   カテゴリ生成
+================================ */
 categories.forEach((cat,i)=>{
   const card=document.createElement("div");
   card.className="category";
@@ -328,14 +736,14 @@ categories.forEach((cat,i)=>{
   leftBox.appendChild(titleWrap);
   head.appendChild(leftBox);
 
-  /* 日曜日トグル追加（捨て地） */
+  /* 捨てられた地の右端に日曜日トグル */
   if(i===4){
-    const sundayContainer=document.createElement("div");
-    sundayContainer.className="sunday-toggle-container";
+    const sundayContainer = document.createElement("div");
+    sundayContainer.className = "sunday-toggle-container";
 
-    const text=document.createElement("span");
-    text.className="sunday-label-text";
-    text.textContent="日曜日";
+    const text = document.createElement("span");
+    text.className = "sunday-label-text";
+    text.textContent = "日曜日";
 
     const sundayWrap=document.createElement("label");
     sundayWrap.className="sunday-switch";
@@ -349,6 +757,7 @@ categories.forEach((cat,i)=>{
 
     sundayWrap.appendChild(sunInput);
     sundayWrap.appendChild(slider);
+
     sundayContainer.appendChild(text);
     sundayContainer.appendChild(sundayWrap);
     head.appendChild(sundayContainer);
@@ -364,7 +773,6 @@ categories.forEach((cat,i)=>{
 
   card.appendChild(head);
 
-  /* アイテム一覧 */
   const list=document.createElement("div");
   list.className="items";
 
@@ -408,9 +816,9 @@ categories.forEach((cat,i)=>{
   mainPanel.appendChild(card);
 });
 
-/* ===========================
+/* ===============================
    キャンドル数計算
-=========================== */
+================================ */
 function getCandleCount(t){
   for(const x of candleThresholds){
     if(t<=x.max) return x.candles;
@@ -418,30 +826,30 @@ function getCandleCount(t){
   return 0;
 }
 
-/* ===========================
+/* ===============================
    ゲージ更新
-=========================== */
+================================ */
 function updateGauge(c){
-  const ratio=c/20;
+  const ratio = c / 20;
 
-  if(c>lastCandles){
+  if (c > lastCandles) {
     gaugeFill.classList.add("flash");
     setTimeout(()=>gaugeFill.classList.remove("flash"),450);
     gaugeMarker.classList.add("flash");
     setTimeout(()=>gaugeMarker.classList.remove("flash"),450);
   }
 
-  gaugeFill.style.width=(ratio*100)+"%";
-  gaugeMarker.style.left=(ratio*100)+"%";
+  gaugeFill.style.width = (ratio * 100) + "%";
+  gaugeMarker.style.left = (ratio * 100) + "%";
 
-  lastCandles=c;
+  lastCandles = c;
 }
 
 /* ===============================
-   Reset ボタンのラベル（スマホ簡略表示）
+   Reset ボタンの文字更新（スマホのみ）
 ================================ */
-function updateResetButtonLabel(){
-  const isMobile=window.matchMedia("(max-width:480px)").matches;
+function updateResetButtonLabel() {
+  const isMobile = window.matchMedia("(max-width: 480px)").matches;
   resetButton.textContent = isMobile ? "リセット" : "全てリセット";
 }
 
@@ -451,17 +859,18 @@ function updateResetButtonLabel(){
 function updateTotal(){
   let total=0;
 
-  // パン屋処理
+  // パン屋カンスト処理
   const p1=checkBoxes[7][0];
   const p2=checkBoxes[7][1];
+
   const v1=parseInt(p1.dataset.value,10);
   const v2=parseInt(p2.dataset.value,10);
-  let panyaSum=0;
 
+  let panyaSum=0;
   if(p1.checked) panyaSum+=v1;
   if(p2.checked) panyaSum+=v2;
 
-  const capped=Math.min(panyaSum,1000);
+  const cappedPanya=Math.min(panyaSum,1000);
 
   checkBoxes.forEach(row=>{
     row.forEach(cb=>{
@@ -469,26 +878,27 @@ function updateTotal(){
     });
   });
 
-  total = total - panyaSum + capped;
+  total = total - panyaSum + cappedPanya;
 
-  // パン屋2の表示切替
-  const p2Label=p2.parentElement.querySelector(".item-value");
+  // パン屋2 表示切替
+  const p2Label = p2.parentElement.querySelector(".item-value");
   if(p1.checked && p2.checked){
     p2Label.textContent = "+460";
-    p2Label.style.color="red";
-    p2Label.style.fontWeight="700";
+    p2Label.style.color = "red";
+    p2Label.style.fontWeight = "700";
   } else {
     p2Label.textContent = `+${v2}`;
-    p2Label.style.color="";
-    p2Label.style.fontWeight="";
+    p2Label.style.color = "";
+    p2Label.style.fontWeight = "";
   }
 
-  // キャンドル換算
   const c=getCandleCount(total);
   totalLabel.innerHTML=`合計: ${total} （${c}キャンドル）`;
 
   updateGauge(c);
-  updateDailyList(); // ← ★スマホの2055→2268表示も更新
+
+  // ★ スマホしきい値更新
+  updateDailyList();
 }
 
 /* ===============================
@@ -513,7 +923,7 @@ function updateCategoryTotals(){
 }
 
 /* ===============================
-   上側ラベル（PC）
+   上側ラベル配置（PC用）
 ================================ */
 function placeTopLabels(){
   topLabelLayer.innerHTML="";
@@ -525,105 +935,102 @@ function placeTopLabels(){
     const label=document.createElement("div");
     label.className="gauge-top-label";
     label.textContent=v;
+
     const px=rect.left + rect.width*(c/20);
     label.style.left=px+"px";
     label.style.top=topY+"px";
+
     topLabelLayer.appendChild(label);
   }
 }
 
 /* ===============================
-   下側ラベル（0 / 5 / 10 / 15 / 20）
+   下側ラベル配置（0,5,10,15,20）
 ================================ */
 function placeBottomLabels(){
   bottomLabelLayer.innerHTML="";
+
   for(const n of [0,5,10,15,20]){
-    const ratio=n/20;
+    const ratio = n / 20;
     const label=document.createElement("div");
     label.className="bottom-gauge-label";
     label.textContent=n;
-    label.style.left=(ratio*100)+"%";
+    label.style.left = (ratio * 100) + "%";
+    label.style.top = "0px";
     bottomLabelLayer.appendChild(label);
   }
 }
 
 /* ===============================
-   ★ スマホ用デイリーライン
-   2055 → 2268 → … → 灰キャン
-   ＋ ボタンを右端に表示
+   ★ スマホ用デイリーリスト（2055 → 2268 → … → 灰キャン）
 ================================ */
 function updateDailyList(){
-  const isMobile=window.matchMedia("(max-width:480px)").matches;
+  const isMobile=window.matchMedia("(max-width: 480px)").matches;
   if(!isMobile){
     dailyListEl.textContent="";
     return;
   }
 
-  // 合計再計算（パン屋補正済みなので totalLabel を信用してOK）
+  // 合計値の再取得
   let total=0;
   checkBoxes.forEach(row=>{
     row.forEach(cb=>{
-      if(cb.checked) total+=parseInt(cb.dataset.value,10);
+      if(cb.checked) total += parseInt(cb.dataset.value,10);
     });
   });
 
-  const thresholds=[
-    {base:2055,next:2268,c:15},
-    {base:2268,next:2481,c:16},
-    {base:2481,next:2719,c:17},
-    {base:2719,next:3207,c:18},
-    {base:3207,next:4195,c:19}
+  const thresholds = [
+    { base: 2055, next: 2268, candle: 15 },
+    { base: 2268, next: 2481, candle: 16 },
+    { base: 2481, next: 2719, candle: 17 },
+    { base: 2719, next: 3207, candle: 18 },
+    { base: 3207, next: 4195, candle: 19 }
   ];
 
-  let baseText="", nextText="", glow=false, found=false;
+  let baseText = "";
+  let nextText = "";
+  let glow = false;
 
-  if(total>=4195){
-    baseText=`4195（20キャンドル）`;
-    nextText=`灰キャン`;
-    glow=true;
+  // 4195以上 → 灰キャン
+  if (total >= 4195){
+    baseText = `4195（20キャンドル）`;
+    nextText = `灰キャン`;
+    glow = true;
   } else {
-    for(const t of thresholds){
-      if(total<2055){
-        baseText=`2055（15キャンドル）`;
-        nextText=`2268（16キャンドル）`;
-        found=true;
+    let found = false;
+
+    for (let t of thresholds){
+      if(total < 2055){
+        baseText = `2055（15キャンドル）`;
+        nextText = `2268（16キャンドル）`;
+        found = true;
         break;
       }
-      if(total>=t.base && total<t.next){
-        baseText=`${t.base}（${t.c}キャンドル）`;
-        nextText=`${t.next}（${t.c+1}キャンドル）`;
-        glow=true;
-        found=true;
+
+      if(total >= t.base && total < t.next){
+        baseText = `${t.base}（${t.candle}キャンドル）`;
+        nextText = `${t.next}（${t.candle+1}キャンドル）`;
+        glow = true;
+        found = true;
         break;
       }
     }
+
     if(!found){
-      baseText=`3207（19キャンドル）`;
-      nextText=`4195（20キャンドル）`;
-      glow=true;
+      baseText = `3207（19キャンドル）`;
+      nextText = `4195（20キャンドル）`;
+      glow = true;
     }
   }
 
-  /* ▼ スマホ 2 行構造 ＋ 右端にボタン配置 */
   dailyListEl.innerHTML = `
     <span class="sp-line1 ${glow ? "sp-glow" : ""}">
       ${baseText}
     </span>
-
     <div class="sp-line2">
       <span><span class="sp-arrow">➡：</span>${nextText}</span>
-
-      <span class="sp-buttons">
-        <button id="spReset" class="sp-reset">リセット</button>
-        <button id="spUndo"  class="sp-undo" style="${undoState ? "" : "display:none;"}">元に戻す</button>
-      </span>
     </div>
   `;
-
-  // スマホ専用ボタンの動作
-  document.getElementById("spReset").onclick = ()=> resetButton.click();
-  const spUndoBtn = document.getElementById("spUndo");
-  if(spUndoBtn) spUndoBtn.onclick = ()=> undoButton.click();
 }
 
 /* ===============================
@@ -647,23 +1054,25 @@ function applyWrapToggle(){
 }
 
 /* ===============================
-   Undo 状態
+   Undo 状態管理
 ================================ */
 function snapshotState(){
-  return checkBoxes.map(row=>row.map(cb=>cb.checked));
+  return checkBoxes.map(row => row.map(cb => cb.checked));
 }
 
 function restoreState(state){
   checkBoxes.forEach((row,i)=>{
     row.forEach((cb,j)=>{
-      cb.checked=state[i][j];
-      localStorage.setItem(cb.id,cb.checked);
-      cb.parentElement.classList.toggle("checked",cb.checked);
+      const checked = state[i][j];
+      cb.checked = checked;
+      localStorage.setItem(cb.id, checked);
+      cb.parentElement.classList.toggle("checked", checked);
     });
   });
 
   document.querySelectorAll(".category-toggle").forEach((toggle,i)=>{
-    toggle.checked = state[i].every(v=>v);
+    const allChecked = state[i].every(v=>v);
+    toggle.checked = allChecked;
   });
 
   updateTotal();
@@ -685,10 +1094,11 @@ function applySundayMode(){
 
   categories.forEach((cat,i)=>{
     items[i].forEach((name,j)=>{
-      const cb=checkBoxes[i][j];
-      cb.dataset.value=activeValues[i][j];
-      const vs=cb.parentElement.querySelector(".item-value");
-      vs.textContent=`+${activeValues[i][j]}`;
+      const cb = checkBoxes[i][j];
+      const v  = activeValues[i][j];
+      cb.dataset.value = v;
+      const vs = cb.parentElement.querySelector(".item-value");
+      vs.textContent = `+${v}`;
     });
   });
 
@@ -724,19 +1134,21 @@ resetButton.onclick=()=>{
 undoButton.onclick=()=>{
   if(!undoState) return;
   restoreState(undoState);
-  undoState=null;
+  undoState = null;
   updateUndoButton();
 };
 
 /* ===============================
-   初期化
+   初期表示
 ================================ */
 window.addEventListener("load",()=>{
 
-  const savedMode=localStorage.getItem(SUNDAY_MODE_KEY);
-  if(savedMode==="true"){
-    sundayMode=true;
-    if(sundaySwitchInput) sundaySwitchInput.checked=true;
+  const savedMode = localStorage.getItem(SUNDAY_MODE_KEY);
+  if(savedMode === "true"){
+    sundayMode = true;
+    if(sundaySwitchInput){
+      sundaySwitchInput.checked = true;
+    }
   }
   applySundayMode();
 
@@ -751,7 +1163,7 @@ window.addEventListener("load",()=>{
 });
 
 /* ===============================
-   ウィンドウリサイズ
+   リサイズ時
 ================================ */
 window.addEventListener("resize",()=>{
   placeTopLabels();
@@ -763,4 +1175,3 @@ window.addEventListener("resize",()=>{
 
 </body>
 </html>
-
