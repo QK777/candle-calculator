@@ -378,28 +378,47 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  margin-top: 40px;
+  margin-top: 0px;
 }
 
 /* ============================================
    🟦 スマホ最適化
    ============================================ */
 @media (max-width:480px){
-  .category-label { font-size:16px !important; }
-  #required { display:none; }
-  .items { grid-template-columns:repeat(2,1fr) !important; }
-  .daily-list{ display:block !important; }
-  #resetButton, #undoButton{
-    font-size:12px;
-    padding:6px 12px;
+
+  /* ▼ 合計パネルの「合計：」を非表示 */
+  #total {
+    font-size: 0;    /* ← 文字を消す（一番きれいに消える） */
   }
 
-  /* スマホ → ゲージ上の数字は非表示 */
-  .gauge-top-label {
-    display:none !important;
+  /* ▼ 合計スロット（数字）はそのまま表示する */
+  #total .slot-wrapper,
+  #total .slot-wrapper * {
+    font-size: 20px !important;  /* 合計スロット数字の大きさは維持 */
+  }
+
+  /* ▼ （xxキャンドル）だけ小さく */
+  #totalCandles {
+    font-size: 14px !important;
+  }
+
+  /* ▼ カッコ全体も小さく */
+  #total span {
+    font-size: 14px !important;
+  }
+
+  /* ▼ 蝋燭アイコンを小型化 */
+  #gaugeMarker {
+    width: 32px !important;
+    height: 32px !important;
+    top: -36px !important;
+  }
+
+  #gaugeMarker img {
+    width: 100%;
+    height: 100%;
   }
 }
-
 /* ============================================
    🟦 タブレット
    ============================================ */
@@ -465,33 +484,3 @@ body {
 }
 
 
-/* ----------------------------
-   ▼ スロット回転（変わった桁のみ）
----------------------------- */
-digits.forEach((d, i) => {
-  const reel = document.getElementById(`slot_reel_${i}`);
-  if (!reel) return;
-
-  const prev = prevDigits[i];
-  const offset = parseInt(d, 10) * -32;
-
-  if (prev === d) {
-    // 変わっていない → transitionなしで位置だけ合わせる
-    reel.style.transition = "none";
-    reel.style.transform = `translateY(${offset}px)`;
-    return;
-  }
-
-  // 変わった桁 → transitionを使って回す
-  reel.style.transition = "none";
-  reel.style.transform = `translateY(${offset}px)`; // ← 初期位置セット
-
-  // ★★ ここが重要：レイアウト確定させる（無いと絶対回らない）
-  reel.offsetHeight;
-
-  // transition ON にして回転
-  reel.style.transition = "transform 0.45s ease-out";
-  requestAnimationFrame(() => {
-    reel.style.transform = `translateY(${offset}px)`;
-  });
-});
