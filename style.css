@@ -308,26 +308,77 @@ body {
   transition:width .4s ease-out;
 }
 #gaugeMarker {
-  position:absolute;
-  top:-20px;
-  transform:translateX(-50%);
-  width:44px;
-  height:44px;
-  pointer-events:none;
-  transition:left .4s ease-out .05s;
-}
-#gaugeMarker img {
-  width:44px;
+  position: absolute;
+  top: -50px;
+  transform: translateX(-50%);
+  width: 48px;
+  height: 48px;
+  pointer-events: none;
+  z-index: 5;
+  transition: left 0.4s ease-out 0.05s;
 }
 
-/* ゲージ光 */
-.gauge-fill.flash {
-  animation: flashGauge .45s ease-out;
+/* ロウソク画像そのもの */
+#gaugeMarker img {
+  width: 48px;
+  opacity: 0.9;
+  transition: filter 0.4s ease;
+  
+  /* ▼ ロウソクの影：柔らかいバージョン ▼ */
+  filter: drop-shadow(0px 4px 12px rgba(0, 0, 0, 0.25));
 }
-@keyframes flashGauge {
-  0% { filter: brightness(1); }
-  50%{ filter: brightness(1.8); }
-  100%{ filter: brightness(1); }
+
+/* ▼ 差し替え時に “柔らかく光る” エフェクト ▼ */
+#gaugeMarker.flash-icon img {
+  animation: iconFlashSoft 0.9s ease-out;
+}
+
+@keyframes iconFlashSoft {
+  0% {
+    filter:
+      brightness(1)
+      drop-shadow(0 4px 12px rgba(0,0,0,0.25))
+      drop-shadow(0 0 0 rgba(255,240,200,0));
+  }
+  50% {
+    filter:
+      brightness(1.8)
+      drop-shadow(0 4px 14px rgba(0,0,0,0.25))
+      drop-shadow(0 0 22px rgba(255,240,200,0.9)); /* 柔らかい光 */
+  }
+  100% {
+    filter:
+      brightness(1)
+      drop-shadow(0 4px 12px rgba(0,0,0,0.25));
+  }
+}
+
+
+/* ▼ ゲージ移動時の “スライムぼよよん” アニメ ▼ */
+#gaugeMarker.bounce {
+  animation: slimeBounce 0.6s ease-out;
+  transform-origin: center bottom; /* スライム感に必須 */
+}
+
+@keyframes slimeBounce {
+  0% {
+    transform: translate(-50%, 0px) scale(1, 1);
+  }
+  20% {
+    transform: translate(-50%, -6px) scale(1.05, 0.95); /* 伸びる */
+  }
+  40% {
+    transform: translate(-50%, 2px) scale(0.90, 1.10); /* つぶれる */
+  }
+  60% {
+    transform: translate(-50%, -3px) scale(1.03, 0.97); /* 少し戻る */
+  }
+  80% {
+    transform: translate(-50%, 1px) scale(0.97, 1.03); /* 最後の揺れ */
+  }
+  100% {
+    transform: translate(-50%, 0px) scale(1, 1); /* 元の形 */
+  }
 }
 
 
@@ -363,6 +414,13 @@ body {
   font-size:12px;
   font-weight:700;
   transform:translateX(-50%);
+
+    /* 外側方向への白い縁取り（中抜きされない） */
+  text-shadow:
+    0 0 3px #fff,
+    0 0 5px #fff,
+    0 0 7px #fff,
+    0 0 9px #fff;
 }
 
 #bottomLabelLayer {
@@ -376,6 +434,7 @@ body {
   position:absolute;
   font-size:14px;
   font-weight:700;
+  top: 6px !important;
   transform:translateX(-50%);
 }
 
