@@ -14,7 +14,6 @@ body {
   margin: 0 auto;
 }
 
-
 /* ============================================
    🟦 タイトル
    ============================================ */
@@ -35,7 +34,6 @@ body {
   font-size: 22px;
   opacity: 0.9;
 }
-
 
 /* ============================================
    🟦 カテゴリカード（大枠）
@@ -69,7 +67,6 @@ body {
   top: -2px;
 }
 
-
 /* ============================================
    🟧 カテゴリ ON/OFF トグル（丸ボタン）
    ============================================ */
@@ -94,7 +91,6 @@ body {
   60%  { transform: scale(1.15); opacity: 1; }
   100% { transform: scale(1.0); opacity: 1; }
 }
-
 
 /* ============================================
    🟦 カテゴリ合計（pill タグ）
@@ -126,7 +122,6 @@ body {
     inset 0 0 6px rgba(255,255,255,0.8);
 }
 
-
 /* ============================================
    🟦 アイテム一覧（4カラム）
    ============================================ */
@@ -135,7 +130,6 @@ body {
   grid-template-columns:repeat(4,minmax(0,1fr));
   gap:8px;
 }
-
 
 /* ============================================
    🟦 各アイテムのチェック部分
@@ -176,9 +170,8 @@ body {
   border:1px solid rgba(61,138,255,0.25);
 }
 
-
 /* ============================================
-   🟦 日曜日モードスイッチ
+   🟦 日曜日モード
    ============================================ */
 .sunday-toggle-container{
   display:flex;
@@ -225,25 +218,37 @@ body {
   transform: translateX(28px);
 }
 
-
 /* ============================================
-   🟦 合計パネル（固定表示）
+   🟦 合計パネル
    ============================================ */
 #southPanel {
   position: fixed;
   left: 0; right: 0; bottom: 0;
-  padding: 14px 16px;
+  padding: 28px 16px 14px 16px;
   background: rgba(255,255,255,0.88);
   backdrop-filter: blur(12px);
   border-top: 1px solid rgba(150,170,240,0.9);
   box-shadow: 0 -4px 18px rgba(60,80,150,0.25);
+  z-index: 20;
 }
 
+/* 合計： と （xxキャンドル） → 黒 */
 #total {
-  font-size: 22px;
-  font-weight:700;
-  color:#2d3a80;
+  font-family: 'Sawarabi Gothic', 'Noto Sans JP', sans-serif;
+  font-size: 28px;
+  font-weight: 400;
+  color: #000; /* ← !important を外す（ここが重要） */
 }
+
+/* 真ん中の数値だけ色を変える */
+#total .total-num {
+  color: #5874c4 !important; /* ← 好きな色 */
+  font-weight: 900;
+  font-size: 32px;
+}
+
+
+
 
 #required {
   font-size:18px;
@@ -256,36 +261,6 @@ body {
   font-size:13px;
   margin-top:4px;
 }
-
-
-/* ============================================
-   🟦 スマホ向け 15→16 表示
-   ============================================ */
-.sp-line1 {
-  display:block;
-  font-size:18px;
-  font-weight:700;
-  color:#d33;
-}
-.sp-line2 {
-  display:flex;
-  justify-content:space-between;
-  font-size:14px;
-  margin-top:2px;
-}
-.sp-arrow {
-  font-weight:700;
-}
-
-.sp-glow {
-  animation: spGlow .7s ease-in-out;
-}
-@keyframes spGlow {
-  0% { filter: brightness(1); }
-  50%{ filter: brightness(1.7); text-shadow:0 0 12px rgba(255,120,120,1); }
-  100%{ filter: brightness(1); }
-}
-
 
 /* ============================================
    🟦 ゲージ
@@ -315,75 +290,12 @@ body {
   height: 48px;
   pointer-events: none;
   z-index: 5;
-  transition: left 0.4s ease-out 0.05s;
+
+  /* ★ 追加：ゲージ移動と同期してスムーズに動く */
+  transition: left .4s ease-out;
 }
-
-/* ロウソク画像そのもの */
-#gaugeMarker img {
-  width: 48px;
-  opacity: 1.0;
-  transition: filter 0.4s ease;
-  
-  /* ▼ ロウソクの影：柔らかいバージョン ▼ */
-  filter: drop-shadow(0px 4px 12px rgba(0, 0, 0, 0.25));
-}
-
-/* ▼ 差し替え時に “柔らかく光る” エフェクト ▼ */
-#gaugeMarker.flash-icon img {
-  animation: iconFlashSoft 0.9s ease-out;
-}
-
-@keyframes iconFlashSoft {
-  0% {
-    filter:
-      brightness(1)
-      drop-shadow(0 4px 12px rgba(0,0,0,0.25))
-      drop-shadow(0 0 0 rgba(255,240,200,0));
-  }
-  50% {
-    filter:
-      brightness(1.8)
-      drop-shadow(0 4px 14px rgba(0,0,0,0.25))
-      drop-shadow(0 0 22px rgba(255,240,200,0.9)); /* 柔らかい光 */
-  }
-  100% {
-    filter:
-      brightness(1)
-      drop-shadow(0 4px 12px rgba(0,0,0,0.25));
-  }
-}
-
-
-/* ▼ ゲージ移動時の “スライムぼよよん” アニメ ▼ */
-#gaugeMarker.bounce {
-  animation: slimeBounce 0.6s ease-out;
-  transform-origin: center bottom; /* スライム感に必須 */
-}
-
-@keyframes slimeBounce {
-  0% {
-    transform: translate(-50%, 0px) scale(1, 1);
-  }
-  20% {
-    transform: translate(-50%, -6px) scale(1.05, 0.95); /* 伸びる */
-  }
-  40% {
-    transform: translate(-50%, 2px) scale(0.90, 1.10); /* つぶれる */
-  }
-  60% {
-    transform: translate(-50%, -3px) scale(1.03, 0.97); /* 少し戻る */
-  }
-  80% {
-    transform: translate(-50%, 1px) scale(0.97, 1.03); /* 最後の揺れ */
-  }
-  100% {
-    transform: translate(-50%, 0px) scale(1, 1); /* 元の形 */
-  }
-}
-
-
 /* ============================================
-   🟦 ゲージのメモリ
+   🟦 メモリ線
    ============================================ */
 .gauge-segment {
   position:absolute;
@@ -398,31 +310,32 @@ body {
   background:rgba(30,30,30,0.9);
 }
 
-
 /* ============================================
-   🟦 ラベル
+   🟦 ラベル（ゲージ上数字）
    ============================================ */
 #topLabelLayer {
   position:fixed;
-  left:0; top:0;
+  left:0;
+  top:0;
   width:100vw;
   height:100vh;
   pointer-events:none;
+  z-index: 9999;   /* ★これを追加して最前面に */
 }
+
 .gauge-top-label {
   position:absolute;
   font-size:12px;
   font-weight:700;
   transform:translateX(-50%);
 
-    /* 外側方向への白い縁取り（中抜きされない） */
+  /* 外側方向への白い縁取り（中抜きされない） */
   text-shadow:
     0 0 3px #fff,
     0 0 5px #fff,
     0 0 7px #fff,
     0 0 9px #fff;
 }
-
 #bottomLabelLayer {
   position:absolute;
   left:0;
@@ -437,7 +350,6 @@ body {
   top: 6px !important;
   transform:translateX(-50%);
 }
-
 
 /* ============================================
    🟦 ボタン
@@ -463,37 +375,123 @@ body {
 }
 
 .south-bottom-row {
-  margin-top:30px;
-  display:flex;
-  justify-content:space-between;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-top: 40px;
 }
-
 
 /* ============================================
    🟦 スマホ最適化
    ============================================ */
 @media (max-width:480px){
   .category-label { font-size:16px !important; }
-
   #required { display:none; }
-
   .items { grid-template-columns:repeat(2,1fr) !important; }
-
   .daily-list{ display:block !important; }
-
   #resetButton, #undoButton{
     font-size:12px;
     padding:6px 12px;
   }
+
+  /* スマホ → ゲージ上の数字は非表示 */
+  .gauge-top-label {
+    display:none !important;
+  }
 }
 
-/* タブレット */
+/* ============================================
+   🟦 タブレット
+   ============================================ */
 @media (min-width:481px) and (max-width:768px){
   .items { grid-template-columns:repeat(3,1fr) !important; }
 }
 
-/* PC */
+/* ============================================
+   🟦 PC
+   ============================================ */
 @media (min-width:769px){
   .items { grid-template-columns:repeat(4,1fr); }
+
+  /* PC → ゲージ上の数字は必ず表示 */
+  .gauge-top-label {
+    display:block !important;
+  }
 }
 
+/* ============================================
+   🟦 合計スロット数字アニメーション（リール式）
+   ============================================ */
+.slot-wrapper {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  margin: 0 4px;
+}
+
+/* 各ケタの枠（1ケタぶんだけ見せる） */
+.digit-slot {
+  display: inline-block;
+  width: 26px;          /* ケタの横幅 */
+  height: 32px;         /* ★ JS 側の -32px と合わせる */
+  overflow: hidden;
+  border-radius: 6px;
+  background: rgba(255,255,255,0.9);
+  box-shadow:
+    0 1px 3px rgba(0,0,0,0.18),
+    inset 0 0 4px rgba(255,255,255,0.8);
+}
+
+/* 0〜9 が縦に並んだリール本体 */
+.digit-reel {
+  display: block;
+  transition: transform 0.45s ease-out;
+  will-change: transform;
+}
+
+/* 各数字の行 */
+.digit-reel span {
+  display: block;
+  height: 32px;         /* ★ ここも 32px にしておく */
+  line-height: 32px;
+  text-align: center;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 900;
+  font-size: 22px;
+  color: #5874c4;
+  text-shadow:
+    0 0 2px rgba(255,255,255,0.8),
+    0 1px 0 rgba(0,0,0,0.25);
+}
+
+
+/* ----------------------------
+   ▼ スロット回転（変わった桁のみ）
+---------------------------- */
+digits.forEach((d, i) => {
+  const reel = document.getElementById(`slot_reel_${i}`);
+  if (!reel) return;
+
+  const prev = prevDigits[i];
+  const offset = parseInt(d, 10) * -32;
+
+  if (prev === d) {
+    // 変わっていない → transitionなしで位置だけ合わせる
+    reel.style.transition = "none";
+    reel.style.transform = `translateY(${offset}px)`;
+    return;
+  }
+
+  // 変わった桁 → transitionを使って回す
+  reel.style.transition = "none";
+  reel.style.transform = `translateY(${offset}px)`; // ← 初期位置セット
+
+  // ★★ ここが重要：レイアウト確定させる（無いと絶対回らない）
+  reel.offsetHeight;
+
+  // transition ON にして回転
+  reel.style.transition = "transform 0.45s ease-out";
+  requestAnimationFrame(() => {
+    reel.style.transform = `translateY(${offset}px)`;
+  });
+});
