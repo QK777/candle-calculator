@@ -10,7 +10,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Sawarabi+Gothic&display=swap" rel="stylesheet">
 
-
 <style>
 /* ================================
    全体スタイル
@@ -80,6 +79,7 @@ body {
   position: relative;
   top: -2px;
 }
+
 /* ================================
    カテゴリトグル（四角 → 丸）
 ================================ */
@@ -87,35 +87,29 @@ body {
   appearance: none;
   width: 22px;
   height: 22px;
-  border-radius: 50%;  /* ← 四角 → まる */
+  border-radius: 50%;
   border: 2px solid #ff9b42;
   background: #fff;
   cursor: pointer;
   position: relative;
-  transition: 
+  transition:
     background 0.25s ease,
     box-shadow 0.25s ease,
     border-color 0.25s ease;
 }
-
-/* チェック時（● が灯るイメージ） */
 .category-toggle:checked {
   background: radial-gradient(circle, #ffb36b 0%, #ff9b42 70%);
   border-color: #ff9b42;
   box-shadow: 0 0 6px rgba(255,150,50,0.6);
 }
-
-/* 点灯アニメ（自然にぽわっと増える） */
 .category-toggle:checked {
   animation: catPop 0.25s ease-out;
 }
-
 @keyframes catPop {
   0%   { transform: scale(0.6); opacity: 0.4; }
   60%  { transform: scale(1.15); opacity: 1; }
   100% { transform: scale(1.0); opacity: 1; }
 }
-
 
 /* カテゴリ名横の pill タグ */
 .category-title {
@@ -200,25 +194,21 @@ body {
   align-items:center;
   gap:8px;
 }
-
 .sunday-label-text {
   font-size:16px;
   font-family: 'Sawarabi Gothic', 'Noto Sans JP', sans-serif;
   position: relative;
-  top: -1px;  /* ← 他のテキストと高さを揃える微調整 */
+  top: -1px;
 }
-
 .sunday-switch {
   position: relative;
   width: 60px;
   height: 32px;
   display: inline-block;
 }
-
 .sunday-switch input {
   display: none;
 }
-
 .sunday-slider {
   position: absolute;
   cursor: pointer;
@@ -228,7 +218,6 @@ body {
   box-shadow: inset 0 1px 2px rgba(0,0,0,0.15);
   transition: background 0.25s ease, box-shadow 0.25s ease;
 }
-
 .sunday-slider::before {
   content: "";
   position: absolute;
@@ -241,21 +230,16 @@ body {
   box-shadow: 0 2px 4px rgba(0,0,0,0.3);
   transition: transform 0.22s cubic-bezier(0.22, 0.61, 0.36, 1), box-shadow 0.22s ease;
 }
-
-/* ON */
 .sunday-switch input:checked + .sunday-slider {
   background: linear-gradient(135deg, #4cd964, #3ac569);
   box-shadow:
     inset 0 0 0 rgba(0,0,0,0),
     0 0 6px rgba(76,217,100,0.6);
 }
-
 .sunday-switch input:checked + .sunday-slider::before {
   transform: translateX(28px);
   box-shadow: 0 2px 5px rgba(0,0,0,0.35);
 }
-
-/* タップ中のちょい伸び */
 .sunday-switch:active .sunday-slider::before {
   box-shadow: 0 1px 3px rgba(0,0,0,0.25);
 }
@@ -297,6 +281,18 @@ body {
   margin-top:4px;
 }
 
+/* スマホ用しきい値ラベルのスタイル（ここを変えれば色やサイズ調整可） */
+.sp-threshold-label {
+  font-size: 12px;
+  color: #333;
+  margin-right: 6px;
+}
+.sp-threshold-label-highlight {
+  font-size: 14px;
+  color: #d33;
+  font-weight: 700;
+}
+
 /* ================================
    ゲージ
 ================================ */
@@ -305,7 +301,6 @@ body {
   margin-bottom:6px;
   position:relative;
 }
-
 .gauge-track {
   position:relative;
   height:18px;
@@ -314,7 +309,6 @@ body {
   border:1px solid #aaa;
   overflow:hidden;
 }
-
 .gauge-fill {
   position:absolute;
   top:0; left:0;
@@ -324,7 +318,6 @@ body {
   transition:width 0.4s ease-out;
   z-index:2;
 }
-
 #gaugeMarker {
   position:absolute;
   top:-20px;
@@ -402,7 +395,6 @@ body {
 .gauge-fill.flash {
   animation: flashGauge 0.45s ease-out;
 }
-
 @keyframes markerFlash {
   0% { filter: brightness(1); }
   50%{ filter: brightness(1.8) drop-shadow(0 0 8px rgba(255,255,200,0.9)); }
@@ -419,7 +411,6 @@ body {
   display:flex;
   gap:8px;
 }
-
 #resetButton,
 #undoButton {
   padding:8px 18px;
@@ -430,13 +421,9 @@ body {
   font-weight:700;
   white-space: nowrap;
 }
-
-/* リセット */
 #resetButton {
   background:linear-gradient(135deg,#ff8b8b,#ff6b6b);
 }
-
-/* Undo */
 #undoButton {
   background:linear-gradient(135deg,#8bb4ff,#6b8dff);
 }
@@ -450,7 +437,7 @@ body {
 }
 
 /* ================================
-   スマホ対応（押し出し対策）
+   スマホ対応（押し出し対策 + 新デザイン）
 ================================ */
 @media (max-width:480px){
 
@@ -461,6 +448,12 @@ body {
     overflow: hidden;
   }
 
+  /* 旧：デイリーライト行 → スマホでは非表示 */
+  #required {
+    display:none;
+  }
+
+  /* (15)〜(20) を1行に並べて横スクロール可 */
   #dailyList {
     white-space: nowrap;
     overflow-x: auto;
@@ -483,6 +476,11 @@ body {
 
   .daily-list{
     display:block !important;
+  }
+
+  /* スマホ時アイテム名を 14px に統一 */
+  .item-name {
+    font-size:14px !important;
   }
 }
 
@@ -920,12 +918,14 @@ function updateDailyList(){
     return;
   }
 
-  dailyListEl.textContent =
-    `(16)${thresholdMap[16]} `+
-    `(17)${thresholdMap[17]} `+
-    `(18)${thresholdMap[18]} `+
-    `(19)${thresholdMap[19]} `+
-    `(20)${thresholdMap[20]}`;
+  // (15)〜(20) を span で区切って、(15) は強調 & 赤
+  dailyListEl.innerHTML =
+    `<span class="sp-threshold-label sp-threshold-label-highlight">(15)${thresholdMap[15]}</span>` +
+    `<span class="sp-threshold-label">(16)${thresholdMap[16]}</span>` +
+    `<span class="sp-threshold-label">(17)${thresholdMap[17]}</span>` +
+    `<span class="sp-threshold-label">(18)${thresholdMap[18]}</span>` +
+    `<span class="sp-threshold-label">(19)${thresholdMap[19]}</span>` +
+    `<span class="sp-threshold-label">(20)${thresholdMap[20]}</span>`;
 }
 
 /* ===============================
