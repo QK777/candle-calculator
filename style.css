@@ -415,9 +415,15 @@ body {
 
   /* ▼ アイテムを 2 カラムに */
   .items {
-    grid-template-columns:repeat(2,1fr) !important;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr) !important;
   }
 
+    /* アイテムが伸びたり押し合わないように */
+  .check-wrapper {
+    width: 100%;
+  }
+}
   /* ▼ 上側のゲージ数字を隠す（2055 / 2268 など） */
   .gauge-top-label {
     display:none !important;
