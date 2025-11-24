@@ -285,7 +285,6 @@ body {
 #gaugeMarker {
   position: absolute;
   top: -50px;
-  transform: translateX(-50%);
   width: 48px;
   height: 48px;
   pointer-events: none;
@@ -380,48 +379,91 @@ body {
   align-items: flex-end;
   margin-top: 0px;
 }
-/* ============================================
-   🟧 スマホ最適化（完全統合版）
-============================================ */
+
+
+/*  🟧 スマートフォン対応  */
 @media (max-width:480px){
 
-  /* ▼ 合計パネル文字（“合計：”を非表示） */
+  /* ---------------------------------------------
+     🔶 合計パネル（“合計:” を消して数字だけ残す）
+  --------------------------------------------- */
   #total {
     font-size: 0;
   }
 
-/* カテゴリタイトル（孤島 / 草原 / 捨てられた地 / 倉庫 など全部） */
-.category-title {
-  font-size: 20px;        /* ← タイトルを小さく */
-  font-weight: 600;
-  line-height: 1.2;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-/* タイトル行全体を整えて重なり防止 */
-.category-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: nowrap;      /* ← 改行させず、行の高さを保つ */
-  margin-bottom: 6px;
-}
-
-  /* ▼ 合計スロットの数字はそのまま見せる */
+  /* 合計スロットの数字は表示 */
   #total .slot-wrapper,
   #total .slot-wrapper * {
     font-size: 20px !important;
   }
 
-  /* ▼ “（xxキャンドル）” を小型化 */
+  /* （xxキャンドル）部分 */
   #total span,
   #totalCandles {
     font-size: 14px !important;
   }
 
-  /* ▼ 蝋燭マーカー小型化 */
+  /* ---------------------------------------------
+     🔶 カテゴリタイトル（孤島・草原・捨てられた地…）
+  --------------------------------------------- */
+  .category-title {
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 1.2;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* タイトル行の重なり防止 */
+  .category-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+    margin-bottom: 6px;
+  }
+
+  /* ---------------------------------------------
+     🔶 アイテム（チェック行）
+  --------------------------------------------- */
+  /* アイテム2カラム */
+  .items {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  /* 押しつぶし防止 */
+  .check-wrapper {
+    width: 100%;
+  }
+
+  /* 行の折り返しと重なり防止 */
+  .item-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 8px;
+  }
+
+  /* ボタンを横2段にしやすく */
+  .item-button {
+    flex: 1 1 45%;
+  }
+
+  /* アイテム名小型化 */
+  .item-name {
+    font-size: 14px !important;
+  }
+
+  /* ---------------------------------------------
+     🔶 ゲージ関連（上の数字消す・ろうそく位置）
+  --------------------------------------------- */
+  /* ゲージ上の 2055 / 2268 などを隠す */
+  .gauge-top-label {
+    display: none !important;
+  }
+
+  /* ろうそくマーカーを小型化 */
   #gaugeMarker {
     width: 32px !important;
     height: 32px !important;
@@ -432,60 +474,67 @@ body {
     height: 100%;
   }
 
-  /* ▼ アイテムを 2 カラムに */
-  .items {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr) !important;
-  }
+  /* アイコン（別指定の場合） */
+   .candle-icon {
+     width: 32px;     /* スマホ用サイズ */
+     top: -34px;      /* 高さ */
+     transform: translateX(-50%) translateX(4px); /* 右へ4px補正 */
+   }
+  
 
-    /* アイテムが伸びたり押し合わないように */
-  .check-wrapper {
-    width: 100%;
-  }
-}
-  /* ▼ 上側のゲージ数字を隠す（2055 / 2268 など） */
-  .gauge-top-label {
-    display:none !important;
-  }
-
-  /* ▼ デイリー（(15)〜(20)）を横スクロール */
+  /* ---------------------------------------------
+     🔶 デイリー一覧（(15)〜(20)）横スクロール化
+  --------------------------------------------- */
   #dailyList {
-    display:block !important;
+    display: block !important;
     white-space: nowrap;
     overflow-x: auto;
     max-width: 100%;
   }
 
-  /* ▼ スマホ時のアイテム名小型化 */
-  .item-name {
-    font-size:14px !important;
+  /* デイリーライト：2055… はスマホでは非表示 */
+  #required {
+    display: none;
   }
 
-  /* ▼ 左側（required + dailyList）が圧迫されないように */
+  /* ---------------------------------------------
+     🔶 下部（south-bottom-row）レイアウト調整
+  --------------------------------------------- */
   .south-bottom-row > div:first-child {
-    flex:1;
-    min-width:0;
-    overflow:hidden;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
   }
 
-  /* ▼ Reset ボタン文字調整 */
+  /* Reset / Undo ボタン調整 */
   #resetButton,
   #undoButton {
-    flex-shrink:0;
-    font-size:14px;
+    flex-shrink: 0;
+    font-size: 14px;
   }
 
-  /* ▼ “デイリーライト：2055…” を非表示（スマホでは dailyList で代替） */
-  #required {
-    display:none;
+  #resetButton {
+    width: 110px;
+    position: relative;
   }
 
-
-    .candle-icon {
-    width: 30px;              /* スマホだけ小さく */
-    top: -10px;               /* スマホだけ上の位置を調整 */
-    transform: translateX(-50%) translateX(4px); /* 横方向の微調整 */
+  #resetButton::before {
+    content: "リセット";    /* ← スマホでは短い表記 */
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
+
+  #resetButton > * {
+    opacity: 0;   /* display:none だとクリック不可になる場合があるので非推奨 */
+  }
+
+}
+
+
+
 /* ============================================
    🟦 タブレット
    ============================================ */
