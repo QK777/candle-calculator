@@ -482,7 +482,7 @@ function updateCandleIcon(total) {
 
 
 /* ============================================================
-   ゲージ更新
+   ゲージ更新（スマホ時だけロウソク位置補正）
 ============================================================ */
 function updateGauge(c, total){
   const ratio = c / 20;
@@ -496,13 +496,19 @@ function updateGauge(c, total){
   }
 
   gaugeFill.style.width = (ratio * 100) + "%";
-  gaugeMarker.style.left = (ratio * 100) + "%";
+
+  /* 🔥 スマホ専用ロウソク位置補正 */
+  let offset = 0;
+  if (window.matchMedia("(max-width: 480px)").matches) {
+    offset = 4;   
+  }
+
+  gaugeMarker.style.left = `calc(${ratio * 100}% + ${offset}px)`;
 
   lastCandles = c;
 
   updateCandleIcon(total);
 }
-
 
 /* ============================================================
    スマホ向け：15 → 16 表示
