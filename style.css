@@ -384,24 +384,6 @@ body {
 /*  🟧 スマートフォン対応  */
 @media (max-width:480px){
 
-  /* ---------------------------------------------
-     🔶 合計パネル（“合計:” を消して数字だけ残す）
-  --------------------------------------------- */
-  #total {
-    font-size: 0;
-  }
-
-  /* 合計スロットの数字は表示 */
-  #total .slot-wrapper,
-  #total .slot-wrapper * {
-    font-size: 20px !important;
-  }
-
-  /* （xxキャンドル）部分 */
-  #total span,
-  #totalCandles {
-    font-size: 14px !important;
-  }
 
   /* ---------------------------------------------
      🔶 カテゴリタイトル（孤島・草原・捨てられた地…）
@@ -424,19 +406,25 @@ body {
     margin-bottom: 6px;
   }
 
+  .category-label {
+   font-size: 18px;  /* ← 好きなサイズに変更 (例：18px) */
+  }
+
   /* ---------------------------------------------
      🔶 アイテム（チェック行）
   --------------------------------------------- */
   /* アイテム2カラム */
   .items {
     display: grid;
-    grid-template-columns: repeat(2, 1fr) !important;
+    grid-template-columns: repeat(2, 1fr); /* ← 2列にする */
+    gap: 8px 12px; /* ← アイテム同士の間隔 */
   }
 
   /* 押しつぶし防止 */
   .check-wrapper {
-    width: 100%;
-  }
+    width: 100%;     /* ← 自動フィット */
+    margin: 0;
+ }
 
   /* 行の折り返しと重なり防止 */
   .item-row {
@@ -455,12 +443,33 @@ body {
     font-size: 14px !important;
   }
 
+    /* ---------------------------------------------
+     🔶 合計パネル（“合計:” を消して数字だけ残す）
+  --------------------------------------------- */
+  #total {
+    font-size: 0;
+  }
+
+  /* 合計スロットの数字は表示 */
+  #total .slot-wrapper,
+  #total .slot-wrapper * {
+    font-size: 20px !important;
+  }
+
+  /* （xxキャンドル）部分 */
+  #total span,
+  #totalCandles {
+    font-size: 14px !important;
+  }
+
+
+
   /* ---------------------------------------------
      🔶 ゲージ関連（上の数字消す・ろうそく位置）
   --------------------------------------------- */
   /* ゲージ上の 2055 / 2268 などを隠す */
   .gauge-top-label {
-    display: none !important;
+    top: -18px !important; /* ← ゲージに合わせて上へ */
   }
 
   /* ろうそくマーカーを小型化 */
@@ -481,6 +490,18 @@ body {
      transform: translateX(-50%) translateX(4px); /* 右へ4px補正 */
    }
   
+  /* ゲージ全体を上へ */
+  .gauge-wrapper {
+    margin-top: -24px; /* ← 上に移動（好きに調整OK） */
+  }
+
+  /* 下側目盛り */
+  .bottom-gauge-label {
+    top: 2px !important;
+  }
+}
+
+
 
   /* ---------------------------------------------
      🔶 デイリー一覧（(15)〜(20)）横スクロール化
@@ -514,7 +535,7 @@ body {
   }
 
   #resetButton {
-    width: 110px;
+    width: 80px;
     position: relative;
   }
 
@@ -528,8 +549,12 @@ body {
   }
 
   #resetButton > * {
-    opacity: 0;   /* display:none だとクリック不可になる場合があるので非推奨 */
+    display: none;
   }
+
+
+
+
 
 }
 
