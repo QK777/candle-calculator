@@ -474,9 +474,9 @@ body {
 
   /* ろうそくマーカーを小型化 */
   #gaugeMarker {
-    width: 32px !important;
+    width: 28px !important;
     height: 32px !important;
-    top: -36px !important;
+    top: -5px !important;
   }
   #gaugeMarker img {
     width: 100%;
