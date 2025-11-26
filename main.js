@@ -1,21 +1,11 @@
 /* ============================================================
-   Sky キャンドル計算機 main.js
-   ------------------------------------------------------------
-   ✔ パン屋 + パン屋2 合算 → 最大1000（460処理含む）
-   ✔ Sunday モード
-   ✔ Undo 対応
-   ✔ スマホ用「15 → 16」しきい値表示
-   ✔ ゲージアニメーション
-   ✔ カテゴリ小計（ソーシャルも1000上限で補正）
-   ✔ ローカルストレージ保存
-   ✔ ロウソクアイコン差し替え & ボヨンアニメ
-   ✔ 合計スロット：変化した桁だけ回転
-   ============================================================ */
+   Sky キャンドル計算機 main.js（光収束エフェクト対応版）
+============================================================ */
 
 
-/* ===================
+/* =============================
    データ定義
-=================== */
+============================= */
 const categories = ["孤島","草原","雨林","峡谷","捨てられた地","書庫","その他","ソーシャル"];
 
 const items = [
@@ -40,7 +30,7 @@ const values = [
   [540,540,300,300,200]
 ];
 
-// 日曜版
+// 日曜日値
 const sundayValues = [
   [200,50,100,105,200,200],
   [55,119,45,99,50,299],
@@ -52,22 +42,41 @@ const sundayValues = [
   [540,540,300,300,200]
 ];
 
-
 /* ============================
    キャンドルしきい値
 ============================= */
 const candleThresholds = [
-  {max:93,candles:0},{max:187,candles:1},{max:281,candles:2},{max:375,candles:3},
-  {max:469,candles:4},{max:608,candles:5},{max:747,candles:6},{max:886,candles:7},
-  {max:1025,candles:8},{max:1164,candles:9},{max:1342,candles:10},{max:1520,candles:11},
-  {max:1698,candles:12},{max:1876,candles:13},{max:2054,candles:14},{max:2267,candles:15},
-  {max:2480,candles:16},{max:2718,candles:17},{max:3206,candles:18},{max:4194,candles:19},
+  {max:93,  candles:0},
+  {max:187, candles:1},
+  {max:281, candles:2},
+  {max:375, candles:3},
+  {max:469, candles:4},
+  {max:608, candles:5},
+  {max:747, candles:6},
+  {max:886, candles:7},
+  {max:1025,candles:8},
+  {max:1164,candles:9},
+  {max:1342,candles:10},
+  {max:1520,candles:11},
+  {max:1698,candles:12},
+  {max:1876,candles:13},
+  {max:2054,candles:14},
+  {max:2267,candles:15},
+  {max:2480,candles:16},
+  {max:2719,candles:17},
+  {max:3207,candles:18},
+  {max:4194,candles:19},
   {max:Infinity,candles:20}
 ];
 
-// 上側ラベルで使用
+// ゲージ上ラベル値
 const thresholdMap = {
-  15:2055,16:2268,17:2481,18:2719,19:3207,20:4195
+  15:2055,
+  16:2268,
+  17:2481,
+  18:2719,
+  19:3207,
+  20:4195
 };
 
 
@@ -80,7 +89,7 @@ const SUNDAY_MODE_KEY = "sky_candle_sunday_mode";
 
 
 /* ============================
-   DOM
+   DOM 参照
 ============================= */
 const mainPanel = document.getElementById("mainPanel");
 const totalLabel = document.getElementById("total");
@@ -97,27 +106,23 @@ let checkBoxes = [];
 let categorySumTags = [];
 let sundaySwitchInput = null;
 let lastCandles = 0;
-
-// Undo 用
 let undoState = null;
 
 
 /* ============================================================
-   ゲージのメモリ線（0〜20の中間線）生成
+   ゲージのメモリ線生成
 ============================================================ */
 for (let i = 1; i <= 19; i++) {
   const mem = document.createElement("div");
   mem.classList.add("gauge-segment");
   mem.style.left = (i / 20 * 100) + "%";
-  if (i === 5 || i === 10 || i === 15) {
-    mem.classList.add("major");
-  }
+  if (i === 5 || i === 10 || i === 15) mem.classList.add("major");
   gaugeTrack.appendChild(mem);
 }
 
 
 /* ============================================================
-   DOM生成：カテゴリ & アイテム
+   カテゴリ & アイテム DOM 生成
 ============================================================ */
 categories.forEach((cat,i)=>{
   const card=document.createElement("div");
@@ -129,7 +134,7 @@ categories.forEach((cat,i)=>{
   const leftBox=document.createElement("div");
   leftBox.className="category-left";
 
-  // ---- カテゴリ全 ON/OFF ----
+  // ▼ カテゴリ全 ON/OFF トグル
   const toggle=document.createElement("input");
   toggle.type="checkbox";
   toggle.className="category-toggle";
@@ -164,7 +169,7 @@ categories.forEach((cat,i)=>{
   leftBox.appendChild(titleWrap);
   head.appendChild(leftBox);
 
-  // ---- 捨てられた地に Sunday モードボタン ----
+  // ▼ 捨てられた地に Sunday トグル
   if(i===4){
     const sundayContainer = document.createElement("div");
     sundayContainer.className = "sunday-toggle-container";
@@ -216,7 +221,7 @@ categories.forEach((cat,i)=>{
     cb.id=`cb_${i}_${j}`;
     cb.dataset.value=activeValues[i][j];
 
-    // restore from localStorage
+    // localStorage 復元
     cb.checked = localStorage.getItem(cb.id)==="true";
     wrap.classList.toggle("checked",cb.checked);
 
@@ -249,7 +254,7 @@ categories.forEach((cat,i)=>{
 
 
 /* ============================================================
-   合計キャンドル数 → 本数
+   キャンドル本数算出
 ============================================================ */
 function getCandleCount(t){
   for(const x of candleThresholds){
@@ -260,7 +265,7 @@ function getCandleCount(t){
 
 
 /* ============================================================
-   パン屋ロジック（540+540 = 見た目460 / 実計算上1000 まで）
+   パン屋ロジック（最大1000）
 ============================================================ */
 function calcPanya(){
   const p1 = checkBoxes[7][0];
@@ -273,10 +278,8 @@ function calcPanya(){
   if(p1.checked) s += v1;
   if(p2.checked) s += v2;
 
-  // 最大1000
   const capped = Math.min(s, 1000);
 
-  // パン屋2の表示操作
   const p2Label = p2.parentElement.querySelector(".item-value");
   if (p1.checked && p2.checked){
     p2Label.textContent = "+460";
@@ -293,7 +296,7 @@ function calcPanya(){
 
 
 /* ============================================================
-   合計計算（スロット4桁アニメ付き・変化した桁だけ回転）
+   合計スロット表示
 ============================================================ */
 let prevDigits = null;
 let slotInitialized = false;
@@ -302,7 +305,6 @@ function initTotalSlotDisplay() {
   if (slotInitialized) return;
   slotInitialized = true;
 
-  // スロット4桁のHTMLを生成
   let slotInner = "";
   for (let i = 0; i < 4; i++) {
     slotInner += `
@@ -322,19 +324,26 @@ function initTotalSlotDisplay() {
       </span>`;
   }
 
-  totalLabel.innerHTML = `
-    合計：
-    <span id="totalSlot" class="slot-wrapper">
-      ${slotInner}
-    </span>
-    （<span id="totalCandles">0</span>キャンドル）
-  `;
+totalLabel.innerHTML = `
+  合計：
+  <span id="totalSlot" class="slot-wrapper">
+    ${slotInner}
+  </span>
+  （<span id="totalCandles">0</span><span class="total-candle-text">キャンドル</span>）
+`;
+}
+
+
+/* ============================================================
+   合計計算（光収束エフェクト）
+============================================================ */
+function triggerCandleFlash(){
+  createFlashEffect();
 }
 
 function updateTotal(){
   let total = 0;
 
-  // ▼ 初回のみ：スロットDOM構築
   initTotalSlotDisplay();
 
   // 全アイテム合計
@@ -346,91 +355,74 @@ function updateTotal(){
     });
   });
 
-  // パン屋補正（raw → capped に差し替え）
-  const {raw, capped} = calcPanya();
+  // パン屋補正
+  const {raw,capped} = calcPanya();
   total = total - raw + capped;
 
   const c = getCandleCount(total);
 
-  // キャンドル本数表示だけ更新
-  const candleSpan = document.getElementById("totalCandles");
-  if (candleSpan) {
-    candleSpan.textContent = c;
-  }
+  // キャンドル本数表示
+  const candleSpan=document.getElementById("totalCandles");
+  if(candleSpan) candleSpan.textContent = c;
 
-  /* ----------------------------
-     ▼ スロット4桁に変換（ゼロ埋め）
-  ---------------------------- */
-  const padded = total.toString().padStart(4, "0");
-  const digits = padded.split(""); // [ "0","1","2","3" ]
+  // スロット演出
+  const padded = total.toString().padStart(4,"0");
+  const digits = padded.split("");
 
-  /* ----------------------------
-     ▼ スロットに数字を反映（変化した桁だけアニメ）
-  ---------------------------- */
-  digits.forEach((d, i) => {
-    const reel = document.getElementById(`slot_reel_${i}`);
-    if (!reel) return;
+  digits.forEach((d,i)=>{
+    const reel=document.getElementById(`slot_reel_${i}`);
+    if(!reel) return;
 
-    const offset = parseInt(d, 10) * -32;  // サイズ32px（上方向へスクロール）
+    const offset = parseInt(d,10) * -32;
 
-    // 初回は prevDigits が null → 全桁アニメ
-    if (prevDigits === null) {
-      reel.style.transition = "transform 0.45s ease-out";
-      requestAnimationFrame(() => {
-        reel.style.transform = `translateY(${offset}px)`;
-      });
+    if(prevDigits===null){
+      reel.style.transition="transform 0.45s ease-out";
+      requestAnimationFrame(()=>reel.style.transform=`translateY(${offset}px)`);
       return;
     }
 
     const prev = prevDigits[i];
+    if(prev===d) return;
 
-    // ▼ 同じ数字 → 何もしない（位置もそのまま、回転もしない）
-    if (prev === d) {
-      return;
-    }
-
-    // ▼ 異なる数字 → アニメさせる
-    reel.style.transition = "transform 0.45s ease-out";
-    requestAnimationFrame(() => {
-      reel.style.transform = `translateY(${offset}px)`;
-    });
+    reel.style.transition="transform 0.45s ease-out";
+    requestAnimationFrame(()=>reel.style.transform=`translateY(${offset}px)`);
   });
 
-  // 次回比較用に保存
+  // ★ 増えた時だけ光エフェクト
+  if(prevDigits !== null){
+    const prevTotal = parseInt(prevDigits.join(""),10);
+    if(total > prevTotal){
+      triggerCandleFlash();
+    }
+  }
+
   prevDigits = digits;
 
-  updateGauge(c, total);
+  updateGauge(c,total);
   updateDailyList();
 }
 
 
 /* ============================================================
-   カテゴリ小計（ソーシャルのみパン屋補正）
+   カテゴリ小計更新
 ============================================================ */
 function updateCategoryTotals(){
   categories.forEach((cat,i)=>{
     let sum = 0;
 
-    // まず通常の合計
     checkBoxes[i].forEach(cb=>{
       if(cb.checked) sum += parseInt(cb.dataset.value,10);
     });
 
-    // ソーシャルカテゴリだけパン屋補正
-    if(i === 7){
-      const p1 = checkBoxes[7][0];
-      const p2 = checkBoxes[7][1];
+    // ソーシャルだけパン屋補正
+    if(i===7){
+      const p1=checkBoxes[7][0];
+      const p2=checkBoxes[7][1];
+      let raw=0;
+      if(p1.checked) raw += parseInt(p1.dataset.value,10);
+      if(p2.checked) raw += parseInt(p2.dataset.value,10);
 
-      const v1 = parseInt(p1.dataset.value,10);
-      const v2 = parseInt(p2.dataset.value,10);
-
-      let raw = 0;
-      if(p1.checked) raw += v1;
-      if(p2.checked) raw += v2;
-
-      const capped = Math.min(raw, 1000);
-
-      // 生のパン屋合計 raw を capped に置き換え
+      const capped = Math.min(raw,1000);
       sum = sum - raw + capped;
     }
 
@@ -446,81 +438,147 @@ function updateCategoryTotals(){
 }
 
 
-/* ==========================================
-   ロウソクアイコンの差し替え処理
-========================================== */
-function updateCandleIcon(total) {
-  let newIcon = "";
+/* ============================================================
+   キャンドルアイコン切替
+============================================================ */
+function updateCandleIcon(c){
+  let newIcon="";
 
-  // ▼ アイコン選択
-  if (total <= 607) {
-    newIcon = "Sky_Candle3.png";
-  } else if (total <= 1341) {
-    newIcon = "Sky_Candle2.png";
-  } else if (total <= 2054) {
-    newIcon = "Sky_Candle1.png";
-  } else if (total <= 4194) {
-    newIcon = "Sky_Candle0.png";
-  } else {
-    newIcon = "Sky_Candle0-.png"; // 灰キャン
-  }
+  if(c <= 4)      newIcon = "Sky_Candle3.png";
+  else if(c <= 9) newIcon = "Sky_Candle2.png";
+  else if(c <= 14)newIcon = "Sky_Candle1.png";
+  else if(c <= 19)newIcon = "Sky_Candle0.png";
+  else            newIcon = "Sky_Candle0-.png";
 
   const img = gaugeMarker.querySelector("img");
-  if (!img) return;
+  if(!img) return;
 
-  if (img.dataset.currentIcon !== newIcon) {
+  if(img.dataset.currentIcon !== newIcon){
     img.dataset.currentIcon = newIcon;
     img.src = newIcon;
 
-    gaugeMarker.classList.add("flash-icon");
-    setTimeout(() => gaugeMarker.classList.remove("flash-icon"), 900);
+    gaugeMarker.classList.add("bounce");
+    setTimeout(()=>gaugeMarker.classList.remove("bounce"),500);
   }
-
-  gaugeMarker.classList.add("bounce");
-  setTimeout(() => gaugeMarker.classList.remove("bounce"), 500);
 }
 
 
 /* ============================================================
-   ゲージ更新（スマホ時だけロウソク位置補正）
+   🟧 完全追尾型・光吸収エフェクト（外→中）
 ============================================================ */
-function updateGauge(c, total){
+
+function createFlashEffect() {
+
+  const parent = gaugeMarker.parentNode;
+
+  function getTarget() {
+    const rect = gaugeMarker.getBoundingClientRect();
+    const parentRect = parent.getBoundingClientRect();
+    return {
+      x: rect.left - parentRect.left + rect.width / 2,
+      y: rect.top  - parentRect.top  + rect.height / 2
+    };
+  }
+
+  const RADIUS   = 40;
+  const DURATION = 1500;
+  const COUNT    = 14;
+
+  const easeOut = t => 1 - Math.pow(1 - t, 3);
+
+  for (let i = 0; i < COUNT; i++) {
+
+    const p = document.createElement("div");
+    p.className = "light-particle";
+    p.style.willChange = "transform, opacity, left, top";
+    parent.appendChild(p);
+
+    // 初期位置
+    const angle = Math.random() * Math.PI * 2;
+    const dist  = RADIUS + Math.random() * 15;
+
+    const t0 = getTarget();
+    const startX = t0.x + Math.cos(angle) * dist;
+    const startY = t0.y + Math.sin(angle) * dist;
+
+    p.style.left = `${startX}px`;
+    p.style.top  = `${startY}px`;
+    p.style.opacity = "1";
+
+    const delay = i * 40;
+
+    setTimeout(() => {
+
+      const startTime = performance.now();
+
+      function animate(now) {
+
+        const elapsed = now - startTime;
+        const rawT = Math.min(elapsed / DURATION, 1);
+        const t    = easeOut(rawT);
+
+        // ★ 毎フレーム、目標位置だけ取り直す
+        const target = getTarget();
+
+        // ★ 位置は “start → 最新target” の補間（ふわっと感の源）
+        const x = startX + (target.x - startX) * t;
+        const y = startY + (target.y - startY) * t;
+
+        p.style.left = `${x}px`;
+        p.style.top  = `${y}px`;
+
+        // 縮小
+        const scale = 1 - 0.85 * t;
+        p.style.transform = `translate(-50%, -50%) scale(${scale})`;
+
+        // フェードアウト
+        p.style.opacity = `${1 - rawT}`;
+
+        if (rawT < 1) {
+          requestAnimationFrame(animate);
+        } else {
+          p.remove();
+        }
+      }
+
+      requestAnimationFrame(animate);
+
+    }, delay);
+  }
+}
+
+
+
+/* ============================================================
+   ゲージ更新
+============================================================ */
+function updateGauge(c,total){
   const ratio = c / 20;
 
-  if (c > lastCandles) {
+  if(c > lastCandles){
     gaugeFill.classList.add("flash");
     setTimeout(()=>gaugeFill.classList.remove("flash"),450);
-
-    gaugeMarker.classList.add("flash");
-    setTimeout(()=>gaugeMarker.classList.remove("flash"),450);
   }
 
-  gaugeFill.style.width = (ratio * 100) + "%";
-
-  /* 🔥 スマホ専用ロウソク位置補正 */
-  let offset = 0;
-  if (window.matchMedia("(max-width: 480px)").matches) {
-    offset = 4;   
-  }
-
-  gaugeMarker.style.left = `calc(${ratio * 100}% + ${offset}px)`;
+  gaugeFill.style.width = (ratio*100)+"%";
+  gaugeMarker.style.left = (ratio*100)+"%";
 
   lastCandles = c;
 
-  updateCandleIcon(total);
+  updateCandleIcon(c);
 }
 
+
 /* ============================================================
-   スマホ向け：15 → 16 表示
+   スマホ向け 15 → 16
 ============================================================ */
 function updateDailyList(){
-  const isMobile=window.matchMedia("(max-width: 480px)").matches;
+  const isMobile=window.matchMedia("(max-width:480px)").matches;
   if(!isMobile){
     dailyListEl.textContent="";
     return;
   }
 
-  // 再計算（パン屋補正込み）
   let total = 0;
   checkBoxes.forEach(r=>r.forEach(cb=>{
     if(cb.checked) total += parseInt(cb.dataset.value,10);
@@ -529,33 +587,35 @@ function updateDailyList(){
   const {raw,capped} = calcPanya();
   total = total - raw + capped;
 
-  const thresholds = [
-    { base: 2055, next: 2268, candle: 15 },
-    { base: 2268, next: 2481, candle: 16 },
-    { base: 2481, next: 2719, candle: 17 },
-    { base: 2719, next: 3207, candle: 18 },
-    { base: 3207, next: 4195, candle: 19 }
+
+  const thresholds=[
+    
+    {base:2055,next:2268,candle:15},
+    {base:2268,next:2481,candle:16},
+    {base:2481,next:2719,candle:17},
+    {base:2719,next:3207,candle:18},
+    {base:3207,next:4195,candle:19}
   ];
 
   let baseText="", nextText="", glow=false;
 
   if(total>=4195){
-    baseText = `4195（20キャンドル）`;
-    nextText = `灰キャン`;
-    glow = true;
+    baseText=`4195（20キャンドル）`;
+    nextText=`灰キャン`;
+    glow=true;
   } else {
     let found=false;
 
     if(total < 2055){
-      baseText = `2055（15キャンドル）`;
-      nextText = `2268（16キャンドル）`;
+      baseText=`2055（15キャンドル）`;
+      nextText=`2268（16キャンドル）`;
       found=true;
     }
 
     for(const t of thresholds){
-      if(total >= t.base && total < t.next){
-        baseText = `${t.base}（${t.candle}キャンドル）`;
-        nextText = `${t.next}（${t.candle+1}キャンドル）`;
+      if(total>=t.base && total<t.next){
+        baseText=`${t.base}（${t.candle}キャンドル）`;
+        nextText=`${t.next}（${t.candle+1}キャンドル）`;
         glow=true;
         found=true;
         break;
@@ -563,25 +623,25 @@ function updateDailyList(){
     }
 
     if(!found){
-      baseText = `3207（19キャンドル）`;
-      nextText = `4195（20キャンドル）`;
+      baseText=`3207（19キャンドル）`;
+      nextText=`4195（20キャンドル）`;
       glow=true;
     }
   }
 
-  dailyListEl.innerHTML = `
-    <span class="sp-line1 ${glow ? "sp-glow" : ""}">
+  dailyListEl.innerHTML=`
+    <span class="sp-line1 ${glow?"sp-glow":""}">
       ${baseText}
     </span>
     <div class="sp-line2">
-      <span><span class="sp-arrow">➡：</span>${nextText}</span>
+      <span><span class="sp-arrow">➡</span>${nextText}</span>
     </div>
   `;
 }
 
 
 /* ============================================================
-   上側ラベル配置
+   ゲージ上ラベル
 ============================================================ */
 function placeTopLabels(){
   topLabelLayer.innerHTML="";
@@ -604,18 +664,17 @@ function placeTopLabels(){
 
 
 /* ============================================================
-   下側ラベル配置
+   ゲージ下ラベル
 ============================================================ */
 function placeBottomLabels(){
   bottomLabelLayer.innerHTML="";
 
   for(const n of [0,5,10,15,20]){
-    const ratio = n / 20;
+    const ratio = n/20;
     const label=document.createElement("div");
     label.className="bottom-gauge-label";
     label.textContent=n;
-    label.style.left = (ratio * 100) + "%";
-    label.style.top = "0px";
+    label.style.left=(ratio*100)+"%";
     bottomLabelLayer.appendChild(label);
   }
 }
@@ -629,12 +688,12 @@ function applySundayMode(){
 
   categories.forEach((cat,i)=>{
     items[i].forEach((name,j)=>{
-      const cb = checkBoxes[i][j];
-      const v  = activeValues[i][j];
-      cb.dataset.value = v;
+      const cb=checkBoxes[i][j];
+      const v=activeValues[i][j];
+      cb.dataset.value=v;
 
-      const vs = cb.parentElement.querySelector(".item-value");
-      vs.textContent = `+${v}`;
+      const vs=cb.parentElement.querySelector(".item-value");
+      vs.textContent=`+${v}`;
     });
   });
 
@@ -647,22 +706,22 @@ function applySundayMode(){
    Undo
 ============================================================ */
 function snapshotState(){
-  return checkBoxes.map(row => row.map(cb => cb.checked));
+  return checkBoxes.map(row=>row.map(cb=>cb.checked));
 }
 
 function restoreState(state){
   checkBoxes.forEach((row,i)=>{
     row.forEach((cb,j)=>{
-      const checked = state[i][j];
-      cb.checked = checked;
-      localStorage.setItem(cb.id, checked);
-      cb.parentElement.classList.toggle("checked", checked);
+      const checked=state[i][j];
+      cb.checked=checked;
+      localStorage.setItem(cb.id,checked);
+      cb.parentElement.classList.toggle("checked",checked);
     });
   });
 
   document.querySelectorAll(".category-toggle").forEach((toggle,i)=>{
-    const allChecked = state[i].every(v=>v);
-    toggle.checked = allChecked;
+    const allChecked=state[i].every(v=>v);
+    toggle.checked=allChecked;
   });
 
   updateTotal();
@@ -703,18 +762,18 @@ resetButton.onclick=()=>{
 
 
 /* ============================================================
-   Undo
+   Undo ボタン
 ============================================================ */
 undoButton.onclick=()=>{
   if(!undoState) return;
   restoreState(undoState);
-  undoState = null;
+  undoState=null;
   updateUndoButton();
 };
 
 
 /* ============================================================
-   wrapクリックでチェックトグル
+   アイテム全体クリック切替
 ============================================================ */
 function applyWrapToggle(){
   checkBoxes.forEach(row=>{
@@ -736,11 +795,10 @@ function applyWrapToggle(){
    初期化
 ============================================================ */
 window.addEventListener("load",()=>{
-  // Sunday モード復元
   const savedMode = localStorage.getItem(SUNDAY_MODE_KEY);
-  if(savedMode === "true"){
-    sundayMode = true;
-    if(sundaySwitchInput) sundaySwitchInput.checked = true;
+  if(savedMode==="true"){
+    sundayMode=true;
+    if(sundaySwitchInput) sundaySwitchInput.checked=true;
   }
   applySundayMode();
 
@@ -755,7 +813,7 @@ window.addEventListener("load",()=>{
 
 
 /* ============================================================
-   リサイズ時
+   リサイズ
 ============================================================ */
 window.addEventListener("resize",()=>{
   placeTopLabels();
