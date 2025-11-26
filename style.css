@@ -72,8 +72,8 @@ body {
    ============================================ */
 .category-toggle {
   appearance: none;
-  width: 22px;
-  height: 22px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
   border: 2px solid #ff9b42;
   background: #fff;
@@ -219,47 +219,37 @@ body {
 }
 
 /* ============================================
-   🟦 合計パネル
-   ============================================ */
-#southPanel {
-  position: fixed;
-  left: 0; right: 0; bottom: 0;
-  padding: 28px 16px 14px 16px;
-  background: rgba(255,255,255,0.88);
-  backdrop-filter: blur(12px);
-  border-top: 1px solid rgba(150,170,240,0.9);
-  box-shadow: 0 -4px 18px rgba(60,80,150,0.25);
-  z-index: 20;
-}
+   🟦 合計パネル（回り込み完全禁止版）
+============================================ */
 
-/* 合計： と （xxキャンドル） → 黒 */
+/* 全デバイス共通：文字が折り返されないようにする */
 #total {
-  font-family: 'Sawarabi Gothic', 'Noto Sans JP', sans-serif;
-  font-size: 28px;
-  font-weight: 400;
-  color: #000; /* ← !important を外す（ここが重要） */
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap !important;
+  min-width: 0;
 }
 
-/* 真ん中の数値だけ色を変える */
-#total .total-num {
-  color: #5874c4 !important; /* ← 好きな色 */
-  font-weight: 900;
-  font-size: 32px;
+#total .slot-wrapper,
+#total .slot-wrapper * {
+  font-size: 20px !important;
+  white-space: nowrap !important;
 }
 
-
-
-
-#required {
-  font-size:18px;
-  font-weight:700;
-  color:#000;
+#total span,
+#totalCandles,
+#total .total-candle-text {
+  font-size: 14px !important;
+  white-space: nowrap !important;
+  display: inline-flex !important;
+  align-items: center;
 }
 
-.daily-list {
-  display:none;
-  font-size:13px;
-  margin-top:4px;
+/* 特にキャンドル（xxキャンドル）部分が下に落ちないように */
+.total-candle-text {
+  padding-left: 2px;
+  flex-shrink: 0;
 }
 
 /* ============================================
@@ -282,17 +272,39 @@ body {
   background:linear-gradient(180deg,#afc9f0,#3787ff);
   transition:width .4s ease-out;
 }
+
+/* ろうそくマーカー（デフォルト） */
 #gaugeMarker {
   position: absolute;
-  top: -50px;
-  width: 48px;
-  height: 48px;
+  top: -80px;
+  width: 24px;
+  height: 24px;
   pointer-events: none;
   z-index: 5;
-
-  /* ★ 追加：ゲージ移動と同期してスムーズに動く */
+  opacity: 1.0;
+  filter: drop-shadow(0px 4px 7px rgba(0, 0, 0, 0.25));
   transition: left .4s ease-out;
+  transform: translateX(-65%);
 }
+
+/* ============================================
+   🟦 光粒（PC版デフォルト）
+   ============================================ */
+.light-particle {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  pointer-events: none;
+  background: radial-gradient(
+    rgba(150,200,255,0.9) 0%,
+    rgba(150,200,255,0.4) 50%,
+    rgba(150,200,255,0) 100%
+  );
+  transform: translate(-50%, -50%) scale(1.0);
+  opacity: 0.9;
+}
+
 /* ============================================
    🟦 メモリ線
    ============================================ */
@@ -319,22 +331,20 @@ body {
   width:100vw;
   height:100vh;
   pointer-events:none;
-  z-index: 9999;   /* ★これを追加して最前面に */
+  z-index: 9999;
 }
-
 .gauge-top-label {
   position:absolute;
   font-size:12px;
   font-weight:700;
   transform:translateX(-50%);
-
-  /* 外側方向への白い縁取り（中抜きされない） */
   text-shadow:
     0 0 3px #fff,
     0 0 5px #fff,
     0 0 7px #fff,
     0 0 9px #fff;
 }
+
 #bottomLabelLayer {
   position:absolute;
   left:0;
@@ -372,7 +382,6 @@ body {
 #undoButton {
   background:linear-gradient(135deg,#8bb4ff,#6b8dff);
 }
-
 .south-bottom-row {
   display: flex;
   justify-content: space-between;
@@ -380,24 +389,19 @@ body {
   margin-top: 0px;
 }
 
-
 /*  🟧 スマートフォン対応  */
 @media (max-width:480px){
 
-
-  /* ---------------------------------------------
-     🔶 カテゴリタイトル（孤島・草原・捨てられた地…）
-  --------------------------------------------- */
+  /* カテゴリタイトル */
   .category-title {
-    font-size: 20px;
-    font-weight: 600;
+    font-size: 16px;
+    font-weight: 300;
     line-height: 1.2;
     display: flex;
     align-items: center;
     gap: 8px;
   }
 
-  /* タイトル行の重なり防止 */
   .category-header {
     display: flex;
     align-items: center;
@@ -407,105 +411,103 @@ body {
   }
 
   .category-label {
-   font-size: 18px;  /* ← 好きなサイズに変更 (例：18px) */
+    font-family: 'Sawarabi Gothic', 'Noto Sans JP', sans-serif;
+    font-size:14px !important;
+    font-weight:500;
+    position: relative;
+    top: 0px;
   }
 
-  /* ---------------------------------------------
-     🔶 アイテム（チェック行）
-  --------------------------------------------- */
   /* アイテム2カラム */
   .items {
     display: grid;
-    grid-template-columns: repeat(2, 1fr); /* ← 2列にする */
-    gap: 8px 12px; /* ← アイテム同士の間隔 */
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px 12px;
   }
 
-  /* 押しつぶし防止 */
   .check-wrapper {
-    width: 100%;     /* ← 自動フィット */
+    width: 90%;
     margin: 0;
- }
+  }
 
-  /* 行の折り返しと重なり防止 */
   .item-row {
     display: flex;
     flex-wrap: wrap;
     gap: 6px 8px;
   }
 
-  /* ボタンを横2段にしやすく */
   .item-button {
     flex: 1 1 45%;
   }
 
-  /* アイテム名小型化 */
   .item-name {
     font-size: 14px !important;
   }
 
-    /* ---------------------------------------------
-     🔶 合計パネル（“合計:” を消して数字だけ残す）
-  --------------------------------------------- */
+  /* ▼ southPanel を画面固定に強制復元 */
+#southPanel {
+  position: fixed !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  z-index: 99999 !important;
+}
+
+/* ▼ southPanel が transform の影響を受けないよう隔離 */
+#southPanel, #southPanel * {
+  transform: none !important;
+}
+
+  /* 合計パネル（“合計:” を消して数字だけ） */
   #total {
     font-size: 0;
   }
-
-  /* 合計スロットの数字は表示 */
   #total .slot-wrapper,
   #total .slot-wrapper * {
     font-size: 20px !important;
   }
-
-  /* （xxキャンドル）部分 */
   #total span,
   #totalCandles {
     font-size: 14px !important;
   }
 
-
-
-  /* ---------------------------------------------
-     🔶 ゲージ関連（上の数字消す・ろうそく位置）
-  --------------------------------------------- */
-  /* ゲージ上の 2055 / 2268 などを隠す */
-  .gauge-top-label {
-    top: -18px !important; /* ← ゲージに合わせて上へ */
-  }
-
-  /* ろうそくマーカーを小型化 */
-  #gaugeMarker {
-    width: 32px !important;
-    height: 32px !important;
-    top: -36px !important;
-  }
-  #gaugeMarker img {
-    width: 100%;
-    height: 100%;
-  }
-
-  /* アイコン（別指定の場合） */
-   .candle-icon {
-     width: 32px;     /* スマホ用サイズ */
-     top: -5px;      /* 高さ */
-     transform: translateX(-50%) translateX(4px); /* 右へ4px補正 */
-   }
-  
-  /* ゲージ全体を上へ */
-  .gauge-wrapper {
-    margin-top: -24px; /* ← 上に移動（好きに調整OK） */
-  }
-
-  /* 下側目盛り */
-  .bottom-gauge-label {
-    top: 2px !important;
-  }
+/* スマホでも（数字キャンドル）を表示させる */
+#total .total-candle-text {
+  font-size: 14px !important;
+  display: inline !important;
 }
 
 
 
-  /* ---------------------------------------------
-     🔶 デイリー一覧（(15)〜(20)）横スクロール化
-  --------------------------------------------- */
+  /* ゲージ関連 */
+  .gauge-top-label {
+    top: -18px !important;
+  }
+
+  /* ▼ キャンドル 42px に縮小（スマホ専用） */
+  #gaugeMarker {
+    width: 42px !important;
+    height: 42px !important;
+    top: -23px !important;
+    transform: translateX(-44%) !important;
+  }
+
+  #gaugeMarker img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .gauge-wrapper {
+    margin-top: -24px;
+    margin-bottom: 24px !important;
+  }
+
+  .bottom-gauge-label {
+    top: 2px !important;
+  }
+
+  /* デイリー一覧 */
   #dailyList {
     display: block !important;
     white-space: nowrap;
@@ -513,49 +515,64 @@ body {
     max-width: 100%;
   }
 
-  /* デイリーライト：2055… はスマホでは非表示 */
   #required {
     display: none;
   }
 
-  /* ---------------------------------------------
-     🔶 下部（south-bottom-row）レイアウト調整
-  --------------------------------------------- */
   .south-bottom-row > div:first-child {
     flex: 1;
     min-width: 0;
     overflow: hidden;
   }
 
-  /* Reset / Undo ボタン調整 */
+  /* ▼ スマホのリセット／元に戻す：高さ・幅を揃える（構造同じ） */
   #resetButton,
   #undoButton {
-    flex-shrink: 0;
-    font-size: 14px;
-  }
-
-  #resetButton {
-    width: 80px;
+    padding: 10px 20px !important;
+    font-size: 0 !important;
+    line-height: 1.2 !important;
+    min-width: 100px !important;   /* ← 横幅を確実に広げる */
+    min-height: 38px !important;
     position: relative;
+    border-radius: 26px !important;   /* 丸みをつける */
+    min-height: 38px !important;
+   padding: 10px 0 !important;
   }
 
+  /* スマホでも undo ボタンの文字を表示 */
+#undoButton::after {
+  content: "元に戻す";
+  font-size: 14px;
+  line-height: 1.2;
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+  /* リセット専用の擬似要素は使わない（Undo と構造を揃えるため） */
   #resetButton::before {
-    content: "リセット";    /* ← スマホでは短い表記 */
+    content: none !important;
+  }
+
+    #resetButton::after {
+    content: "リセット";         /* ← スマホ用の表示 */
+    font-size: 14px;
+    line-height: 1.2;
     position: absolute;
     inset: 0;
     display: flex;
-    align-items: center;
-    justify-content: center;
+    align-items:center;
+    justify-content:center;
   }
-
-  #resetButton > * {
-    display: none;
+  
+  /* ▼ キャンドル42に合わせた光粒サイズ（同じ見え方） */
+  .light-particle {
+    width: 14px !important;
+    height: 14px !important;
   }
-
-
-
-
-
 }
 
 
@@ -568,15 +585,34 @@ body {
 }
 
 /* ============================================
+   🟦 タブレット／PC 共通
+   ============================================ */
+@media (min-width: 481px) {
+
+  #gaugeMarker {
+    width: 64px !important;
+    height: 64px !important;
+    top: -45px !important;
+    transform: translateX(-44%);
+  }
+
+  #gaugeMarker img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain;
+  }
+
+  .gauge-wrapper {
+    margin-bottom: 36px;
+  }
+}
+
+/* ============================================
    🟦 PC
    ============================================ */
 @media (min-width:769px){
   .items { grid-template-columns:repeat(4,1fr); }
-
-  /* PC → ゲージ上の数字は必ず表示 */
-  .gauge-top-label {
-    display:block !important;
-  }
+  .gauge-top-label { display:block !important; }
 }
 
 /* ============================================
@@ -588,12 +624,10 @@ body {
   gap: 2px;
   margin: 0 4px;
 }
-
-/* 各ケタの枠（1ケタぶんだけ見せる） */
 .digit-slot {
   display: inline-block;
-  width: 26px;          /* ケタの横幅 */
-  height: 32px;         /* ★ JS 側の -32px と合わせる */
+  width: 26px;
+  height: 32px;
   overflow: hidden;
   border-radius: 6px;
   background: rgba(255,255,255,0.9);
@@ -601,18 +635,14 @@ body {
     0 1px 3px rgba(0,0,0,0.18),
     inset 0 0 4px rgba(255,255,255,0.8);
 }
-
-/* 0〜9 が縦に並んだリール本体 */
 .digit-reel {
   display: block;
   transition: transform 0.45s ease-out;
   will-change: transform;
 }
-
-/* 各数字の行 */
 .digit-reel span {
   display: block;
-  height: 32px;         /* ★ ここも 32px にしておく */
+  height: 32px;
   line-height: 32px;
   text-align: center;
   font-family: 'Roboto', sans-serif;
@@ -623,5 +653,3 @@ body {
     0 0 2px rgba(255,255,255,0.8),
     0 1px 0 rgba(0,0,0,0.25);
 }
-
-
