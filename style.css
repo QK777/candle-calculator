@@ -219,37 +219,47 @@ body {
 }
 
 /* ============================================
-   🟦 合計パネル（回り込み完全禁止版）
-============================================ */
+   🟦 合計パネル
+   ============================================ */
+#southPanel {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  padding: 28px 16px 14px 16px;
+  background: rgba(255,255,255,0.88);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid rgba(150,170,240,0.9);
+  box-shadow: 0 -4px 18px rgba(60,80,150,0.25);
+  z-index: 20;
+  user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+}
 
-/* 全デバイス共通：文字が折り返されないようにする */
+/* 合計： と （xxキャンドル） → 黒 */
 #total {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  white-space: nowrap !important;
-  min-width: 0;
+  font-family: 'Sawarabi Gothic', 'Noto Sans JP', sans-serif;
+  font-size: 28px;
+  font-weight: 400;
+  color: #000;
 }
 
-#total .slot-wrapper,
-#total .slot-wrapper * {
-  font-size: 20px !important;
-  white-space: nowrap !important;
+/* 真ん中の数値だけ色を変える */
+#total .total-num {
+  color: #5874c4 !important;
+  font-weight: 900;
+  font-size: 32px;
 }
 
-#total span,
-#totalCandles,
-#total .total-candle-text {
-  font-size: 14px !important;
-  white-space: nowrap !important;
-  display: inline-flex !important;
-  align-items: center;
+#required {
+  font-size:18px;
+  font-weight:700;
+  color:#000;
 }
 
-/* 特にキャンドル（xxキャンドル）部分が下に落ちないように */
-.total-candle-text {
-  padding-left: 2px;
-  flex-shrink: 0;
+.daily-list {
+  display:none;
+  font-size:13px;
+  margin-top:4px;
 }
 
 /* ============================================
@@ -443,20 +453,6 @@ body {
   .item-name {
     font-size: 14px !important;
   }
-
-  /* ▼ southPanel を画面固定に強制復元 */
-#southPanel {
-  position: fixed !important;
-  left: 0 !important;
-  right: 0 !important;
-  bottom: 0 !important;
-  z-index: 99999 !important;
-}
-
-/* ▼ southPanel が transform の影響を受けないよう隔離 */
-#southPanel, #southPanel * {
-  transform: none !important;
-}
 
   /* 合計パネル（“合計:” を消して数字だけ） */
   #total {
