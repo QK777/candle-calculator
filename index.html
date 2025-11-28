@@ -30,6 +30,26 @@
     <div class="page-title-line">Candle Calculator</div>
   </div>
 
+  <!-- ▼ クイックメニューパネル -->
+<div id="quickPanel">
+  <button class="quick-btn" data-target="daily">デイリー</button>
+  <button class="quick-btn" data-target="big">大キャンドル</button>
+  <button class="quick-btn" data-target="season">シーズンキャンドル</button>
+  <button class="quick-btn" data-target="yami">闇の欠片</button>
+</div>
+
+<!-- ▼ モーダル背景 -->
+<div id="modalOverlay">
+  <div id="modalWindow">
+    <div id="modalHeader">
+      <span id="modalTitle">タイトル</span>
+      <button id="modalClose">×</button>
+    </div>
+
+    <iframe id="modalFrame" src="" loading="lazy"></iframe>
+  </div>
+</div>
+
   <!-- カテゴリカード -->
   <div id="mainPanel"></div>
 
