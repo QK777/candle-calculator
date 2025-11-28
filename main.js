@@ -1,6 +1,45 @@
 /* ============================================================
    Sky キャンドル計算機 main.js（光収束エフェクト対応版）
 ============================================================ */
+// ▼ モーダル制御
+const modalOverlay = document.getElementById("modalOverlay");
+const modalWindow  = document.getElementById("modalWindow");
+const modalFrame   = document.getElementById("modalFrame");
+const modalTitle   = document.getElementById("modalTitle");
+const modalClose   = document.getElementById("modalClose");
+
+// URL マップ
+const modalUrls = {
+  daily:  "https://9-bit.jp/skygold/6593",
+  big:    "https://9-bit.jp/skygold/4920/",
+  season: "https://9-bit.jp/skygold/19750/",
+  yami:   "https://9-bit.jp/skygold/23767/"
+};
+
+// 開く処理
+document.querySelectorAll(".quick-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const key = btn.dataset.target;
+    modalTitle.textContent = btn.textContent;
+    modalFrame.src = modalUrls[key];
+
+    modalOverlay.style.display = "flex";
+  });
+});
+
+// 閉じる
+modalClose.addEventListener("click", () => {
+  modalOverlay.style.display = "none";
+  modalFrame.src = "";
+});
+
+// 背景クリックでも閉じる
+modalOverlay.addEventListener("click", e => {
+  if (e.target === modalOverlay) {
+    modalOverlay.style.display = "none";
+    modalFrame.src = "";
+  }
+});
 
 
 /* =============================
