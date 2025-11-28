@@ -36,6 +36,85 @@ body {
 }
 
 /* ============================================
+   🟦 クイックパネル
+   ============================================ */
+   
+/* ▼ クイックパネル（タイトル下のボタン） */
+#quickPanel {
+  display: flex;
+  gap: 12px;
+  margin: -6px 0 18px;
+}
+.quick-btn {
+  padding: 8px 14px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #ffffff, #eef3ff);
+  border: 1px solid rgba(140,160,255,0.6);
+  cursor: pointer;
+  font-family: 'Sawarabi Gothic', 'Noto Sans JP', sans-serif;
+  transition: background .25s, box-shadow .25s;
+}
+.quick-btn:hover {
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(120,140,220,0.3);
+}
+
+/* ▼ モーダル背景（暗転） */
+#modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  backdrop-filter: blur(2px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 999999;
+}
+
+/* ▼ モーダル本体（白いカード） */
+#modalWindow {
+  width: 90%;
+  max-width: 600px;
+  height: 80vh;
+  background: white;
+  border-radius: 18px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: modalPop .25s ease-out;
+}
+
+@keyframes modalPop {
+  0% { transform: scale(0.7); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* ▼ モーダル上部バー */
+#modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: #f4f6ff;
+  border-bottom: 1px solid rgba(150,150,200,0.3);
+  font-family: 'Sawarabi Gothic', 'Noto Sans JP', sans-serif;
+}
+#modalClose {
+  border: none;
+  background: transparent;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+/* ▼ iframe（中身） */
+#modalFrame {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+/* ============================================
    🟦 カテゴリカード（大枠）
    ============================================ */
 .category {
@@ -219,37 +298,47 @@ body {
 }
 
 /* ============================================
-   🟦 合計パネル（回り込み完全禁止版）
-============================================ */
+   🟦 合計パネル
+   ============================================ */
+#southPanel {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  padding: 28px 16px 14px 16px;
+  background: rgba(255,255,255,0.88);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid rgba(150,170,240,0.9);
+  box-shadow: 0 -4px 18px rgba(60,80,150,0.25);
+  z-index: 20;
+  user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+}
 
-/* 全デバイス共通：文字が折り返されないようにする */
+/* 合計： と （xxキャンドル） → 黒 */
 #total {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  white-space: nowrap !important;
-  min-width: 0;
+  font-family: 'Sawarabi Gothic', 'Noto Sans JP', sans-serif;
+  font-size: 28px;
+  font-weight: 400;
+  color: #000;
 }
 
-#total .slot-wrapper,
-#total .slot-wrapper * {
-  font-size: 20px !important;
-  white-space: nowrap !important;
+/* 真ん中の数値だけ色を変える */
+#total .total-num {
+  color: #5874c4 !important;
+  font-weight: 900;
+  font-size: 32px;
 }
 
-#total span,
-#totalCandles,
-#total .total-candle-text {
-  font-size: 14px !important;
-  white-space: nowrap !important;
-  display: inline-flex !important;
-  align-items: center;
+#required {
+  font-size:18px;
+  font-weight:700;
+  color:#000;
 }
 
-/* 特にキャンドル（xxキャンドル）部分が下に落ちないように */
-.total-candle-text {
-  padding-left: 2px;
-  flex-shrink: 0;
+.daily-list {
+  display:none;
+  font-size:13px;
+  margin-top:4px;
 }
 
 /* ============================================
@@ -444,17 +533,6 @@ body {
     font-size: 14px !important;
   }
 
-  /* ▼ southPanel を画面固定に強制復元 */
-#southPanel {
-  position: fixed !important;
-  left: 0 !important;
-  right: 0 !important;
-  bottom: 0 !important;
-  z-index: 99999 !important;
-}
-
-
-
   /* 合計パネル（“合計:” を消して数字だけ） */
   #total {
     font-size: 0;
@@ -604,48 +682,12 @@ body {
   }
 }
 
-/* ============================================================
-   🖥 PC / タブレット southPanel：固定のまま幅だけ縮める
-   ============================================================ */
-@media (min-width: 769px) {
-
-  /* ▼ southPanel を固定のまま中央寄せ */
-  #southPanel {
-    position: fixed;        /* ← 固定を維持 */
-    left: 50%;              /* ← 画面中央合わせ */
-    transform: translateX(-50%);
-    width: 820px;           /* ← 好みで調整可能（広め） */
-    max-width: 95vw;        /* ← 画面が小さくても崩れない */
-    padding: 26px 24px 18px;
-  }
-
-  /* ▼ ゲージを少し縮める（控えめに 80% に） */
-  .gauge-wrapper {
-    width: 80%;
-    margin: 0 auto 28px auto;
-  }
-
-  #gaugeTrack,
-  #gaugeFill {
-    width: 100% !important;
-    margin: 0 auto;
-  }
-
-  /* ▼ メモリラベルもゲージに合わせて中央 */
-  #topLabelLayer,
-  #bottomLabelLayer {
-    width: 80%;
-    left: 50%;
-    transform: translateX(-50%);
-    position: absolute;
-  }
-
-  /* ▼ 合計 と リセット/元に戻すの範囲もゲージ幅に合わせる */
-  .south-bottom-row {
-    width: 80%;
-    margin: 0 auto;
-    justify-content: space-between;
-  }
+/* ============================================
+   🟦 PC
+   ============================================ */
+@media (min-width:769px){
+  .items { grid-template-columns:repeat(4,1fr); }
+  .gauge-top-label { display:block !important; }
 }
 
 /* ============================================
@@ -685,140 +727,4 @@ body {
   text-shadow:
     0 0 2px rgba(255,255,255,0.8),
     0 1px 0 rgba(0,0,0,0.25);
-}
-
-/* ============================================
-   🔶 追加：デイリーパネル & モーダル
-   ============================================ */
-
-/* タイトル直下のボタンパネル */
-.daily-panel {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  gap: 8px;
-  margin-bottom: 16px;
-}
-
-.daily-tab-btn {
-  border-radius: 999px;
-  border: 1px solid rgba(170, 190, 255, 0.9);
-  padding: 5px 14px;
-  font-size: 13px;
-  font-family: 'Sawarabi Gothic', 'Noto Sans JP', sans-serif;
-  background: linear-gradient(135deg, #ffffff, #eef4ff);
-  box-shadow: 0 2px 6px rgba(80, 100, 180, 0.18);
-  cursor: pointer;
-  transition: transform 0.15s ease-out, box-shadow 0.15s ease-out, background 0.2s;
-}
-.daily-tab-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 10px rgba(80, 100, 180, 0.28);
-  background: linear-gradient(135deg, #fdfbff, #e4edff);
-}
-
-/* モーダル全体 */
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.35);
-  display: none;              /* JS で flex にする */
-  align-items: center;
-  justify-content: center;
-  z-index: 100000;            /* southPanel / ラベルより上 */
-}
-
-.modal-window {
-  background: #ffffff;
-  border-radius: 20px;
-  max-width: 900px;
-  width: 94vw;
-  max-height: 80vh;
-  box-shadow:
-    0 10px 30px rgba(0, 0, 0, 0.25),
-    0 0 0 1px rgba(200, 210, 255, 0.8);
-  position: relative;
-  display: flex;
-  flex-direction: column;
-}
-
-.modal-close {
-  position: absolute;
-  top: 6px;
-  right: 10px;
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  border: none;
-  background: #f0f2ff;
-  color: #445;
-  cursor: pointer;
-  font-size: 16px;
-  line-height: 1;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.15);
-}
-.modal-close:hover {
-  background: #e1e5ff;
-}
-
-.modal-body {
-  padding: 16px 18px 18px;
-  overflow: auto;
-  border-radius: 20px;
-}
-
-/* デイリー本文 */
-.modal-content {
-  font-size: 14px;
-  line-height: 1.6;
-  color: #222;
-}
-.modal-content h2,
-.modal-content h3 {
-  font-family: 'Sawarabi Gothic', 'Noto Sans JP', sans-serif;
-}
-.modal-content img {
-  max-width: 100%;
-  height: auto;
-}
-
-/* iframe フォールバック */
-.modal-frame {
-  display: none;   /* 失敗時だけ表示 */
-  width: 100%;
-  height: 65vh;
-  border: none;
-  margin-top: 8px;
-}
-
-/* ローディング / エラー表示 */
-.modal-loading,
-.modal-error {
-  font-size: 14px;
-  padding: 8px 10px;
-  border-radius: 10px;
-}
-.modal-loading {
-  background: rgba(230, 240, 255, 0.8);
-}
-.modal-error {
-  background: rgba(255, 220, 220, 0.9);
-}
-
-/* 「9-bit で詳しく見る」リンク */
-.modal-link {
-  margin-top: 10px;
-  font-size: 14px;
-}
-.modal-link a {
-  color: #3a6cff;
-  text-decoration: underline;
-}
-
-/* スマホ用に少し縮める */
-@media (max-width:480px) {
-  .modal-window {
-    width: 95vw;
-    max-height: 85vh;
-  }
 }
